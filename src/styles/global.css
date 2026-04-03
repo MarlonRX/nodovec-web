@@ -1,0 +1,468 @@
+@import "tailwindcss";
+@import "../config/theme.light.css";
+@import "../config/theme.dark.css";
+@import "../config/theme.custom.css";
+@import "../config/theme.obsidian.css";
+@import "../config/theme.midnight-teal.css";
+@import "../config/theme.ember.css";
+@import "../config/theme.violet-dusk.css";
+@import "../config/theme.forest-night.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Variables CSS generadas automáticamente desde colorConfig.ts
+  NO EDITES MANUALMENTE - Todos los colores están centralizados en colorConfig.ts
+*/
+:root {
+    /* Fondos */
+    --bg-primary: #121212;
+    --bg-surface: #1e1e24;
+    --bg-secondary: #1a1a1f;
+
+    /* Acentos */
+    --accent-primary: #d4af37;
+    --accent-primary-rgb: 212, 175, 55;
+    --accent-secondary: #a0a0a0;
+    --accent-secondary-rgb: 160, 160, 160;
+    --accent-hover: #c9a632;
+
+    /* RGB helpers (utilizadas por scripts y colores con alpha) */
+    --text-primary-rgb: 225, 225, 225;
+    --bg-surface-rgb: 30, 30, 36;
+    --semantic-success-rgb: 46, 139, 87;
+    --semantic-error-rgb: 207, 102, 121;
+    --sidebar-hover-alpha: 0.08;
+
+    /* Texto */
+    --text-primary: #e1e1e1;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #808080;
+    --text-inverted: #121212;
+
+    /* Bordes */
+    --border-primary: #2a2a30;
+    --border-secondary: #333339;
+    --border-light: #1f1f24;
+
+    /* Datos Semánticos */
+    --semantic-success: #2e8b57;
+    --semantic-error: #cf6679;
+    --semantic-warning: #ffb74d;
+    --semantic-info: #d4af37;
+
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+    --accent: oklch(0.968 0.007 247.896);
+    --accent-dark: #000d8a;
+    --black: 15, 18, 25;
+    --gray: 96, 115, 159;
+    --gray-light: 229, 233, 240;
+    --gray-dark: 34, 41, 57;
+    --gray-gradient: rgba(var(--gray-light), 50%), #fff;
+    --box-shadow:
+        0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
+        0 16px 32px rgba(var(--gray), 33%);
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.129 0.042 264.695);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.129 0.042 264.695);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.129 0.042 264.695);
+    --primary: oklch(0.208 0.042 265.755);
+    --primary-foreground: oklch(0.984 0.003 247.858);
+    --secondary: oklch(0.968 0.007 247.896);
+    --secondary-foreground: oklch(0.208 0.042 265.755);
+    --muted: oklch(0.968 0.007 247.896);
+    --muted-foreground: oklch(0.554 0.046 257.417);
+    --accent-foreground: oklch(0.208 0.042 265.755);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.929 0.013 255.508);
+    --input: oklch(0.929 0.013 255.508);
+    --ring: oklch(0.704 0.04 256.788);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: oklch(0.984 0.003 247.858);
+    --sidebar-foreground: oklch(0.129 0.042 264.695);
+    --sidebar-primary: oklch(0.208 0.042 265.755);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+    --sidebar-accent: oklch(0.968 0.007 247.896);
+    --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+    --sidebar-border: oklch(0.929 0.013 255.508);
+    --sidebar-ring: oklch(0.704 0.04 256.788);
+}
+
+body {
+    font-family: "Atkinson", sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    background: #121212;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: var(--text-primary);
+    font-size: 20px;
+    line-height: 1.7;
+}
+
+main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.table-page-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .table-page-container {
+        padding: 2rem;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 0.5rem 0;
+    color: rgb(var(--text-secondary));
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 3.052em;
+}
+
+h2 {
+    font-size: 2.441em;
+}
+
+h3 {
+    font-size: 1.953em;
+}
+
+h4 {
+    font-size: 1.563em;
+}
+
+h5 {
+    font-size: 1.25em;
+}
+
+strong,
+b {
+    font-weight: 700;
+}
+
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+p {
+    margin-bottom: 1em;
+}
+
+.prose p {
+    margin-bottom: 2em;
+}
+
+textarea {
+    width: 100%;
+    font-size: 16px;
+}
+
+input {
+    font-size: 16px;
+}
+
+table {
+    width: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+code {
+    padding: 2px 5px;
+    background-color: rgb(var(--gray-light));
+    border-radius: 2px;
+}
+
+pre {
+    padding: 1.5em;
+    border-radius: 8px;
+}
+
+pre>code {
+    all: unset;
+}
+
+blockquote {
+    border-left: 4px solid var(--accent);
+    padding: 0 0 0 20px;
+    margin: 0px;
+    font-size: 1.333em;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgb(var(--gray-light));
+}
+
+@media (max-width: 720px) {
+    body {
+        font-size: 18px;
+    }
+
+    main {
+        padding: 1em;
+    }
+}
+
+.sr-only {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    /* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
+    clip: rect(1px 1px 1px 1px);
+    /* maybe deprecated but we need to support legacy browsers */
+    clip: rect(1px, 1px, 1px, 1px);
+    /* modern browsers, clip-path works inwards from each corner */
+    clip-path: inset(50%);
+    /* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
+    white-space: nowrap;
+}
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+.dark {
+    --background: oklch(0.129 0.042 264.695);
+    --foreground: oklch(0.984 0.003 247.858);
+    --card: oklch(0.208 0.042 265.755);
+    --card-foreground: oklch(0.984 0.003 247.858);
+    --popover: oklch(0.208 0.042 265.755);
+    --popover-foreground: oklch(0.984 0.003 247.858);
+    --primary: oklch(0.929 0.013 255.508);
+    --primary-foreground: oklch(0.208 0.042 265.755);
+    --secondary: oklch(0.279 0.041 260.031);
+    --secondary-foreground: oklch(0.984 0.003 247.858);
+    --muted: oklch(0.279 0.041 260.031);
+    --muted-foreground: oklch(0.704 0.04 256.788);
+    --accent: oklch(0.279 0.041 260.031);
+    --accent-foreground: oklch(0.984 0.003 247.858);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.551 0.027 264.364);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.208 0.042 265.755);
+    --sidebar-foreground: oklch(0.984 0.003 247.858);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+    --sidebar-accent: oklch(0.279 0.041 260.031);
+    --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Custom Scrollbar for Excel Table */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+/* Toast Styles with Semantic Colors */
+:is(.toaster-toast-success) {
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.95) 0%, rgba(34, 102, 68, 0.95) 100%) !important;
+    color: #e1e1e1 !important;
+    border: 2px solid #2e8b57 !important;
+    box-shadow: 0 8px 32px rgba(46, 139, 87, 0.3) !important;
+}
+
+:is(.toaster-toast-success) svg {
+    color: #4ade80 !important;
+    stroke: #4ade80 !important;
+}
+
+:is(.toaster-toast-error) {
+    background: linear-gradient(135deg, rgba(207, 102, 121, 0.95) 0%, rgba(180, 70, 80, 0.95) 100%) !important;
+    color: #e1e1e1 !important;
+    border: 2px solid #cf6679 !important;
+    box-shadow: 0 8px 32px rgba(207, 102, 121, 0.3) !important;
+}
+
+:is(.toaster-toast-error) svg {
+    color: #ff6b6b !important;
+    stroke: #ff6b6b !important;
+}
+
+:is(.toaster-toast-warning) {
+    background: linear-gradient(135deg, rgba(255, 183, 77, 0.95) 0%, rgba(255, 152, 0, 0.95) 100%) !important;
+    color: #121212 !important;
+    border: 2px solid #ffb74d !important;
+    box-shadow: 0 8px 32px rgba(255, 183, 77, 0.3) !important;
+}
+
+:is(.toaster-toast-warning) svg {
+    color: #ffd700 !important;
+    stroke: #ffd700 !important;
+}
+
+:is(.toaster-toast-info) {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(184, 134, 11, 0.95) 100%) !important;
+    color: #121212 !important;
+    border: 2px solid #d4af37 !important;
+    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3) !important;
+}
+
+:is(.toaster-toast-info) svg {
+    color: #ffd700 !important;
+    stroke: #ffd700 !important;
+}
+
+/* ============================================
+   Estilos personalizados para Scrollbars
+   ============================================ */
+
+/* Para navegadores basados en Chromium (Chrome, Edge, Brave, etc.) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #505050;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #707070;
+    box-shadow: 0 0 6px rgba(112, 112, 112, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #606060;
+}
+
+/* Para Firefox */
+* {
+    scrollbar-color: #505050 var(--bg-surface);
+    scrollbar-width: thin;
+}
+
+/* Scrollbar para inputs */
+input::-webkit-scrollbar {
+    width: 6px;
+}
+
+input::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 3px;
+}
+
+input::-webkit-scrollbar-thumb {
+    background: #505050;
+    border-radius: 3px;
+}
+
+input::-webkit-scrollbar-thumb:hover {
+    background: #707070;
+}

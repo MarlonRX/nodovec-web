@@ -1,0 +1,20 @@
+/* Obsidiana — oscuro profundo con acento frío */
+html[data-theme="obsidian"] {
+  --bg-primary: #0b0b0d;
+  --bg-surface: #121214;
+  --bg-secondary: #0f1113;
+
+  --text-primary: #e6eef8;
+  --text-secondary: #9aa6b2;
+  --text-inverted: #0b0b0d;
+
+  --accent-primary: #6cc3ff; /* hielo */
+  --accent-primary-rgb: 108, 195, 255;
+  --accent-secondary: #263142;
+  --accent-hover: #53b0ff;
+
+  --border-primary: #1a1c1f;
+  --border-secondary: #222428;
+
+  --sidebar-hover-alpha: 0.12;
+}

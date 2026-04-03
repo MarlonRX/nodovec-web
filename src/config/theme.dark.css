@@ -1,0 +1,17 @@
+/* Dark theme — overrides used CSS variables */
+html[data-theme="dark"] {
+  --bg-primary: #121212;
+  --bg-surface: #1e1e24;
+  --bg-secondary: #1a1a1f;
+
+  --text-primary: #e1e1e1;
+  --text-secondary: #a0a0a0;
+  --text-inverted: #121212;
+
+  --accent-primary: #d4af37;
+  --accent-secondary: #a0a0a0;
+  --accent-hover: #c9a632;
+
+  --border-primary: #2a2a30;
+  --border-secondary: #333339;
+}

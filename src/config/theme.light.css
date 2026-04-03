@@ -1,0 +1,19 @@
+/* Light theme — overrides used CSS variables */
+html[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-surface: #f8fafc;
+  --bg-secondary: #f1f5f9;
+
+  --text-primary: #0f1724;
+  --text-secondary: #475569;
+  --text-inverted: #ffffff;
+
+  --accent-primary: #4f8cff;
+  --accent-primary-rgb: 79, 140, 255;
+  --accent-secondary: #e2e8f0;
+  --accent-hover: #3b73d6;
+  --sidebar-hover-alpha: 0.12;
+
+  --border-primary: #e6edf3;
+  --border-secondary: #cbd5e1;
+}

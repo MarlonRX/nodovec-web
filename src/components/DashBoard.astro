@@ -1,0 +1,8 @@
+---
+import FinancialDashboard from "./reactComponents/FinancialDashboard";
+export const prerender = false;
+---
+
+<div class="w-full">
+    <FinancialDashboard client:only="react" />
+</div>

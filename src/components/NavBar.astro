@@ -1,0 +1,41 @@
+---
+import { LanguageSelector } from "./reactComponents/LanguageSelector";
+import { LoginButton } from "./reactComponents/LoginButton";
+import { MenuToggle } from "./reactComponents/MenuToggle";
+
+// No renderizar NavBar en la página de login o register
+const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/register";
+---
+
+{!isLoginPage && (
+<nav
+    class="fixed top-0 left-0 right-0 z-10 border-b backdrop-blur-xl"
+    style="background: var(--bg-surface); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);"
+>
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center h-16">
+            <div class="flex md:hidden items-center space-x-3">
+                <MenuToggle client:load isSidebar={true} />
+            </div>
+
+            <div class="flex-1"></div>
+
+            <div class="hidden md:flex items-center space-x-4">
+                <LanguageSelector client:load />
+                <LoginButton client:load />
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <MenuToggle client:load isSidebar={false} />
+            </div>
+        </div>
+    </div>
+</nav>
+)}
+
+<style>
+    .nav-link {
+        transition: all 0.2s ease-in-out;
+    }
+</style>
