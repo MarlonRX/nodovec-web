@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { UserComponent } from "@/components/reactComponents/UserComponent";
+
+export const prerender = false;
+---
+
+<BaseLayout>
+  <main class="w-full min-h-[72vh]">
+    <div class="table-page-container">
+      <!-- Page header -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-black mb-2" style="color: var(--text-primary)">
+          Preferencias
+        </h1>
+        <p class="text-sm" style="color: var(--text-secondary)">
+          Ajusta la apariencia y otras preferencias de la aplicación. Elige un
+          tema en el recuadro "Tema" a la izquierda.
+        </p>
+      </div>
+
+      <!-- Single, focused Profile panel (perfil, idioma, moneda, tema) -->
+      <div class="flex justify-center w-full">
+        <section class="max-w-6xl w-full mx-auto rounded-xl p-8 md:p-10 bg-(--bg-surface) border border-(--border-primary) shadow-md">
+          <div class="mt-4">
+            <UserComponent client:load />
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

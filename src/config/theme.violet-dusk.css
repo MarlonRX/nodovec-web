@@ -1,0 +1,20 @@
+/* Violeta Crepúsculo — oscuro con matiz violeta */
+html[data-theme="violet-dusk"] {
+  --bg-primary: #0c0810;
+  --bg-surface: #151026;
+  --bg-secondary: #0e0a16;
+
+  --text-primary: #f5f3ff;
+  --text-secondary: #bdb4d8;
+  --text-inverted: #0c0810;
+
+  --accent-primary: #9b7bff; /* violeta */
+  --accent-primary-rgb: 155, 123, 255;
+  --accent-secondary: #2e2342;
+  --accent-hover: #8a63ff;
+
+  --border-primary: #231b31;
+  --border-secondary: #2a2238;
+
+  --sidebar-hover-alpha: 0.11;
+}

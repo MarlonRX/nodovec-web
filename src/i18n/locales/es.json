@@ -1,0 +1,30 @@
+{
+    "welcome": "Bienvenido a CashPilot",
+    "subtitle": "Tu herramienta de gestión financiera personal.",
+    "startMessage": "¡Comienza a gestionar tus finanzas hoy!",
+    "navbar": {
+        "dashboard": "Panel",
+        "transactions": "Transacciones",
+        "categories": "Categorías",
+        "reports": "Reportes",
+        "settings": "Configuración",
+        "login": "Iniciar Sesión"
+    },
+    "dashboard": {
+        "welcome": "Bienvenido a CashPilot",
+        "subtitle": "Tu herramienta de gestión financiera personal.",
+        "startMessage": "¡Comienza a gestionar tus finanzas hoy!"
+    },
+    "barChart": {
+        "title": "Gastos Mensuales",
+        "description": "Visualiza tus gastos mensuales por categoría.",
+        "debts": "Débitos",
+        "credits": "Créditos"
+    },
+    "months": "Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre",
+    "sidebar": {
+        "dashboard": "Panel",
+        "transactions": "Transacciones",
+        "logout": "Cerrar Sesión"
+    }
+}

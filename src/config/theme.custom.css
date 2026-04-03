@@ -1,0 +1,17 @@
+/* Custom theme — soft palette */
+html[data-theme="custom"] {
+  --bg-primary: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-secondary: #eef6f9;
+
+  --text-primary: #1a365d;
+  --text-secondary: #475569;
+  --text-inverted: #ffffff;
+
+  --accent-primary: #ff6f61;
+  --accent-secondary: #b2f5ea;
+  --accent-hover: #ff5a4b;
+
+  --border-primary: #e6edf2;
+  --border-secondary: #dbeef3;
+}

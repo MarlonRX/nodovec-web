@@ -1,0 +1,236 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PasswordInput } from "../components/reactComponents/PasswordInput";
+import { LoadingSpinner } from "../components/reactComponents/LoadingSpinner";
+export const prerender = false;
+
+// Si ya está autenticado, redirigir al dashboard
+const token = Astro.cookies.get("auth_token");
+if (token) {
+  return Astro.redirect("/dashboard");
+}
+---
+
+<BaseLayout>
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Logo / Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-black text-(--text-primary) mb-2 tracking-tight">CashPilot</h1>
+        <p class="text-(--text-secondary) text-sm uppercase tracking-widest">Create your account</p>
+      </div>
+
+      <!-- Register Form -->
+      <div class="bg-(--bg-surface) border border-(--border-primary) rounded-2xl p-8 shadow-xl">
+        <form id="register-form" class="space-y-5" autocomplete="off">
+          <!-- First Name -->
+          <div>
+            <label for="first_name" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              First Name
+            </label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              required
+              autocomplete="name"
+              placeholder="John"
+              class="w-full px-4 py-3 bg-(--bg-secondary) border-2 border-(--border-primary) rounded-lg text-(--text-primary) placeholder-(--text-tertiary) focus:outline-none focus:border-(--accent-primary) transition-colors"
+            />
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label for="last_name" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              required
+              autocomplete="family-name"
+              placeholder="Doe"
+              class="w-full px-4 py-3 bg-(--bg-secondary) border-2 border-(--border-primary) rounded-lg text-(--text-primary) placeholder-(--text-tertiary) focus:outline-none focus:border-(--accent-primary) transition-colors"
+            />
+          </div>
+
+          <!-- Email Input -->
+          <div>
+            <label for="email" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="off"
+              placeholder="you@example.com"
+              class="w-full px-4 py-3 bg-(--bg-secondary) border-2 border-(--border-primary) rounded-lg text-(--text-primary) placeholder-(--text-tertiary) focus:outline-none focus:border-(--accent-primary) transition-colors"
+            />
+          </div>
+
+          <!-- Password Input -->
+          <div>
+            <label for="password" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              Password
+            </label>
+            <PasswordInput 
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              required
+              showRequirements={true}
+              client:only="react"
+            />
+          </div>
+
+          <!-- Error Message (Hidden by default) -->
+          <div id="error-message" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p class="text-sm text-red-600 dark:text-red-400 font-medium"></p>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full px-6 py-3 bg-(--accent-primary) text-(--text-inverted) font-black text-sm uppercase tracking-wider rounded-xl hover:bg-(--accent-hover) transition-all shadow-lg hover:shadow-(--accent-primary)/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span id="button-text">Create Account</span>
+            <span id="loading-spinner" class="hidden">
+              <LoadingSpinner client:only="react" />
+            </span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-4 my-6">
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+          <span class="text-xs text-(--text-tertiary) uppercase font-bold">or</span>
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+        </div>
+
+        <!-- Demo Mode Link -->
+        <a
+          href="/demo"
+          class="w-full block text-center px-6 py-3 bg-(--bg-secondary) text-(--text-primary) font-black text-sm uppercase tracking-wider rounded-xl border-2 border-(--border-primary) hover:border-(--accent-primary) transition-all"
+        >
+          Try Demo Mode
+        </a>
+      </div>
+
+      <!-- Sign In Link -->
+      <div class="text-center mt-6">
+        <p class="text-(--text-secondary) text-sm">
+          Already have an account?
+          <a href="/login" class="text-(--accent-primary) font-bold hover:underline">
+            Sign in here
+          </a>
+        </p>
+      </div>
+
+      <!-- Back to Home -->
+      <div class="text-center mt-4">
+        <a href="/" class="text-(--text-tertiary) text-xs hover:text-(--text-secondary) transition-colors">
+          ← Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { toast } from "sonner";
+  import { authStore } from "../store/auth";
+  import { registerUser } from "../services/userServices";
+
+  const form = document.getElementById("register-form") as HTMLFormElement;
+  const errorMsg = document.getElementById("error-message") as HTMLDivElement;
+  const errorText = errorMsg.querySelector("p") as HTMLParagraphElement;
+  const btnText = document.getElementById("button-text") as HTMLSpanElement;
+  const spinner = document.getElementById("loading-spinner") as HTMLSpanElement;
+  const submitBtn = form.querySelector("button[type='submit']") as HTMLButtonElement;
+
+  function showError(message: string) {
+    errorText.textContent = message;
+    errorMsg.classList.remove("hidden");
+  }
+
+  function hideError() {
+    errorMsg.classList.add("hidden");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    hideError();
+
+    const firstname = (form.querySelector("#first_name") as HTMLInputElement).value;
+    const lastname = (form.querySelector("#last_name") as HTMLInputElement).value;
+    const email = (form.querySelector("#email") as HTMLInputElement).value;
+    const password = (form.querySelector("#password") as HTMLInputElement).value;
+
+    // Validaciones básicas en frontend
+    if (!firstname || !lastname || !email || !password) {
+      showError("Please fill in all required fields");
+      return;
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError("Please enter a valid email address");
+      return;
+    }
+
+    // Validar contraseña
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      showError("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+      return;
+    }
+
+    // Show loading state
+    submitBtn.disabled = true;
+    btnText.classList.add("hidden");
+    spinner.classList.remove("hidden");
+
+    try {
+      // Usar el mismo servicio de registro que el resto de la app
+      const result = await registerUser({
+        firstname,
+        lastname,
+        email,
+        password,
+        username: email,
+      });
+
+      if (result.response === true && result.data) {
+        // Guardar token y usuario en el store
+        const token = result.data.token || result.data.access_token;
+        const user = result.data.user || result.data.data;
+        authStore.register(token, user);
+
+        // Mostrar toast de éxito
+        toast.success(`Account created! Welcome, ${firstname}!`);
+
+        // Redirigir al login
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
+      } else {
+        const errorMessage = result.message || "Registration failed";
+        showError(errorMessage);
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Network error. Please check your connection and try again.";
+      console.error('[Register] Error:', error);
+      showError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      submitBtn.disabled = false;
+      btnText.classList.remove("hidden");
+      spinner.classList.add("hidden");
+    }
+  });
+</script>

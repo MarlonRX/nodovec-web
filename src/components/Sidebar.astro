@@ -1,0 +1,238 @@
+---
+// import { TranslatedText } from "./reactComponents/TranslatedText";
+import { SidebarToggle } from "./reactComponents/SidebarToggle";
+import { SidebarIcons } from "./reactComponents/SidebarIcons";
+import { SidebarHoverStyles } from "./reactComponents/SidebarHoverStyles";
+import { colorConfig } from "../styles/colorConfig";
+import { TranslatedText } from "./reactComponents/TranslatedText";
+
+// Obtener prop del layout
+interface Props {
+    isAuthenticated?: boolean;
+}
+
+const { isAuthenticated = false } = Astro.props as Props;
+---
+
+{isAuthenticated && (
+<>
+<SidebarHoverStyles client:only="react" />
+<aside
+    id="sidebar"
+    style={`background: var(--bg-primary); border-color: var(--border-primary);`}
+    class="fixed left-0 top-0 h-screen w-64 transition-all duration-300 overflow-y-auto overflow-x-hidden z-20 flex-col md:flex"
+> 
+    <!-- Header with Logo -->
+    <div
+        class="sidebar-header flex items-center gap-3 px-6 py-4"
+        style={`border-color: var(--border-primary);`}
+    >
+        <!-- Logo Icon -->
+        <div
+            class="logo-icon shrink-0 p-1.5 rounded-md border"
+            style={`background: var(--accent-primary); border-color: var(--bg-surface);`}
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="w-6 h-6"
+            >
+                <rect width="24" height="24" fill="none"></rect>
+                <path
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    fill="none"
+                    stroke="var(--border-primary)"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+            </svg>
+        </div>
+
+        <!-- Text Content (hidden when sidebar is collapsed) -->
+        <div class="logo-text flex flex-col flex-1 min-w-0">
+            <span
+                class="text-lg font-bold truncate"
+                style={`color: var(--accent-primary);`}
+            >
+                CashPilot
+            </span>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="mt-5 px-4 flex-1">
+        <div class="space-y-1">
+            <!-- Dashboard -->
+            <a
+                href="/"
+                id="sidebar-dashboard"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="home" />
+                <span class="text-sm font-medium ml-3">
+                    <TranslatedText
+                        translationKey="sidebar.dashboard"
+                        client:load
+                    />
+                </span>
+            </a>
+
+            <!-- Transactions -->
+            <a
+                href="/transactions/table"
+                id="sidebar-transactions"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="transactions" />
+                <span class="text-sm font-medium ml-3">
+                    <TranslatedText
+                        translationKey="sidebar.transactions"
+                        client:load
+                    />
+                </span>
+            </a>
+
+            <!-- Preferences -->
+            <a
+                href="/preferences"
+                id="sidebar-preferences"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="preferences" />
+                <span class="text-sm font-medium ml-3">Preferencias</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<!-- Toggle Button - Always Visible -->
+<div
+    id="sidebar-toggle-container"
+    class="fixed left-0 bottom-1 z-20 transition-all duration-300 flex items-center justify-center overflow-hidden"
+    style={`background: var(--bg-primary); width: 5rem; height: 3rem;`}
+>
+    <SidebarToggle client:load />
+</div>
+
+<script is:inline>
+    // Restaurar estado del sidebar desde localStorage
+    if (typeof window !== 'undefined') {
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOpen = localStorage.getItem("sidebarOpen");
+
+        if (sidebarOpen === "true") {
+            if (sidebar) {
+                sidebar.classList.add("open");
+                sidebar.classList.remove("collapsed");
+            }
+        } else {
+            if (sidebar) {
+                sidebar.classList.add("collapsed");
+                sidebar.classList.remove("open");
+            }
+        }
+    }
+</script>
+
+<style>
+    aside.collapsed {
+        width: 5rem;
+    }
+
+    aside.open {
+        width: 16rem;
+    }
+
+    @media (max-width: 768px) {
+        aside {
+            padding-top: 4rem;
+        }
+
+        aside.open {
+            display: flex;
+        }
+
+        aside.collapsed {
+            display: none;
+        }
+
+        #sidebar-toggle-container {
+            width: 4rem !important;
+            left: 0;
+        }
+    }
+
+    .sidebar-link {
+        transition: all 0.2s duration;
+    }
+
+    .sidebar-link.active {
+        border-left: 4px solid;
+        padding-left: calc(1rem - 4px);
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .sidebar-header {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .logo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .logo-text {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    aside.collapsed .logo-text {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    aside.open .logo-text {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    aside.collapsed nav span:not([class*="h-6"]),
+    aside.collapsed .sidebar-footer span {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    aside.open nav span:not([class*="h-6"]),
+    aside.open .sidebar-footer span {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    #sidebar-toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    aside.open ~ #sidebar-toggle-container {
+        width: 16rem;
+    }
+
+    aside.collapsed ~ #sidebar-toggle-container {
+        width: 4rem;
+    }
+</style>
+</>
+)}

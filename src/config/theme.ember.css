@@ -1,0 +1,20 @@
+/* Brasa Nocturna — oscuro cálido con toques anaranjados */
+html[data-theme="ember"] {
+  --bg-primary: #0f0d0c;
+  --bg-surface: #171414;
+  --bg-secondary: #121111;
+
+  --text-primary: #fff7ef;
+  --text-secondary: #d7c7b8;
+  --text-inverted: #0f0d0c;
+
+  --accent-primary: #ff8a3d; /* brasa */
+  --accent-primary-rgb: 255, 138, 61;
+  --accent-secondary: #3a2418;
+  --accent-hover: #ff7a1a;
+
+  --border-primary: #241a18;
+  --border-secondary: #2c201d;
+
+  --sidebar-hover-alpha: 0.13;
+}

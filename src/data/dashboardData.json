@@ -1,0 +1,39 @@
+{
+  "monthlyData": [
+    { "month": "Jan", "income": 1500, "expenses": 1000, "cashFlow": 500 },
+    { "month": "Feb", "income": 1800, "expenses": 1100, "cashFlow": 700 },
+    { "month": "Mar", "income": 1600, "expenses": 950, "cashFlow": 650 },
+    { "month": "Apr", "income": 2000, "expenses": 1200, "cashFlow": 800 },
+    { "month": "May", "income": 1900, "expenses": 1000, "cashFlow": 900 },
+    { "month": "Jun", "income": 1700, "expenses": 1100, "cashFlow": 600 },
+    { "month": "Jul", "income": 1800, "expenses": 1050, "cashFlow": 750 },
+    { "month": "Aug", "income": 2100, "expenses": 1300, "cashFlow": 800 },
+    { "month": "Sep", "income": 2200, "expenses": 1400, "cashFlow": 800 },
+    { "month": "Oct", "income": 2000, "expenses": 1200, "cashFlow": 800 },
+    { "month": "Nov", "income": 2300, "expenses": 1100, "cashFlow": 1200 },
+    { "month": "Dec", "income": 2100, "expenses": 1000, "cashFlow": 1100 }
+  ],
+  "accountBalancesData": [
+    { "month": "Jan", "tax": 500, "expense": 400, "other": 300, "savings": 1000 },
+    { "month": "Feb", "tax": 600, "expense": 450, "other": 350, "savings": 1200 },
+    { "month": "Mar", "tax": 700, "expense": 500, "other": 400, "savings": 1400 },
+    { "month": "Apr", "tax": 800, "expense": 550, "other": 450, "savings": 1600 },
+    { "month": "May", "tax": 900, "expense": 600, "other": 500, "savings": 1800 }
+  ],
+  "expenseCategories": [
+    { "name": "Tax", "value": 35 },
+    { "name": "Expense", "value": 25 },
+    { "name": "Post", "value": 20 },
+    { "name": "Food", "value": 15 },
+    { "name": "Others", "value": 5 }
+  ],
+  "recentTransactions": [
+    { "id": 1, "date": "23/03/2025", "category": "Bases Card", "amount": "-$100.00", "icon": "trophy" },
+    { "id": 2, "date": "23/05/2025", "category": "Accounthibs", "amount": "-$50.00", "icon": "folder" },
+    { "id": 3, "date": "23/05/2025", "category": "Payssnt & Service", "amount": "+$100.00", "icon": "bank" },
+    { "id": 4, "date": "22/05/2025", "category": "Recert Transaction", "amount": "-$50.00", "icon": "bell" },
+    { "id": 5, "date": "23/05/2025", "category": "Taxanos", "amount": "+$20.00", "icon": "car" },
+    { "id": 6, "date": "20/05/2025", "category": "Invoices", "amount": "-$0.00", "icon": "document" },
+    { "id": 7, "date": "20/05/2025", "category": "Calculated", "amount": "-$50.00", "icon": "user" }
+  ]
+}

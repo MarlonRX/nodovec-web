@@ -1,0 +1,31 @@
+{
+    "welcome": "Welcome to CashPilot",
+    "subtitle": "Your personal finance management tool.",
+    "startMessage": "Start managing your finances today!",
+    "navbar": {
+        "dashboard": "Dashboard",
+        "transactions": "Transactions",
+        "categories": "Categories",
+        "reports": "Reports",
+        "settings": "Settings",
+        "login": "Log In"
+    },
+    "dashboard": {
+        "welcome": "Welcome to CashPilot",
+        "subtitle": "Your personal finance management tool.",
+        "startMessage": "Start managing your finances today!"
+    },
+    "barChart": {
+        "title": "Monthly Expenses",
+        "description": "Visualize your monthly expenses by category.",
+        "debts": "Debts",
+        "credits": "Credits"
+    },
+    "months": "January, February, March, April, May, June, July, August, September, October, November, December",
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "transactions": "Transactions",
+        "movement_dashboard": "Movement Dashboard",
+        "logout": "Log Out"
+    }
+}

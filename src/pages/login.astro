@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PasswordInput } from "../components/reactComponents/PasswordInput";
+import { LoadingSpinner } from "../components/reactComponents/LoadingSpinner";
+
+export const prerender = false;
+
+// Si ya está autenticado, redirigir al dashboard
+const token = Astro.cookies.get("auth_token");
+if (token) {
+  return Astro.redirect("/dashboard");
+}
+---
+
+<BaseLayout>
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Logo / Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-black text-(--text-primary) mb-2 tracking-tight">CashPilot</h1>
+        <p class="text-(--text-secondary) text-sm uppercase tracking-widest">Sign in to your account</p>
+      </div>
+
+      <!-- Login Form -->
+      <div class="bg-(--bg-surface) border border-(--border-primary) rounded-2xl p-8 shadow-xl">
+        <form id="login-form" class="space-y-6">
+          <!-- Email Input -->
+          <div>
+            <label for="email" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              class="w-full px-4 py-3 bg-(--bg-secondary) border-2 border-(--border-primary) rounded-lg text-(--text-primary) placeholder-(--text-tertiary) focus:outline-none focus:border-(--accent-primary) transition-colors"
+            />
+          </div>
+
+          <!-- Password Input -->
+          <div>
+            <label for="password" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
+              Password
+            </label>
+            <PasswordInput 
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              required
+              showRequirements={false}
+              client:only="react"
+            />
+          </div>
+
+          <!-- Error Message (Hidden by default) -->
+          <div id="error-message" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p class="text-sm text-red-600 dark:text-red-400 font-medium"></p>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full px-6 py-3 bg-(--accent-primary) text-(--text-inverted) font-black text-sm uppercase tracking-wider rounded-xl hover:bg-(--accent-hover) transition-all shadow-lg hover:shadow-(--accent-primary)/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span id="button-text">Sign In</span>
+            <span id="loading-spinner" class="hidden">
+              <LoadingSpinner client:only="react" />
+            </span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-4 my-6">
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+          <span class="text-xs text-(--text-tertiary) uppercase font-bold">or</span>
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+        </div>
+
+        <!-- Demo Mode Link -->
+        <a
+          href="/demo"
+          class="w-full block text-center px-6 py-3 bg-(--bg-secondary) text-(--text-primary) font-black text-sm uppercase tracking-wider rounded-xl border-2 border-(--border-primary) hover:border-(--accent-primary) transition-all"
+        >
+          Try Demo Mode
+        </a>
+      </div>
+
+      <!-- Sign Up Link -->
+      <div class="text-center mt-6">
+        <p class="text-(--text-secondary) text-sm">
+          Don't have an account?
+          <a href="/register" class="text-(--accent-primary) font-bold hover:underline">
+            Sign up here
+          </a>
+        </p>
+      </div>
+
+      <!-- Back to Home -->
+      <div class="text-center mt-4">
+        <a href="/" class="text-(--text-tertiary) text-xs hover:text-(--text-secondary) transition-colors">
+          ← Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { toast } from "sonner";
+  import { authStore } from "../store/auth";
+import { loginUser } from "@/services/userServices";
+
+  const form = document.getElementById("login-form") as HTMLFormElement;
+  const errorMsg = document.getElementById("error-message") as HTMLDivElement;
+  const errorText = errorMsg.querySelector("p") as HTMLParagraphElement;
+  const btnText = document.getElementById("button-text") as HTMLSpanElement;
+  const spinner = document.getElementById("loading-spinner") as HTMLSpanElement;
+  const submitBtn = form.querySelector("button[type='submit']") as HTMLButtonElement;
+
+  function showError(message: string) {
+    errorText.textContent = message;
+    errorMsg.classList.remove("hidden");
+  }
+
+  function hideError() {
+    errorMsg.classList.add("hidden");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    hideError();
+
+    const email = (form.querySelector("#email") as HTMLInputElement).value;
+    const password = (form.querySelector("#password") as HTMLInputElement).value;
+
+    // Validaciones básicas
+    if (!email || !password) {
+      showError("Please fill in all fields");
+      return;
+    }
+
+    // Show loading state
+    submitBtn.disabled = true;
+    btnText.classList.add("hidden");
+    spinner.classList.remove("hidden");
+
+    try {
+      const resp = await loginUser({ email, password });
+
+      console.log("Login response:", resp);
+
+      if (resp.response === true) {
+        // Guardar en el store
+        authStore.login(resp.data.token, resp.data.user);
+        
+        // Mostrar toast de éxito
+        const userName = resp.data.user?.first_name || email;
+        toast.success(`Welcome back, ${userName}!`);
+        
+        // Redirigir al dashboard
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
+      } else {
+        // Mostrar error
+        const errorMessage = resp.message || "Login failed";
+        
+        let displayError = errorMessage;
+        if (errorMessage.includes("Invalid email or password")) {
+          displayError = "Invalid email or password. Please try again.";
+        }
+        
+        showError(displayError);
+        toast.error(displayError);
+      }
+    } catch (error) {
+      console.log("Network error during login:", error);
+      const errorMessage = "Network error. Please check your connection and try again.";
+      showError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      submitBtn.disabled = false;
+      btnText.classList.remove("hidden");
+      spinner.classList.add("hidden");
+    }
+  });
+</script>
