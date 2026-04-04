@@ -2,10 +2,10 @@
 import axios, { type AxiosResponse, type AxiosError } from 'axios';
 import { API_CONFIG, APP_CONFIG, STORAGE_CONFIG } from '../config/api';
 
-// Configurar instancia de axios con URL relativa única
-// Todos los requests irán a /api (mismo origen)
+// Configurar instancia de axios con URL base correcta del backend
+// Usa la URL calculada dinámicamente según el entorno
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_CONFIG.BASE_URL}${API_CONFIG.API_ENDPOINT}`,
   timeout: API_CONFIG.TIMEOUT,
   headers: API_CONFIG.DEFAULT_HEADERS,
 });

@@ -3,25 +3,20 @@
 
 // Detectar URL base del backend EN TIEMPO DE EJECUCIÓN
 export function getBackendUrl(): string {
-  // Solo en el navegador (cliente)
-  if (typeof window === 'undefined') {
-    return 'http://backend:8080'; // SSR fallback
-  }
-
-  // Primero verificar variable de entorno
+  // Siempre respetar la variable de entorno PUBLIC_API_BASE_URL si está definida
   const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
   if (envUrl && envUrl.trim()) {
     return envUrl;
   }
-  
-  // En desarrollo local (localhost/127.0.0.1): usar puerto 8888 para backend
-  const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:8888';
+
+  // Fallback solo si la variable de entorno NO está definida
+  // Solo en el navegador (cliente)
+  if (typeof window === 'undefined') {
+    return 'http://backend:8080'; // SSR fallback
   }
   
   // En producción: asumir mismo host pero puerto 8080
-  return `${window.location.protocol}//${hostname}:8080`;
+  return `${window.location.protocol}//${window.location.hostname}:8080`;
 }
 
 export const API_CONFIG = {
