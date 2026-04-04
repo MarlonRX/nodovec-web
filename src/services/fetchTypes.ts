@@ -24,33 +24,43 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
+  (error: any) => {
+    // Envolver el error en un Error object válido si es necesario
+    const validError = error instanceof Error ? error : new Error(String(error));
+    return Promise.reject(validError);
   }
 );
 
 // Interceptor para manejar respuestas y errores globalmente
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  (error: any) => {
+    // Envolver el error en un Error object válido si es necesario
+    const validError = error instanceof Error ? error : new Error(String(error));
+    
     // Si el token expiró, usar authStore.logout() en lugar de limpiar localStorage directamente
-    if (error.response?.status === 401) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         authStore.logout(); // Esto limpia TODO consistentemente
         // Opcional: redirigir al login
         // window.location.href = '/login';
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(validError);
   }
 );
 
 // Función helper para manejar errores
-const handleError = (error: any): any => {
+const handleError = (error: any): Error => {
+  // Asegurar que siempre lanzamos un Error object válido
+  if (error instanceof Error) {
+    return error;
+  }
   if (axios.isAxiosError(error)) {
     return error;
   }
-  return error;
+  // Si es cualquier otra cosa, crear un Error valido
+  return new Error(String(error) || 'Unknown error occurred');
 };
 
 // Función helper para manejar respuestas exitosas

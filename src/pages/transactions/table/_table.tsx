@@ -5,7 +5,7 @@ import { MyTable } from "@/components/UIComponents/MyTable";
 import { MySelect } from "@/components/UIComponents/MySelect";
 import { TransactionModal } from "@/components/UIComponents/TransactionModal";
 import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
-import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from "@/services/transactionServices";
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction, getTransactionsTotals } from "@/services/transactionServices";
 import type { Column, Transaction, TransactionPaginatedResponse, Filters } from "@/schemas/tableSchema";
 import { TransactionPaginatedResponseSchema, FiltersSchema } from "@/schemas/tableSchema";
 import { STORAGE_CONFIG } from "@/config/api";
@@ -13,7 +13,7 @@ import { isDemoMode } from "@/lib/demoUtils";
 import { toast } from "sonner";
 
 interface Props {
-  onRowClick?: (id: string) => void;
+  onRowClick?: (id: string | number) => void;
   itemsPerPage?: number;
 }
 
@@ -31,6 +31,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
+  const [totals, setTotals] = useState({ income: 0, expense: 0, net: 0 });
+  const [loadingTotals, setLoadingTotals] = useState(false);
 
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -78,6 +80,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         const filters = FiltersSchema.parse({
           year: selectedYear,
           month: selectedMonth,
+          page: currentPage,
         });
 
         const result = await getTransactions(filters);
@@ -105,34 +108,60 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     };
 
     fetchTransactions();
+  }, [selectedYear, selectedMonth, currentPage, refreshTrigger]);
+
+  // Load totals for ALL transactions in the selected month/year
+  useEffect(() => {
+    const fetchTotals = async () => {
+      setLoadingTotals(true);
+      try {
+        const filters = FiltersSchema.parse({
+          year: selectedYear,
+          month: selectedMonth,
+        });
+
+        const result = await getTransactionsTotals(filters);
+
+        if (result.response && result.data) {
+          setTotals({
+            income: result.data.income || 0,
+            expense: result.data.expense || 0,
+            net: result.data.net || 0,
+          });
+        } else {
+          setTotals({ income: 0, expense: 0, net: 0 });
+        }
+      } catch (err: any) {
+        console.error("Error fetching totals:", err?.message);
+        setTotals({ income: 0, expense: 0, net: 0 });
+      } finally {
+        setLoadingTotals(false);
+      }
+    };
+
+    fetchTotals();
   }, [selectedYear, selectedMonth, refreshTrigger]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const totals = useMemo(() => {
-    return data.reduce(
-      (acc, curr) => {
-        const amount = curr.amount || 0;
-        if (curr.type === 'income') {
-          acc.income += amount;
-        } else {
-          acc.expense += amount;
-        }
-        acc.net = acc.income - acc.expense;
-        return acc;
-      },
-      { income: 0, expense: 0, net: 0 }
-    );
-  }, [data]);
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setCurrentPage(1); // Reset pagination
+  };
+
+  const handleMonthChange = (month: number) => {
+    setSelectedMonth(month);
+    setCurrentPage(1); // Reset pagination
+  };
 
   const handleSubmitTransaction = async (transactionData: Partial<Transaction>) => {
     setIsSubmitting(true);
     try {
       let result;
-      if (editingTransaction?.id) {
-        result = await updateTransaction(editingTransaction.id as number, transactionData);
+      if (editingTransaction?.uuid) {
+        result = await updateTransaction(editingTransaction.uuid, transactionData);
       } else {
         result = await createTransaction(transactionData);
       }
@@ -331,13 +360,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 <MySelect
                   options={yearOptions}
                   value={selectedYear}
-                  onChange={(e: any) => setSelectedYear(Number(e.target.value))}
+                  onChange={(e: any) => handleYearChange(Number(e.target.value))}
                   className="w-32 md:w-48 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
                 <MySelect
                   options={monthOptions}
                   value={selectedMonth}
-                  onChange={(e: any) => setSelectedMonth(Number(e.target.value))}
+                  onChange={(e: any) => handleMonthChange(Number(e.target.value))}
                   className="w-32 md:w-56 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
               </div>
@@ -391,7 +420,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             onPageChange={handlePageChange}
             onRowClick={onRowClick}
             variant="excel"
-            showPagination={false}
+            showPagination={true}
           />
         )}
         {!error && data.length === 0 && (
