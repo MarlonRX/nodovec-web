@@ -98,6 +98,7 @@ export type TransactionPaginatedResponse = z.infer<typeof TransactionPaginatedRe
 export const FiltersSchema = z.object({
   year: z.number().int().optional(),
   month: z.number().int().optional(),
+  page: z.number().int().optional(),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

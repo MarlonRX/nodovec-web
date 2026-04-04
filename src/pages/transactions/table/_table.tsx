@@ -80,6 +80,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         const filters = FiltersSchema.parse({
           year: selectedYear,
           month: selectedMonth,
+          page: currentPage,
         });
 
         const result = await getTransactions(filters);
@@ -107,7 +108,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     };
 
     fetchTransactions();
-  }, [selectedYear, selectedMonth, refreshTrigger]);
+  }, [selectedYear, selectedMonth, currentPage, refreshTrigger]);
 
   // Load totals for ALL transactions in the selected month/year
   useEffect(() => {
@@ -143,6 +144,16 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setCurrentPage(1); // Reset pagination
+  };
+
+  const handleMonthChange = (month: number) => {
+    setSelectedMonth(month);
+    setCurrentPage(1); // Reset pagination
   };
 
   const handleSubmitTransaction = async (transactionData: Partial<Transaction>) => {
@@ -349,13 +360,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 <MySelect
                   options={yearOptions}
                   value={selectedYear}
-                  onChange={(e: any) => setSelectedYear(Number(e.target.value))}
+                  onChange={(e: any) => handleYearChange(Number(e.target.value))}
                   className="w-32 md:w-48 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
                 <MySelect
                   options={monthOptions}
                   value={selectedMonth}
-                  onChange={(e: any) => setSelectedMonth(Number(e.target.value))}
+                  onChange={(e: any) => handleMonthChange(Number(e.target.value))}
                   className="w-32 md:w-56 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
               </div>
@@ -409,7 +420,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             onPageChange={handlePageChange}
             onRowClick={onRowClick}
             variant="excel"
-            showPagination={false}
+            showPagination={true}
           />
         )}
         {!error && data.length === 0 && (
