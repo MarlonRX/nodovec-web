@@ -2,6 +2,7 @@
  * Demo mode utilities for CashPilot
  * Handles detection and management of demo vs real user modes
  */
+import { STORAGE_CONFIG } from '../config/api';
 
 /**
  * Detects if the current mode is demo mode
@@ -21,12 +22,13 @@ export const getCurrentMode = (): "demo" | "authenticated1" => {
 
 /**
  * Checks if user is authenticated
- * Looks for token in localStorage
+ * Looks for token in localStorage using STORAGE_CONFIG
  */
 export const isAuthenticated = (): boolean => {
   if (typeof window === "undefined") return false;
   try {
-    const token = localStorage.getItem("cash_pilot_auth_token");
+    const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    const token = localStorage.getItem(tokenKey);
     return !!token;
   } catch {
     return false;
@@ -34,36 +36,39 @@ export const isAuthenticated = (): boolean => {
 };
 
 /**
- * Gets auth token from localStorage
+ * Gets auth token from localStorage using STORAGE_CONFIG
  */
 export const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;
   try {
-    return localStorage.getItem("cash_pilot_auth_token");
+    const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    return localStorage.getItem(tokenKey);
   } catch {
     return null;
   }
 };
 
 /**
- * Sets auth token in localStorage
+ * Sets auth token in localStorage using STORAGE_CONFIG
  */
 export const setAuthToken = (token: string): void => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem("cash_pilot_auth_token", token);
+    const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    localStorage.setItem(tokenKey, token);
   } catch {
     console.error("Failed to set auth token");
   }
 };
 
 /**
- * Clears auth token from localStorage
+ * Clears auth token from localStorage using STORAGE_CONFIG
  */
 export const clearAuthToken = (): void => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem("cash_pilot_auth_token");
+    const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    localStorage.removeItem(tokenKey);
   } catch {
     console.error("Failed to clear auth token");
   }

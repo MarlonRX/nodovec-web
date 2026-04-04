@@ -1,4 +1,6 @@
 // Store para autenticación del usuario
+import { STORAGE_CONFIG } from '../config/api';
+
 export interface AuthUser {
   id?: number;
   uuid: string;
@@ -21,7 +23,7 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
-const STORAGE_KEY = "cash_pilot_auth";
+// Usar STORAGE_CONFIG para consistencia en toda la aplicación
 const COOKIE_NAME = "auth_token";
 
 function getCookie(name: string): string | null {
@@ -53,22 +55,26 @@ function getInitialState(): AuthState {
     };
   }
 
-  // First try to get from cookie
-  const tokenFromCookie = getCookie(COOKIE_NAME);
-  if (tokenFromCookie) {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (parsed.token === tokenFromCookie) {
-          return parsed;
-        }
-      } catch {}
-    }
+  // Try to get token and user from localStorage using STORAGE_CONFIG
+  const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+  const userKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.USER_KEY}`;
+  
+  const token = localStorage.getItem(tokenKey);
+  const userStr = localStorage.getItem(userKey);
+  
+  if (token && userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return {
+        token,
+        user,
+        isAuthenticated: true,
+      };
+    } catch {}
   }
 
-  // Fallback to localStorage
-  const stored = localStorage.getItem(STORAGE_KEY);
+  // Legacy fallback to old localStorage keys (for migration)
+  const stored = localStorage.getItem('cash_pilot_auth');
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
@@ -128,7 +134,14 @@ function ensureClientHydration() {
 
 function saveToLocalStorage() {
   if (typeof window !== "undefined") {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(authState));
+    const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    const userKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.USER_KEY}`;
+    if (authState.token) {
+      localStorage.setItem(tokenKey, authState.token);
+    }
+    if (authState.user) {
+      localStorage.setItem(userKey, JSON.stringify(authState.user));
+    }
   }
 }
 
@@ -171,7 +184,13 @@ export const authStore = {
       isAuthenticated: false,
     };
     if (typeof window !== "undefined") {
-      localStorage.removeItem(STORAGE_KEY);
+      const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+      const userKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.USER_KEY}`;
+      const refreshKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`;
+      localStorage.removeItem(tokenKey);
+      localStorage.removeItem(userKey);
+      localStorage.removeItem(refreshKey);
+      localStorage.removeItem('cash_pilot_auth'); // Legacy
       deleteCookie(COOKIE_NAME);
     }
     hydratedFromClient = true;
