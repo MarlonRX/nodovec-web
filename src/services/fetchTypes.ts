@@ -1,6 +1,7 @@
 // Tipos de peticiones HTTP usando Axios (sin validación Zod)
 import axios, { type AxiosResponse, type AxiosError } from 'axios';
 import { API_CONFIG, APP_CONFIG, STORAGE_CONFIG } from '../config/api';
+import { authStore } from '../store/auth';
 
 // Configurar instancia de axios con URL base correcta del backend
 // Usa la URL calculada dinámicamente según el entorno
@@ -11,11 +12,12 @@ const axiosInstance = axios.create({
 });
 
 // Interceptor para agregar token automáticamente
+// IMPORTANTE: Lee del authStore (source of truth) en lugar de localStorage directamente
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      // Buscar token en localStorage (donde se guarda después del login)
-      const token = localStorage.getItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`);
+      // Obtener token del authStore (source of truth unificado)
+      const token = authStore.getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -31,12 +33,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // Si el token expiró, limpiar localStorage
+    // Si el token expiró, usar authStore.logout() en lugar de limpiar localStorage directamente
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.USER_KEY}`);
-        localStorage.removeItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`);
-        localStorage.removeItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`);
+        authStore.logout(); // Esto limpia TODO consistentemente
         // Opcional: redirigir al login
         // window.location.href = '/login';
       }
@@ -184,31 +184,21 @@ export const authFetch = async (
 
 /**
  * Verificar si hay token de autenticación
+ * IMPORTANTE: Usa authStore como source of truth
  */
 export const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
-  const token = localStorage.getItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`);
-  return !!token;
+  return authStore.isAuthenticated();
 };
 
 /**
- * Obtener usuario actual del localStorage
+ * Obtener usuario actual
+ * IMPORTANTE: Usa authStore como source of truth
  */
 export const getCurrentUser = (): any | null => {
   if (typeof window === 'undefined') return null;
-  const userData = localStorage.getItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.USER_KEY}`);
-  if (!userData) return null;
-  
-  try {
-    const parsedData = JSON.parse(userData);
-    if (parsedData?.avatar && typeof parsedData.avatar === 'string' && !/^https?:\/\//i.test(parsedData.avatar)) {
-      const base = API_CONFIG.BASE_URL.replace(/\/$/, '');
-      parsedData.avatar = `${base}/storage/${parsedData.avatar.replace(/^\/*(storage\/)?/, '')}`;
-    }
-    return parsedData;
-  } catch {
-    return null;
-  }
+  const user = authStore.getUser();
+  return user || null;
 };
 
 // Exportar instancia de axios por si se necesita usar directamente
