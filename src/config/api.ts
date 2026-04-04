@@ -3,21 +3,28 @@
 
 // Detectar URL base del backend EN TIEMPO DE EJECUCIÓN
 export function getBackendUrl(): string {
-  // Siempre respetar la variable de entorno PUBLIC_API_BASE_URL si está definida
-  const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
-  if (envUrl && envUrl.trim()) {
-    return envUrl;
-  }
-
-  // Fallback solo si la variable de entorno NO está definida
   // Solo en el navegador (cliente)
   if (typeof window === 'undefined') {
-    return 'http://backend:8080'; // SSR fallback
+    return 'http://backend:8080'; // SSR fallback para servidor
+  }
+
+  const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
+  const hostname = window.location.hostname;
+  
+  // Si PUBLIC_API_BASE_URL contiene localhost/127.0.0.1 pero estamos en otro host,
+  // construir URL dinámicamente (estamos en producción)
+  if (envUrl && (envUrl.includes('localhost') || envUrl.includes('127.0.0.1'))) {
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      // Estamos en producción, usar mismo dominio que el frontend
+      return `${window.location.protocol}//${window.location.host}`;
+    }
   }
   
-  // En producción: asumir mismo host pero puerto 8080
-  return `${window.location.protocol}//${window.location.hostname}:8080`;
+  // En todos los otros casos, usar PUBLIC_API_BASE_URL tal cual
+  return envUrl;
 }
+
+console.log('API Base URL:', getBackendUrl());
 
 export const API_CONFIG = {
   // URL base se calcula dinámicamente
