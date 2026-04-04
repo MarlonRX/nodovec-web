@@ -359,3 +359,67 @@ export const getTransactionsTotals = async (filters?: Filters) => {
     };
   }
 };
+
+/**
+ * Obtener TODAS las transacciones de un mes (sin limitación de paginación)
+ * Itera por páginas si es necesario para obtener todas las transacciones
+ */
+export const getAllTransactionsForMonth = async (year: number, month: number) => {
+  // Modo demo: combinar todas las transacciones del mes
+  if (isDemoMode()) {
+    try {
+      const filteredData = filterTransactionsByDate(DEMO_TRANSACTIONS, year, month);
+      return {
+        response: true,
+        message: 'All transactions fetched (Demo Mode)',
+        data: filteredData,
+      };
+    } catch (error) {
+      return {
+        response: false,
+        message: 'Error filtering demo transactions',
+        data: [],
+      };
+    }
+  }
+
+  // Modo autenticado: obtener todas las páginas
+  try {
+    const allTransactions: any[] = [];
+    let page = 1;
+    let hasMorePages = true;
+
+    while (hasMorePages) {
+      const result = await getTransactions({ year, month, page });
+      
+      if (result.response && result.data?.data && result.data.data.length > 0) {
+        allTransactions.push(...result.data.data);
+        
+        // Check if there are more pages
+        hasMorePages = page < (result.data.last_page || 1);
+        page++;
+      } else {
+        hasMorePages = false;
+      }
+    }
+
+    return {
+      response: true,
+      message: 'All transactions fetched successfully',
+      data: allTransactions,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return {
+        response: false,
+        message: error.response?.data?.message || 'Failed to fetch all transactions',
+        data: [],
+      };
+    }
+    return {
+      response: false,
+      message: 'An unexpected error occurred',
+      data: [],
+    };
+  }
+};

@@ -193,25 +193,29 @@ const FinancialDashboard = () => {
         'var(--accent-secondary)',
     ];
     const calculateAnnualTotals = () => {
-        const totalIncome = monthlyData.reduce((sum, month) => sum + month.income, 0);
-        const totalExpenses = monthlyData.reduce((sum, month) => sum + month.expenses, 0);
-        const totalCashFlow = monthlyData.reduce((sum, month) => sum + month.cashFlow, 0);
+        const totalIncome = monthlyData.reduce((sum, month) => sum + (month.income || 0), 0);
+        const totalExpenses = monthlyData.reduce((sum, month) => sum + (month.expenses || 0), 0);
+        const totalCashFlow = totalIncome - totalExpenses;
         
         // Count months that have transactions (non-zero values)
         const monthsWithData = monthlyData.filter(
-            month => month.income > 0 || month.expenses > 0
+            month => (month.income || 0) > 0 || (month.expenses || 0) > 0
         ).length;
         
         // Use months with data for average, or 12 if no months have data
         const divisor = monthsWithData > 0 ? monthsWithData : 12;
         
+        const avgMonthlyIncome = isFinite(totalIncome / divisor) ? Math.round(totalIncome / divisor) : 0;
+        const avgMonthlyExpenses = isFinite(totalExpenses / divisor) ? Math.round(totalExpenses / divisor) : 0;
+        const avgMonthlyCashFlow = isFinite(totalCashFlow / divisor) ? Math.round(totalCashFlow / divisor) : 0;
+        
         return {
-            income: totalIncome,
-            expenses: totalExpenses,
-            cashFlow: totalCashFlow,
-            avgMonthlyIncome: Math.round(totalIncome / divisor),
-            avgMonthlyExpenses: Math.round(totalExpenses / divisor),
-            avgMonthlyCashFlow: Math.round(totalCashFlow / divisor),
+            income: isFinite(totalIncome) ? totalIncome : 0,
+            expenses: isFinite(totalExpenses) ? totalExpenses : 0,
+            cashFlow: isFinite(totalCashFlow) ? totalCashFlow : 0,
+            avgMonthlyIncome,
+            avgMonthlyExpenses,
+            avgMonthlyCashFlow,
         };
     };
 
@@ -227,7 +231,7 @@ const FinancialDashboard = () => {
         if (viewMode === "year") {
             const annuals = calculateAnnualTotals();
             // Standard balance equation: Total Income - Total Expenses
-            const totalBalance = annuals.income - annuals.expenses;
+            const totalBalance = isFinite(annuals.income - annuals.expenses) ? annuals.income - annuals.expenses : 0;
             return {
                 balance: formatCurrency(totalBalance),
                 income: formatCurrency(annuals.avgMonthlyIncome),
@@ -236,15 +240,15 @@ const FinancialDashboard = () => {
                 subtitle: "Annual Overview",
             };
         } else {
-            const month = monthlyData[selectedMonth];
+            const month = monthlyData[selectedMonth] || { income: 0, expenses: 0, cashFlow: 0 };
             // Standard balance equation: Monthly Income - Monthly Expenses
-            const monthBalance = month.income - month.expenses;
+            const monthBalance = (month.income || 0) - (month.expenses || 0);
             return {
-                balance: formatCurrency(monthBalance),
-                income: formatCurrency(month.income),
-                expenses: formatCurrency(month.expenses),
-                cashFlow: formatCurrencyWithSign(month.cashFlow, true),
-                subtitle: `${monthlyData[selectedMonth].month} ${currentYear}`,
+                balance: formatCurrency(isFinite(monthBalance) ? monthBalance : 0),
+                income: formatCurrency(month.income || 0),
+                expenses: formatCurrency(month.expenses || 0),
+                cashFlow: formatCurrencyWithSign(month.cashFlow || 0, true),
+                subtitle: `${(monthlyData[selectedMonth] || { month: 'N/A' }).month} ${currentYear}`,
             };
         }
     };
@@ -253,9 +257,10 @@ const FinancialDashboard = () => {
 
     // Calculate dynamic Y-axis domains for charts
     const calculateYAxisDomain = (dataKey: string): [number, number] => {
-        const values = monthlyData.map((item: any) => item[dataKey]);
-        const maxValue = Math.max(...values);
-        return [0, maxValue];
+        const values = monthlyData.map((item: any) => item[dataKey] || 0).filter(v => typeof v === 'number' && isFinite(v));
+        const maxValue = values.length > 0 ? Math.max(...values) : 100;
+        const normalizedMax = isFinite(maxValue) && maxValue > 0 ? maxValue : 100;
+        return [0, normalizedMax];
     };
 
     // Calculate trend percentages based on actual data (comparing first half vs second half)
@@ -278,7 +283,8 @@ const FinancialDashboard = () => {
         }
 
         const percentageChange = ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100;
-        return { value: Math.abs(percentageChange), isPositive: percentageChange >= 0 };
+        const normalizedValue = isFinite(percentageChange) ? Math.abs(percentageChange) : 0;
+        return { value: normalizedValue, isPositive: percentageChange >= 0 };
     };
 
     const incomeTrend = calculateTrendPercentage('income');

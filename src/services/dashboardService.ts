@@ -1,8 +1,9 @@
 import { authStore } from "../store/auth";
 import dashboardDataJson from "../data/dashboardData.json";
-import { getTransactions } from "./transactionServices";
+import { getTransactions, getTransactionsTotals, getAllTransactionsForMonth } from "./transactionServices";
 import { isDemoMode } from "@/lib/demoUtils";
 import { STORAGE_CONFIG } from "../config/api";
+import type { Filters } from "@/schemas/tableSchema";
 
 export interface MonthlyData {
   month: string;
@@ -210,6 +211,7 @@ export async function getDashboardData(): Promise<DashboardData> {
 
     const isInDemoMode = isDemoMode();
     const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
 
     console.log(`[Dashboard] Mode: ${isInDemoMode ? "DEMO" : "AUTHENTICATED"}`);
 
@@ -220,21 +222,42 @@ export async function getDashboardData(): Promise<DashboardData> {
     }
 
     // CASE 2: Not in demo mode - fetch real user transactions from current year
+    // Now using getAllTransactionsForMonth to get ALL transactions, not just first page
     console.log(`[Dashboard] Fetching real user transactions for year ${currentYear}`);
     const allTransactions: any[] = [];
+    const monthlyTotals: { [key: number]: { income: number; expense: number; net: number } } = {};
+
+    // Initialize totals for all months with default 0 values
+    for (let i = 1; i <= 12; i++) {
+      monthlyTotals[i] = { income: 0, expense: 0, net: 0 };
+    }
 
     for (let month = 1; month <= 12; month++) {
       try {
-        const result = await getTransactions({ year: currentYear, month });
-        if (result.response && result.data?.data && result.data.data.length > 0) {
+        // Get all transactions for the month (handles pagination automatically)
+        const result = await getAllTransactionsForMonth(currentYear, month);
+        if (result.response && result.data && result.data.length > 0) {
           console.log(
-            `[Dashboard] Month ${month}: found ${result.data.data.length} transactions`
+            `[Dashboard] Month ${month}: found ${result.data.length} transactions (ALL, not just first page)`
           );
-          allTransactions.push(...result.data.data);
+          allTransactions.push(...result.data);
+        }
+
+        // Also fetch totals separately to ensure accuracy for all records
+        const totalsResult = await getTransactionsTotals({ year: currentYear, month });
+        if (totalsResult.response && totalsResult.data) {
+          monthlyTotals[month] = {
+            income: Number(totalsResult.data.income) || 0,
+            expense: Number(totalsResult.data.expense) || 0,
+            net: Number(totalsResult.data.net) || 0,
+          };
+          console.log(
+            `[Dashboard] Month ${month} totals: income=${monthlyTotals[month].income}, expense=${monthlyTotals[month].expense}, net=${monthlyTotals[month].net}`
+          );
         }
       } catch (monthError) {
         console.log(`[Dashboard] Month ${month}: error or no data`);
-        // Continue to next month if one fails
+        // Keep default 0 values for this month
         continue;
       }
     }
@@ -243,10 +266,24 @@ export async function getDashboardData(): Promise<DashboardData> {
 
     // CASE 3: Process real transactions if we have any
     if (allTransactions.length > 0) {
-      console.log("[Dashboard] Processing real user transactions");
-      return processTransactionsToDashboard({
+      console.log("[Dashboard] Processing real user transactions with accurate totals");
+      const dashboardData = processTransactionsToDashboard({
         data: allTransactions,
       });
+      
+      // Override monthly data with accurate totals from API
+      dashboardData.monthlyData = dashboardData.monthlyData.map((month, index) => {
+        const monthNum = index + 1;
+        const totals = monthlyTotals[monthNum] || { income: 0, expense: 0, net: 0 };
+        return {
+          ...month,
+          income: Number(totals.income) || 0,
+          expenses: Number(totals.expense) || 0,
+          cashFlow: Number(totals.net) || 0,
+        };
+      });
+      
+      return dashboardData;
     }
 
     // CASE 4: No transactions found for real user - return empty dashboard
