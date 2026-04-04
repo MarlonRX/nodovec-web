@@ -2,36 +2,106 @@ import { useEffect, useRef, useState } from "react";
 import { THEMES, getStoredTheme, setTheme, ThemeName } from "../../store/theme";
 import { LanguageSelector } from "./LanguageSelector";
 import { CurrencySelector } from "./CurrencySelector";
-import { Camera } from "lucide-react";
+import { Camera, Save } from "lucide-react";
 import { authStore } from "../../store/auth";
 import { uploadUserAvatar } from "../../services/userServices";
 import { toast } from "sonner";
+import { savePreferences, getPreferences } from "../../lib/preferencesStorage";
+import { getCurrentLanguage } from "../../i18n";
 
 type Currency = 'USD' | 'EUR' | 'COP';
 
 export function UserComponent() {
+  console.log('[UC] Render START');
   const [theme, setLocalTheme] = useState<ThemeName>("dark");
+  const [currency, setCurrency] = useState<Currency>("USD");
+  const [language, setLanguage] = useState<string>("es");
+  console.log('[UC] States initialized');
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Referencias para rastrear las preferencias iniciales
+  const initialPrefsRef = useRef<{ theme: ThemeName; currency: Currency; language: string }>({
+    theme: "dark",
+    currency: "USD",
+    language: "es",
+  });
 
   useEffect(() => {
-    const stored = getStoredTheme();
-    if (stored) {
-      setLocalTheme(stored);
+    console.log('[UC] useEffect#1 (init) START');
+    if (typeof window === 'undefined') return;
+
+    try {
+      // Leer tema directamente de localStorage
+      const storedThemeValue = localStorage.getItem('cash_pilot_theme') as ThemeName | null;
+      console.log('[UC] Read theme:', storedThemeValue);
+      const themeToSet: ThemeName = (storedThemeValue && THEMES.includes(storedThemeValue)) ? storedThemeValue : "dark";
+      
+      // Leer currency  
+      const storedCurrency = (localStorage.getItem("cash_pilot_currency") as Currency) || "USD";
+      
+      // Leer language
+      const storedLanguage = getCurrentLanguage() || "es";
+
+      // Actualizar estados
+      setLocalTheme(themeToSet);
+      setCurrency(storedCurrency);
+      setLanguage(storedLanguage);
+
+      // Aplicar tema inmediatamente al DOM
+      document.documentElement.setAttribute('data-theme', themeToSet);
+
+      // Guardar las preferencias iniciales
+      initialPrefsRef.current = {
+        theme: themeToSet,
+        currency: storedCurrency,
+        language: storedLanguage,
+      };
+      
+      setIsInitialized(true);
+      console.log('[UC] useEffect#1 DONE');
+    } catch (err) {
+      console.error("[UC] Error initializing:", err);
+      setIsInitialized(true);
     }
   }, []);
 
+  // Sincronizar tema cuando cambia en otros componentes
   useEffect(() => {
-    setTheme(theme);
+    const handleThemeChanged = (e: Event) => {
+      const t = (e as CustomEvent).detail as ThemeName;
+      if (t !== theme) {
+        setLocalTheme(t);
+      }
+    };
+    
+    window.addEventListener('themeChanged', handleThemeChanged);
+    return () => window.removeEventListener('themeChanged', handleThemeChanged);
   }, [theme]);
 
-  // stay in sync with other theme controls (e.g. ThemeSwitcher)
+  // Detectar cambios en las preferencias
   useEffect(() => {
-    const onThemeChanged = (e: Event) => {
-      const t = (e as CustomEvent).detail as ThemeName;
-      setLocalTheme(t);
-    };
-    window.addEventListener('themeChanged', onThemeChanged);
-    return () => window.removeEventListener('themeChanged', onThemeChanged);
-  }, []);
+    if (!isInitialized) return;
+
+    const changed =
+      theme !== initialPrefsRef.current.theme ||
+      currency !== initialPrefsRef.current.currency ||
+      language !== initialPrefsRef.current.language;
+
+    setHasUnsavedChanges(changed);
+  }, [theme, currency, language, isInitialized]);
+
+  // Aplicar tema a DOM cuando cambia (preview visual)
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    try {
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (err) {
+      console.error('Error applying theme preview:', err);
+    }
+  }, [theme, isInitialized]);
 
   // Avatar (server URL preferred, fallback to localStorage)
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -107,7 +177,57 @@ export function UserComponent() {
   };
 
   // Currency selection
-  const [currency, setCurrency] = useState<Currency>("USD");
+  const handleSavePreferences = async () => {
+    setIsSaving(true);
+    try {
+      // 1. Guardar tema PRIMERO, directamente a localStorage
+      const themeSaved = localStorage.setItem('cash_pilot_theme', theme);
+      console.log('[UserComponent] Theme saved to localStorage:', theme);
+
+      // 2. Aplicar tema al DOM inmediatamente
+      document.documentElement.setAttribute('data-theme', theme);
+      console.log('[UserComponent] Theme applied to DOM:', theme);
+
+      // 3. Disparar evento de cambio de tema (para sincronización global)
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+      
+      // 4. Guardar todas las preferencias en backup consolidado
+      savePreferences({
+        language: language,
+        currency: currency,
+        theme: theme,
+      });
+
+      // 5. Guardar moneda también en localStorage
+      localStorage.setItem("cash_pilot_currency", currency);
+      window.dispatchEvent(new CustomEvent("currencyChanged", { detail: currency }));
+
+      // 6. Actualizar referencias iniciales para limpiar el indicador de cambios
+      initialPrefsRef.current = {
+        theme: theme,
+        currency: currency,
+        language: language,
+      };
+
+      // 7. Marcar como guardado
+      setHasUnsavedChanges(false);
+      toast.success("Preferencias guardadas correctamente");
+      
+      // 8. Verificar que el tema se guardó (para debugging)
+      setTimeout(() => {
+        const verify = localStorage.getItem('cash_pilot_theme');
+        console.log('[UserComponent] Verification - Theme in localStorage:', verify);
+        if (verify !== theme) {
+          console.warn('[UserComponent] WARNING: Theme mismatch after save!', verify, 'vs', theme);
+        }
+      }, 100);
+    } catch (err) {
+      console.error("Error saving preferences:", err);
+      toast.error("Error al guardar las preferencias");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -117,18 +237,7 @@ export function UserComponent() {
     } else {
       setAvatar(localStorage.getItem("cash_pilot_avatar"));
     }
-
-    const storedCurrency = localStorage.getItem("cash_pilot_currency") as Currency | null;
-    if (storedCurrency) {
-      setCurrency(storedCurrency);
-    }
   }, []);
-  useEffect(() => {
-    try {
-      localStorage.setItem("cash_pilot_currency", currency);
-    } catch (err) {}
-    window.dispatchEvent(new CustomEvent("currencyChanged", { detail: currency }));
-  }, [currency]);
 
   const LABELS: Record<ThemeName, string> = {
     light: "Claro",
@@ -228,6 +337,34 @@ export function UserComponent() {
                   />
                 );
               })}
+            </div>
+          </div>
+
+          {/* Save button with unsaved changes indicator */}
+          <div className="mt-8 pt-6 border-t border-(--border-primary)">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                {hasUnsavedChanges && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-(--semantic-error) animate-pulse"></div>
+                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      Cambios sin guardar
+                    </span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={handleSavePreferences}
+                disabled={!hasUnsavedChanges || isSaving}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all ${
+                  hasUnsavedChanges && !isSaving
+                    ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer hover:-translate-y-0.5'
+                    : 'bg-(--bg-secondary) text-(--text-tertiary) cursor-not-allowed opacity-50'
+                }`}
+              >
+                <Save size={16} />
+                <span>{isSaving ? 'Guardando...' : 'Guardar Preferencias'}</span>
+              </button>
             </div>
           </div>
         </div>

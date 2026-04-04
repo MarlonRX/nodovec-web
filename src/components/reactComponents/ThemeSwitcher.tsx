@@ -3,27 +3,38 @@ import { THEMES, getStoredTheme, setTheme, ThemeName } from "../../store/theme";
 
 export function ThemeSwitcher({ compact }: { compact?: boolean }) {
   const [theme, setLocalTheme] = useState<ThemeName>('dark');
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Solo leer del localStorage, NO escribir
   useEffect(() => {
+    console.log('[ThemeSwitcher] Init');
     const stored = getStoredTheme();
-    if (stored) {
+    if (stored && THEMES.includes(stored)) {
+      console.log('[ThemeSwitcher] Read theme:', stored);
       setLocalTheme(stored);
     }
+    setIsInitialized(true);
   }, []);
 
-  useEffect(() => {
-    setTheme(theme);
-  }, [theme]);
+  // Solo escribir cuando el usuario CAMBIA el tema manualmente
+  const handleThemeChange = (newTheme: ThemeName) => {
+    console.log('[ThemeSwitcher] User changed theme:', newTheme);
+    setLocalTheme(newTheme);
+    setTheme(newTheme);  // Solo aquí escribimos a localStorage
+  };
 
-  // stay in sync if another component changes the theme (UserComponent, etc.)
+  // stay in sync if otro componente cambia el tema (UserComponent, etc.)
   useEffect(() => {
+    if (!isInitialized) return;
+    
     const onThemeChanged = (e: Event) => {
       const t = (e as CustomEvent).detail as ThemeName;
+      console.log('[ThemeSwitcher] External theme change:', t);
       setLocalTheme(t);
     };
     window.addEventListener('themeChanged', onThemeChanged);
     return () => window.removeEventListener('themeChanged', onThemeChanged);
-  }, []);
+  }, [isInitialized]);
 
   const LABELS: Record<ThemeName, string> = {
     light: 'Claro',
@@ -70,7 +81,7 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
               role="option"
               aria-selected={active}
               title={LABELS[t]}
-              onClick={() => setLocalTheme(t)}
+              onClick={() => handleThemeChange(t)}
               className={btnClass}
               style={{ minWidth: compact ? undefined : 0 }}
             >

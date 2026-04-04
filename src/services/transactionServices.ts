@@ -115,9 +115,9 @@ export const getTransactions = async (filters?: Filters) => {
 /**
  * Obtener transacción por ID
  */
-export const getTransactionById = async (id: number) => {
+export const getTransactionById = async (uuid: string) => {
   try {
-    const response: AxiosResponse = await getFetch(`transactions/${id}`);
+    const response: AxiosResponse = await getFetch(`transactions/${uuid}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -178,7 +178,7 @@ export const createTransaction = async (data: any) => {
  * Actualizar transacción
  * En modo demo, muestra un mensaje informativo
  */
-export const updateTransaction = async (id: number, data: any) => {
+export const updateTransaction = async (uuid: string, data: any) => {
   // Modo demo: solo lectura, no permitir actualizar
   if (isDemoMode()) {
     return {
@@ -191,7 +191,7 @@ export const updateTransaction = async (id: number, data: any) => {
 
   // Modo autenticado: actualizar en API real
   try {
-    const response: AxiosResponse = await putFetch(`transactions/${id}`, data);
+    const response: AxiosResponse = await putFetch(`transactions/${uuid}`, data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -294,6 +294,68 @@ export const getTransactionsByCategory = async (categoryId: number, params?: { p
       status: 500,
       message: 'An unexpected error occurred',
       data: null,
+    };
+  }
+};
+
+/**
+ * Obtener totales (income, expense, net) para el mes/año seleccionado
+ * Calcula sobre TODAS las transacciones del período, no solo la página actual
+ */
+export const getTransactionsTotals = async (filters?: Filters) => {
+  // Modo demo: calcular desde datos fictos
+  if (isDemoMode()) {
+    try {
+      const year = filters?.year || new Date().getFullYear();
+      const month = filters?.month || new Date().getMonth() + 1;
+      
+      const filteredData = filterTransactionsByDate(DEMO_TRANSACTIONS, year, month);
+      
+      const totals = filteredData.reduce(
+        (acc, curr) => {
+          const amount = curr.amount || 0;
+          if (curr.type === 'income') {
+            acc.income += amount;
+          } else {
+            acc.expense += amount;
+          }
+          return acc;
+        },
+        { income: 0, expense: 0, net: 0 }
+      );
+      
+      totals.net = totals.income - totals.expense;
+      
+      return {
+        response: true,
+        message: 'Totals calculated (Demo Mode)',
+        data: totals,
+      };
+    } catch (error) {
+      return {
+        response: false,
+        message: 'Error calculating demo totals',
+        data: { income: 0, expense: 0, net: 0 },
+      };
+    }
+  }
+
+  // Modo autenticado: llamar a API real
+  try {
+    const response: AxiosResponse = await getFetch('transactions/totals', filters);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return {
+        response: false,
+        message: error.response?.data?.message || 'Failed to fetch totals',
+        data: { income: 0, expense: 0, net: 0 },
+      };
+    }
+    return {
+      response: false,
+      message: 'An unexpected error occurred',
+      data: { income: 0, expense: 0, net: 0 },
     };
   }
 };
