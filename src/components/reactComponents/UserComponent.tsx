@@ -7,7 +7,7 @@ import { authStore } from "../../store/auth";
 import { uploadUserAvatar } from "../../services/userServices";
 import { toast } from "sonner";
 import { savePreferences, getPreferences } from "../../lib/preferencesStorage";
-import { getCurrentLanguage } from "../../i18n";
+import { getCurrentLanguage, translate, type Language } from "../../i18n";
 
 type Currency = 'USD' | 'EUR' | 'COP';
 
@@ -16,6 +16,8 @@ export function UserComponent() {
   const [theme, setLocalTheme] = useState<ThemeName>("dark");
   const [currency, setCurrency] = useState<Currency>("USD");
   const [language, setLanguage] = useState<string>("es");
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = (key: string) => translate(key, lang);
   console.log('[UC] States initialized');
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -80,6 +82,15 @@ export function UserComponent() {
     return () => window.removeEventListener('themeChanged', handleThemeChanged);
   }, [theme]);
 
+  // Sincronizar idioma cuando cambia en otros componentes
+  useEffect(() => {
+    const handleLangChanged = (e: Event) => {
+      setLang((e as CustomEvent).detail as Language);
+    };
+    window.addEventListener('languageChanged', handleLangChanged);
+    return () => window.removeEventListener('languageChanged', handleLangChanged);
+  }, []);
+
   // Detectar cambios en las preferencias
   useEffect(() => {
     if (!isInitialized) return;
@@ -112,11 +123,11 @@ export function UserComponent() {
   const handleFile = async (f: File) => {
     if (!f) return;
     if (!f.type.startsWith("image/")) {
-      toast.error("Solo se permiten imágenes");
+      toast.error(t('user.onlyImages'));
       return;
     }
     if (f.size > 2 * 1024 * 1024) {
-      toast.error("Imagen demasiado grande (máx 2MB)");
+      toast.error(t('user.imageTooLarge'));
       return;
     }
 
@@ -211,7 +222,7 @@ export function UserComponent() {
 
       // 7. Marcar como guardado
       setHasUnsavedChanges(false);
-      toast.success("Preferencias guardadas correctamente");
+      toast.success(t('user.preferencesSaved'));
       
       // 8. Verificar que el tema se guardó (para debugging)
       setTimeout(() => {
@@ -223,7 +234,7 @@ export function UserComponent() {
       }, 100);
     } catch (err) {
       console.error("Error saving preferences:", err);
-      toast.error("Error al guardar las preferencias");
+      toast.error(t('user.preferencesError'));
     } finally {
       setIsSaving(false);
     }
@@ -240,14 +251,14 @@ export function UserComponent() {
   }, []);
 
   const LABELS: Record<ThemeName, string> = {
-    light: "Claro",
-    dark: "Oscuro",
-    custom: "Personalizado",
-    obsidian: "Obsidiana",
-    "midnight-teal": "Medianoche Turquesa",
-    ember: "Brasa Nocturna",
-    "violet-dusk": "Violeta Crepúsculo",
-    "forest-night": "Bosque Nocturno",
+    light: t('themes.light'),
+    dark: t('themes.dark'),
+    custom: t('themes.custom'),
+    obsidian: t('themes.obsidian'),
+    "midnight-teal": t('themes.midnight-teal'),
+    ember: t('themes.ember'),
+    "violet-dusk": t('themes.violet-dusk'),
+    "forest-night": t('themes.forest-night'),
   };
 
   const SWATCHES: Record<ThemeName, string> = {
@@ -277,7 +288,7 @@ export function UserComponent() {
             onDrop={(ev) => { ev.preventDefault(); ev.stopPropagation(); setIsDragging(false); const file = ev.dataTransfer?.files?.[0]; if (file) void handleFile(file); }}
             className={`group relative w-36 h-36 rounded-full flex items-center justify-center overflow-hidden border-2 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-(--accent-primary) ${isDragging ? 'ring-2 ring-offset-1 ring-(--accent-primary) scale-105' : ''}`}
             style={{ background: avatar ? "transparent" : "var(--accent-primary)", borderColor: "rgba(var(--accent-primary-rgb),0.18)" }}
-            aria-label="Cambiar foto de perfil (arrastra o haz click para subir)"
+            aria-label={t('user.changePhotoAria')}
           >
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -290,7 +301,7 @@ export function UserComponent() {
             <div className={`absolute inset-0 transition-opacity duration-150 flex items-center justify-center pointer-events-none ${isDragging ? 'opacity-100 bg-black/40 dark:bg-white/10' : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100 bg-black/30 dark:bg-white/10'}`}>
               <div className="flex flex-col items-center gap-1">
                 <Camera size={28} className="text-(--text-inverted)" />
-                <span className="text-xs text-(--text-inverted)">{isDragging ? 'Suelta para subir' : 'Cambiar foto'}</span>
+                <span className="text-xs text-(--text-inverted)">{isDragging ? t('user.dropToUpload') : t('user.changePhoto')}</span>
               </div>
             </div>
 
@@ -298,7 +309,7 @@ export function UserComponent() {
             <input ref={fileRef} onChange={onFileChange} accept="image/*" type="file" className="hidden" />
           </div>
 
-          <div className="text-sm text-center md:text-left mt-2" style={{ color: 'var(--text-secondary)' }}>Cambiar foto de perfil (max 2MB)</div>
+          <div className="text-sm text-center md:text-left mt-2" style={{ color: 'var(--text-secondary)' }}>{t('user.changePhotoHint')}</div>
         </div>
 
         {/* Right: controls (Idioma, Moneda, Tema) (70%) */}
@@ -309,19 +320,19 @@ export function UserComponent() {
           </div>
           <div className="grid grid-cols-1 gap-4 items-start">
             <div className="w-full md:max-w-xs">
-              <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>Idioma</label>
+              <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.language')}</label>
               <LanguageSelector fullWidth />
             </div>
 
             <div className="w-full md:max-w-xs">
-              <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>Moneda</label>
+              <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.currency')}</label>
               <CurrencySelector value={currency} onChange={(c) => setCurrency(c)} fullWidth />
             </div>
           </div>
 
           <div>
-            <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>Tema</label>
-            <div className="flex gap-3 flex-wrap" role="listbox" aria-label="Selector de tema">
+            <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('themes.label')}</label>
+            <div className="flex gap-3 flex-wrap" role="listbox" aria-label={t('themes.selector')}>
               {THEMES.map((t) => {
                 const active = t === theme;
                 return (
@@ -348,7 +359,7 @@ export function UserComponent() {
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-(--semantic-error) animate-pulse"></div>
                     <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      Cambios sin guardar
+                      {t('user.unsavedChanges')}
                     </span>
                   </div>
                 )}
@@ -363,7 +374,7 @@ export function UserComponent() {
                 }`}
               >
                 <Save size={16} />
-                <span>{isSaving ? 'Guardando...' : 'Guardar Preferencias'}</span>
+                <span>{isSaving ? t('user.saving') : t('user.savePreferences')}</span>
               </button>
             </div>
           </div>

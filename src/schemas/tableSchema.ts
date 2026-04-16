@@ -102,3 +102,85 @@ export const FiltersSchema = z.object({
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;
+
+// Card schema
+export const CardSchema = z.object({
+  id: z.number(),
+  uuid: z.string(),
+  user_id: z.number().optional().nullable(),
+  type: z.enum(['credit', 'debit']),
+  name: z.string(),
+  last_four: z.string(),
+  bank: z.string(),
+  credit_limit: z.coerce.number().nullable(),
+  current_balance: z.coerce.number(),
+  expiry_date: z.string(),
+  is_active: z.boolean(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type Card = z.infer<typeof CardSchema>;
+
+export const CardPaginatedResponseSchema = z.object({
+  response: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    current_page: z.number(),
+    data: z.array(CardSchema).default([]),
+    last_page: z.number(),
+    total: z.number(),
+    per_page: z.number(),
+    from: z.number().nullable(),
+    to: z.number().nullable(),
+    first_page_url: z.string(),
+    last_page_url: z.string(),
+    next_page_url: z.string().nullable(),
+    prev_page_url: z.string().nullable(),
+    path: z.string(),
+    links: z.array(z.object({ url: z.string().nullable(), label: z.string(), active: z.boolean() })).optional(),
+  }),
+});
+
+export type CardPaginatedResponse = z.infer<typeof CardPaginatedResponseSchema>;
+
+// Card Purchase schema
+export const CardPurchaseSchema = z.object({
+  id: z.number(),
+  uuid: z.string(),
+  card_id: z.number(),
+  user_id: z.number().optional().nullable(),
+  description: z.string(),
+  total_amount: z.coerce.number(),
+  installments: z.number(),
+  current_installment: z.number(),
+  interest_rate: z.coerce.number(),
+  installment_amount: z.coerce.number(),
+  purchase_date: z.string(),
+  category: z.string().nullable(),
+  card: z.object({ id: z.number(), uuid: z.string(), name: z.string(), last_four: z.string(), bank: z.string() }).optional(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type CardPurchase = z.infer<typeof CardPurchaseSchema>;
+
+export const CardPurchasePaginatedResponseSchema = z.object({
+  response: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    current_page: z.number(),
+    data: z.array(CardPurchaseSchema).default([]),
+    last_page: z.number(),
+    total: z.number(),
+    per_page: z.number(),
+    from: z.number().nullable(),
+    to: z.number().nullable(),
+    first_page_url: z.string(),
+    last_page_url: z.string(),
+    next_page_url: z.string().nullable(),
+    prev_page_url: z.string().nullable(),
+    path: z.string(),
+    links: z.array(z.object({ url: z.string().nullable(), label: z.string(), active: z.boolean() })).optional(),
+  }),
+});

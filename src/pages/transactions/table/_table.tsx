@@ -1,15 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ReactNode } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, CreditCard } from "lucide-react";
 import { MyTable } from "@/components/UIComponents/MyTable";
 import { MySelect } from "@/components/UIComponents/MySelect";
 import { TransactionModal } from "@/components/UIComponents/TransactionModal";
 import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
 import { getTransactions, createTransaction, updateTransaction, deleteTransaction, getTransactionsTotals } from "@/services/transactionServices";
-import type { Column, Transaction, TransactionPaginatedResponse, Filters } from "@/schemas/tableSchema";
+import { getActivePurchasesSummary } from "@/services/cardPurchaseServices";
+import type { Column, Transaction, TransactionPaginatedResponse, Filters, CardPurchase } from "@/schemas/tableSchema";
 import { TransactionPaginatedResponseSchema, FiltersSchema } from "@/schemas/tableSchema";
 import { STORAGE_CONFIG } from "@/config/api";
 import { isDemoMode } from "@/lib/demoUtils";
+import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { toast } from "sonner";
 
 interface Props {
@@ -33,6 +36,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [demoMode, setDemoMode] = useState(false);
   const [totals, setTotals] = useState({ income: 0, expense: 0, net: 0 });
   const [loadingTotals, setLoadingTotals] = useState(false);
+  const [activePurchases, setActivePurchases] = useState<CardPurchase[]>([]);
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = (key: string) => translate(key, lang);
 
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -43,20 +49,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     return { value: year, label: String(year) };
   });
 
-  const monthOptions = [
-    { value: 1, label: "January" },
-    { value: 2, label: "February" },
-    { value: 3, label: "March" },
-    { value: 4, label: "April" },
-    { value: 5, label: "May" },
-    { value: 6, label: "June" },
-    { value: 7, label: "July" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "October" },
-    { value: 11, label: "November" },
-    { value: 12, label: "December" },
-  ];
+  const monthOptions = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: t(`months.${i + 1}`) }));
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -71,6 +64,26 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
+
+  // Load active card purchases for the payments panel
+  useEffect(() => {
+    if (demoMode) return;
+    const load = async () => {
+      try {
+        const result = await getActivePurchasesSummary();
+        if (result.response && Array.isArray(result.data)) {
+          setActivePurchases(result.data);
+        }
+      } catch { /* silently fail – panel simply won't show */ }
+    };
+    load();
+  }, [demoMode]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -167,15 +180,15 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       }
 
       if (result.response) {
-        toast.success(editingTransaction ? "Transaction updated" : "Transaction created");
+        toast.success(editingTransaction ? t('transactions.updated') : t('transactions.created'));
         setIsModalOpen(false);
         setEditingTransaction(null);
         setRefreshTrigger(prev => prev + 1);
       } else {
-        toast.error(result.message || "Error al procesar la transacción");
+        toast.error(result.message || t('transactions.errorCreate'));
       }
     } catch (err: any) {
-      toast.error(err?.message || "Error inesperado");
+      toast.error(err?.message || t('common.unexpectedError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -186,13 +199,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     try {
       const result = await deleteTransaction(uuid);
       if (result.response) {
-        toast.success("Transaction deleted definitively");
+        toast.success(t('transactions.deleted'));
         setRefreshTrigger(prev => prev + 1);
       } else {
-        toast.error(result.message || "Error al eliminar");
+        toast.error(result.message || t('transactions.errorDelete'));
       }
     } catch (err: any) {
-      toast.error(err?.message || "Error inesperado");
+      toast.error(err?.message || t('common.unexpectedError'));
     } finally {
       setTransactionToDelete(null);
       setIsDeleting(false);
@@ -239,21 +252,10 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     sortable: boolean;
     render?: (value: any, row: Transaction) => ReactNode;
   }> = [
+      { key: 'date', label: t('transactions.colDate'), sortable: true, render: (value: any): ReactNode => new Date(value).toLocaleDateString() },
+      { key: 'description', label: t('transactions.colDescription'), sortable: true },
       {
-        key: 'date',
-        label: 'Date',
-        sortable: true,
-        render: (value: any): ReactNode => new Date(value).toLocaleDateString(),
-      },
-      {
-        key: 'description',
-        label: 'Description',
-        sortable: true,
-      },
-      {
-        key: 'category',
-        label: 'Category',
-        sortable: true,
+        key: 'category', label: t('transactions.colCategory'), sortable: true,
         render: (value: any, row: Transaction): ReactNode => {
           const categoryName = String(value).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
           const colors = getCategoryColor(String(value));
@@ -268,10 +270,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           );
         }
       },
-      {
-        key: 'income',
-        label: 'Income',
-        sortable: false,
+      { key: 'income', label: t('transactions.colIncome'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => {
           const amount = row.amount;
           return row.type === 'income' ? (
@@ -281,10 +280,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           ) : null;
         },
       },
-      {
-        key: 'expense',
-        label: 'Expense',
-        sortable: false,
+      { key: 'expense', label: t('transactions.colExpense'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => {
           const amount = row.amount;
           return row.type === 'expense' ? (
@@ -294,25 +290,18 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           ) : null;
         },
       },
-      {
-        key: 'actions',
-        label: 'Actions',
-        sortable: false,
+      { key: 'actions', label: t('transactions.colActions'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => (
           <div className="flex gap-2">
             <button
               onClick={(e) => { 
                 e.stopPropagation(); 
                 if (!demoMode) handleEdit(row);
-                else toast.info("Demo mode: Read-only");
+                else toast.info(t('common.demoReadOnly'));
               }}
               disabled={demoMode}
-              className={`p-1.5 rounded-lg transition-colors ${
-                demoMode
-                  ? 'text-gray-400 cursor-not-allowed opacity-50'
-                  : 'text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)'
-              }`}
-              title={demoMode ? "Demo mode: Read-only" : "Edit"}
+              className={`p-1.5 rounded-lg transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)'}`}
+              title={demoMode ? t('common.demoReadOnly') : t('common.edit')}
             >
               <Pencil className="w-4 h-4" />
             </button>
@@ -320,15 +309,11 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
               onClick={(e) => { 
                 e.stopPropagation(); 
                 if (!demoMode) setTransactionToDelete(row.uuid as string);
-                else toast.info("Demo mode: Read-only");
+                else toast.info(t('common.demoReadOnly'));
               }}
               disabled={demoMode}
-              className={`p-1.5 rounded-lg transition-colors ${
-                demoMode
-                  ? 'text-gray-400 cursor-not-allowed opacity-50'
-                  : 'text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]'
-              }`}
-              title={demoMode ? "Demo mode: Read-only" : "Delete"}
+              className={`p-1.5 rounded-lg transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]'}`}
+              title={demoMode ? t('common.demoReadOnly') : t('common.delete')}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -343,7 +328,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-100 flex items-center justify-center">
           <div className="bg-(--bg-surface) p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-t-(--accent-primary) border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">Sincronizando...</p>
+            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">{t('transactions.syncing')}</p>
           </div>
         </div>
       )}
@@ -353,9 +338,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         {/* Título y Filtros */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl md:text-4xl font-black text-(--text-primary) tracking-tight uppercase">Transactions</h2>
+            <h2 className="text-2xl md:text-4xl font-black text-(--text-primary) tracking-tight uppercase">{t('transactions.title')}</h2>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-              <span className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest">Select Period:</span>
+              <span className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest">{t('transactions.selectPeriod')}</span>
               <div className="flex gap-2 md:gap-3">
                 <MySelect
                   options={yearOptions}
@@ -381,25 +366,25 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 ? 'bg-gray-400 text-(--text-inverted) cursor-not-allowed opacity-50'
                 : 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg'
             }`}
-            title={demoMode ? "Demo mode: Read-only" : "Add new transaction"}
+            title={demoMode ? t('common.demoReadOnly') : t('transactions.addTransaction')}
           >
             <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
-            <span>Add Transaction</span>
+            <span>{t('transactions.addTransaction')}</span>
           </button>
         </div>
 
         {/* Totales - Grid responsive */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
-            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">Total Income</span>
+            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalIncome')}</span>
             <span className="text-(--semantic-success) font-black text-sm md:text-base">+ ${formatCurrency(totals.income)}</span>
           </div>
           <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
-            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">Total Expense</span>
+            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalExpense')}</span>
             <span className="text-(--semantic-error) font-black text-sm md:text-base">- ${formatCurrency(totals.expense)}</span>
           </div>
           <div className="col-span-2 md:col-span-2 flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
-            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">Net Balance</span>
+            <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.netBalance')}</span>
             <div className={`px-2 md:px-4 py-0.5 md:py-1 rounded-lg border-2 font-black text-sm md:text-base transition-all ${totals.net >= 0
               ? 'text-(--semantic-success) border-(--semantic-success) bg-[rgba(46,139,87,0.1)]'
               : 'text-(--semantic-error) border-(--semantic-error) bg-[rgba(207,102,121,0.1)]'
@@ -408,6 +393,40 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             </div>
           </div>
         </div>
+
+        {/* Card Payments Panel - only shown when user has active credit purchases */}
+        {activePurchases.length > 0 && (
+          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(var(--accent-primary-rgb),0.2)', backgroundColor: 'rgba(var(--accent-primary-rgb),0.04)' }}>
+            <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'rgba(var(--accent-primary-rgb),0.15)' }}>
+              <CreditCard size={16} style={{ color: 'var(--accent-primary)' }} />
+              <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>
+                {t('transactions.cardPaymentsTitle')}
+              </span>
+              <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb),0.15)', color: 'var(--accent-primary)' }}>
+                {activePurchases.length} {t('transactions.cardPaymentsActive')}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 p-3">
+              {activePurchases.map((p) => (
+                <div key={p.uuid} className="flex items-center justify-between gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-primary)' }}>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-(--text-primary) truncate">{p.description}</p>
+                    <p className="text-[10px] text-(--text-tertiary)">{p.card?.name} •••• {p.card?.last_four} · {p.current_installment}/{p.installments}</p>
+                  </div>
+                  <span className="font-black text-sm shrink-0" style={{ color: 'var(--accent-primary)' }}>
+                    ${formatCurrency(p.installment_amount)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="px-4 py-2 text-right border-t" style={{ borderColor: 'rgba(var(--accent-primary-rgb),0.15)' }}>
+              <span className="text-xs text-(--text-secondary)">Total monthly: </span>
+              <span className="font-black text-sm" style={{ color: 'var(--accent-primary)' }}>
+                ${formatCurrency(activePurchases.reduce((s, p) => s + p.installment_amount, 0))}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col items-center justify-center">
@@ -430,23 +449,19 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             </div>
             <div>
               <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">
-                No transactions yet
+                {t('transactions.noTransactions')}
               </h3>
               <p className="text-(--text-secondary) text-sm md:text-base mb-6">
-                Start tracking your money by adding your first transaction!
+                {t('transactions.noTransactionsHint')}
               </p>
               <button
                 onClick={() => { setEditingTransaction(null); setIsModalOpen(true); }}
                 disabled={demoMode}
-                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto ${
-                  demoMode
-                    ? 'bg-gray-400 text-(--text-inverted) cursor-not-allowed opacity-50'
-                    : 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg'
-                }`}
-                title={demoMode ? "Demo mode: Read-only" : "Add new transaction"}
+                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto ${demoMode ? 'bg-gray-400 text-(--text-inverted) cursor-not-allowed opacity-50' : 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg'}`}
+                title={demoMode ? t('common.demoReadOnly') : t('transactions.addTransaction')}
               >
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
-                Add Your First Transaction
+                {t('transactions.addFirstTransaction')}
               </button>
             </div>
           </div>

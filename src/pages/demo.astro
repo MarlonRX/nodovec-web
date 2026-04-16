@@ -1,19 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DashBoard from "../components/DashBoard.astro";
+import DemoBadge from "../components/reactComponents/DemoBadge";
 
 export const prerender = false;
-// Demo page is public, no authentication needed
 ---
 
 <BaseLayout>
   <div class="w-full">
-    <!-- Demo Mode Badge -->
-    <div class="fixed top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/40 rounded-lg backdrop-blur-sm">
-      <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-      <span class="text-sm font-semibold text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">Demo Mode - Read Only</span>
-    </div>
-    
+    <DemoBadge client:only="react" />
     <DashBoard />
   </div>
 </BaseLayout>
