@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { THEMES, getStoredTheme, setTheme, ThemeName } from "../../store/theme";
+import { translate, getCurrentLanguage, type Language } from "../../i18n";
 
 export function ThemeSwitcher({ compact }: { compact?: boolean }) {
   const [theme, setLocalTheme] = useState<ThemeName>('dark');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = (key: string) => translate(key, lang);
 
   // Solo leer del localStorage, NO escribir
   useEffect(() => {
@@ -36,15 +39,21 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
     return () => window.removeEventListener('themeChanged', onThemeChanged);
   }, [isInitialized]);
 
+  useEffect(() => {
+    const onLangChange = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener('languageChanged', onLangChange);
+    return () => window.removeEventListener('languageChanged', onLangChange);
+  }, []);
+
   const LABELS: Record<ThemeName, string> = {
-    light: 'Claro',
-    dark: 'Oscuro',
-    custom: 'Personalizado',
-    'obsidian': 'Obsidiana',
-    'midnight-teal': 'Medianoche Turquesa',
-    'ember': 'Brasa Nocturna',
-    'violet-dusk': 'Violeta Crepúsculo',
-    'forest-night': 'Bosque Nocturno',
+    light: t('themes.light'),
+    dark: t('themes.dark'),
+    custom: t('themes.custom'),
+    'obsidian': t('themes.obsidian'),
+    'midnight-teal': t('themes.midnight-teal'),
+    'ember': t('themes.ember'),
+    'violet-dusk': t('themes.violet-dusk'),
+    'forest-night': t('themes.forest-night'),
   };
 
   const SWATCHES: Record<ThemeName, string> = {
@@ -60,11 +69,11 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
   return (
     <div className={`flex items-center ${compact ? 'space-x-2' : 'space-x-3'}`}>
-      <label className={`text-xs ${compact ? 'hidden' : 'text-(--text-secondary)'}`}>Tema</label>
+      <label className={`text-xs ${compact ? 'hidden' : 'text-(--text-secondary)'}`}>{t('themes.label')}</label>
 
       <div
         role="listbox"
-        aria-label="Selector de tema"
+        aria-label={t('themes.selector')}
         className={`${compact ? 'flex gap-2 items-center' : 'flex items-center gap-2 flex-wrap bg-(--bg-surface) border border-(--border-primary) rounded-md px-2 py-2 max-w-full'}`}
         style={{ boxSizing: 'border-box' }}
       >

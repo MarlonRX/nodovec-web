@@ -1,0 +1,12 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { CardDetailTable } from "./_table";
+
+export const prerender = false;
+
+const { cardUuid } = Astro.params;
+---
+
+<BaseLayout>
+    <CardDetailTable client:load cardUuid={cardUuid!} />
+</BaseLayout>

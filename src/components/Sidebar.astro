@@ -94,6 +94,22 @@ const { isAuthenticated = false } = Astro.props as Props;
                 </span>
             </a>
 
+            <!-- Cards -->
+            <a
+                href="/cards/table"
+                id="sidebar-cards"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="cards" />
+                <span class="text-sm font-medium ml-3">
+                    <TranslatedText
+                        translationKey="sidebar.cards"
+                        client:load
+                    />
+                </span>
+            </a>
+
             <!-- Preferences -->
             <a
                 href="/preferences"

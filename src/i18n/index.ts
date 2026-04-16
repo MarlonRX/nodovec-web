@@ -1,6 +1,6 @@
-// Configuración simple de i18n
 import esTranslations from "./locales/es.json";
 import enTranslations from "./locales/en.json";
+import { savePreferences, getPreference } from "../lib/preferencesStorage";
 
 export const languages = {
     es: "Español",
@@ -16,21 +16,19 @@ const translations = {
 
 export type Language = keyof typeof translations;
 
-// Variable global para el idioma actual
 let currentLanguage: Language = defaultLang;
 
-// Función para cambiar el idioma
 export function setLanguage(lang: Language) {
     currentLanguage = lang;
     if (typeof window !== "undefined") {
-        localStorage.setItem("cash-pilot-language", lang);
+        savePreferences({ language: lang });
+        window.dispatchEvent(new CustomEvent("languageChanged", { detail: lang }));
     }
 }
 
-// Función para obtener el idioma actual
 export function getCurrentLanguage(): Language {
     if (typeof window !== "undefined") {
-        const saved = localStorage.getItem("cash-pilot-language") as Language;
+        const saved = getPreference("language") as Language | undefined;
         if (saved && saved in translations) {
             currentLanguage = saved;
         }
@@ -38,7 +36,6 @@ export function getCurrentLanguage(): Language {
     return currentLanguage;
 }
 
-// Función para obtener traducción
 export function translate(key: string, lang?: Language): string {
     const useLang = lang || getCurrentLanguage();
     const keys = key.split(".");
@@ -48,11 +45,10 @@ export function translate(key: string, lang?: Language): string {
         translation = translation?.[k];
     }
 
-    if (translation) {
+    if (translation !== undefined && translation !== null) {
         return translation;
     }
 
-    // Fallback al idioma por defecto
     let fallback: any = translations[defaultLang];
     for (const k of keys) {
         fallback = fallback?.[k];
@@ -61,7 +57,6 @@ export function translate(key: string, lang?: Language): string {
     return fallback || key;
 }
 
-// Hook para usar en componentes React
 export function useTranslation() {
     return {
         t: translate,

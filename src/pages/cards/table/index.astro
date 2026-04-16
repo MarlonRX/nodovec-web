@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { CardsTable } from "./_table";
+
+export const prerender = false;
+---
+
+<BaseLayout>
+    <CardsTable client:load />
+</BaseLayout>

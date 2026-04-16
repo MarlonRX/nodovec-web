@@ -12,6 +12,7 @@ import { TransactionIcon } from "./TransactionIcon";
 import { MySelect } from "../UIComponents/MySelect";
 import { getDashboardData, type DashboardData } from "../../services/dashboardService";
 import { formatCurrency, formatCurrencyWithSign } from "../../lib/currencyFormatter";
+import { translate, getCurrentLanguage, type Language } from "../../i18n";
 
 const FinancialDashboard = () => {
     const [viewMode, setViewMode] = useState<"month" | "year">("year");
@@ -21,11 +22,20 @@ const FinancialDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isHydrated, setIsHydrated] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [lang, setLang] = useState<Language>(getCurrentLanguage());
+    const t = (key: string) => translate(key, lang);
     const currentYear = new Date().getFullYear();
 
     // Check if component is hydrated on client-side
     useEffect(() => {
         setIsHydrated(true);
+    }, []);
+
+    // Sync language changes
+    useEffect(() => {
+        const onLangChange = (e: Event) => setLang((e as CustomEvent).detail as Language);
+        window.addEventListener("languageChanged", onLangChange);
+        return () => window.removeEventListener("languageChanged", onLangChange);
     }, []);
 
     // Load dashboard data on component mount (client-side only)
@@ -70,7 +80,7 @@ const FinancialDashboard = () => {
                         }} 
                     ></div>
                     <p style={{ color: 'var(--text-secondary)' }}>
-                        {!isHydrated ? 'Initializing...' : 'Loading dashboard...'}
+                        {!isHydrated ? t('dashboard.initializing') : t('dashboard.loading')}
                     </p>
                 </div>
             </div>
@@ -98,10 +108,10 @@ const FinancialDashboard = () => {
                         <span style={{ fontSize: '32px' }}>⚠️</span>
                     </div>
                     <p style={{ color: 'var(--semantic-error)' }} className="text-lg font-bold mb-2">
-                        {error || "Failed to load data"}
+                        {error || t('dashboard.failedToLoad')}
                     </p>
                     <p style={{ color: 'var(--text-secondary)' }} className="text-sm mb-6">
-                        There was an issue loading your dashboard. Make sure the backend API is running and accessible.
+                        {t('dashboard.loadError')}
                     </p>
                     <div className="flex gap-3 justify-center">
                         <button
@@ -112,7 +122,7 @@ const FinancialDashboard = () => {
                                 color: 'var(--text-inverted)',
                             }}
                         >
-                            Try Again
+                            {t('dashboard.tryAgain')}
                         </button>
                         <a
                             href="/"
@@ -123,7 +133,7 @@ const FinancialDashboard = () => {
                                 border: '1px solid var(--border-primary)',
                             }}
                         >
-                            Go Home
+                            {t('dashboard.goHome')}
                         </a>
                     </div>
                 </div>
@@ -162,13 +172,13 @@ const FinancialDashboard = () => {
                         className="text-2xl font-bold mb-3"
                         style={{ color: 'var(--text-primary)' }}
                     >
-                        Start Tracking Your Finances
+                        {t('dashboard.emptyTitle')}
                     </h2>
                     <p
                         className="text-sm mb-8"
                         style={{ color: 'var(--text-secondary)' }}
                     >
-                        You don't have any transactions yet. Create your first transaction to see your financial dashboard come to life!
+                        {t('dashboard.emptyMessage')}
                     </p>
                     <a
                         href="/transactions/table"
@@ -178,7 +188,7 @@ const FinancialDashboard = () => {
                             color: 'var(--text-inverted)',
                         }}
                     >
-                        Add Your First Transaction
+                        {t('dashboard.addFirstTransaction')}
                     </a>
                 </div>
             </div>
@@ -237,7 +247,7 @@ const FinancialDashboard = () => {
                 income: formatCurrency(annuals.avgMonthlyIncome),
                 expenses: formatCurrency(annuals.avgMonthlyExpenses),
                 cashFlow: formatCurrencyWithSign(annuals.avgMonthlyCashFlow, true),
-                subtitle: "Annual Overview",
+                subtitle: t('dashboard.annualOverview'),
             };
         } else {
             const month = monthlyData[selectedMonth] || { income: 0, expenses: 0, cashFlow: 0 };
@@ -314,15 +324,15 @@ const FinancialDashboard = () => {
                                 className="text-4xl font-black mb-2"
                                 style={{ color: 'var(--text-primary)' }}
                             >
-                                Financial Dashboard
+                                {t('dashboard.title')}
                             </h1>
                             <p
                                 className="text-sm"
                                 style={{ color: 'var(--text-secondary)' }}
                             >
                                 {viewMode === "year" 
-                                    ? `Welcome back! Here's your financial overview for ${currentYear}` 
-                                    : `Detailed view for ${monthlyData[selectedMonth].month} ${currentYear}`}
+                                    ? `${t('dashboard.yearOverview').replace('{year}', String(currentYear))}` 
+                                    : `${t('dashboard.monthView').replace('{month}', monthlyData[selectedMonth].month).replace('{year}', String(currentYear))}`}
                             </p>
                         </div>
                         <div className="flex gap-3">
@@ -330,8 +340,8 @@ const FinancialDashboard = () => {
                                 value={viewMode}
                                 onChange={(e) => setViewMode(e.target.value as "month" | "year")}
                                 options={[
-                                    { value: "year", label: "Yearly" },
-                                    { value: "month", label: "Monthly" },
+                                    { value: "year", label: t('dashboard.yearly') },
+                                    { value: "month", label: t('dashboard.monthly') },
                                 ]}
                                 className="min-w-fit"
                             />
@@ -350,9 +360,9 @@ const FinancialDashboard = () => {
                                 value={selectedAccount}
                                 onChange={(e) => setSelectedAccount(e.target.value)}
                                 options={[
-                                    { value: "personal", label: "Personal" },
-                                    { value: "business", label: "Business" },
-                                    { value: "investments", label: "Investments" },
+                                    { value: "personal", label: t('dashboard.personal') },
+                                    { value: "business", label: t('dashboard.business') },
+                                    { value: "investments", label: t('dashboard.investments') },
                                 ]}
                                 className="min-w-fit"
                             />
@@ -369,10 +379,10 @@ const FinancialDashboard = () => {
                         {/* Key Metrics Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
                             <MetricCard
-                                title="Total Balance"
+                                title={t('dashboard.totalBalance')}
                                 value={metrics.balance}
                                 trend={cashFlowTrend}
-                                subtitle="Accumulated balance"
+                                subtitle={t('dashboard.accumulatedBalance')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -386,10 +396,10 @@ const FinancialDashboard = () => {
                                 }
                             />
                             <MetricCard
-                                title={viewMode === "year" ? "Avg Monthly Income" : "Monthly Income"}
+                                title={viewMode === "year" ? t('dashboard.avgMonthlyIncome') : t('dashboard.monthlyIncome')}
                                 value={metrics.income}
                                 trend={incomeTrend}
-                                subtitle={viewMode === "year" ? "Average per month" : "This month"}
+                                subtitle={viewMode === "year" ? t('dashboard.averagePerMonth') : t('dashboard.thisMonth')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -403,10 +413,10 @@ const FinancialDashboard = () => {
                                 }
                             />
                             <MetricCard
-                                title={viewMode === "year" ? "Avg Monthly Expenses" : "Monthly Expenses"}
+                                title={viewMode === "year" ? t('dashboard.avgMonthlyExpenses') : t('dashboard.monthlyExpenses')}
                                 value={metrics.expenses}
                                 trend={expensesTrend}
-                                subtitle={viewMode === "year" ? "Average per month" : "This month"}
+                                subtitle={viewMode === "year" ? t('dashboard.averagePerMonth') : t('dashboard.thisMonth')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -420,10 +430,10 @@ const FinancialDashboard = () => {
                                 }
                             />
                             <MetricCard
-                                title="Net Cash Flow"
+                                title={t('dashboard.netCashFlow')}
                                 value={metrics.cashFlow}
                                 trend={cashFlowTrend}
-                                subtitle={viewMode === "year" ? "Average per month" : "This month"}
+                                subtitle={viewMode === "year" ? t('dashboard.averagePerMonth') : t('dashboard.thisMonth')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -454,13 +464,13 @@ const FinancialDashboard = () => {
                                             className="text-xl font-bold"
                                             style={{ color: 'var(--text-primary)' }}
                                         >
-                                            Financial Overview
+                                            {t('dashboard.financialOverview')}
                                         </h2>
                                         <p
                                             className="text-xs mt-1"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
-                                            {viewMode === "year" ? "Year-to-Date Analysis" : `${monthlyData[selectedMonth].month} ${currentYear} Analysis`}
+                                            {viewMode === "year" ? t('dashboard.yearToDateAnalysis') : `${t('dashboard.monthAnalysis').replace('{month}', monthlyData[selectedMonth].month).replace('{year}', String(currentYear))}`}
                                         </p>
                                     </div>
                                 </div>
@@ -471,12 +481,12 @@ const FinancialDashboard = () => {
                                         {
                                             dataKey: "income",
                                             fill: 'var(--semantic-success)',
-                                            name: "Income",
+                                            name: t('dashboard.income'),
                                         },
                                         {
                                             dataKey: "expenses",
                                             fill: 'var(--semantic-error)',
-                                            name: "Expenses",
+                                            name: t('dashboard.expenses'),
                                         },
                                     ]}
                                     lines={[
@@ -484,7 +494,7 @@ const FinancialDashboard = () => {
                                             dataKey: "cashFlow",
                                             stroke: 'var(--accent-primary)',
                                             strokeWidth: 2,
-                                            name: "Cash Flow",
+                                            name: t('dashboard.cashFlow'),
                                         },
                                     ]} 
                                     height={320}
@@ -503,7 +513,7 @@ const FinancialDashboard = () => {
                                     className="text-xl font-bold mb-8"
                                     style={{ color: 'var(--text-primary)' }}
                                 >
-                                    Expense Categories
+                                    {t('dashboard.expenseCategories')}
                                 </h2>
 
                                 <DonutChart
@@ -560,7 +570,7 @@ const FinancialDashboard = () => {
                                     className="text-xl font-bold mb-8"
                                     style={{ color: 'var(--text-primary)' }}
                                 >
-                                    Account Balances
+                                    {t('dashboard.accountBalances')}
                                 </h2>
                                 <StackedBarChart
                                     data={accountBalancesData}
@@ -569,22 +579,22 @@ const FinancialDashboard = () => {
                                         {
                                             dataKey: "savings",
                                             fill: 'var(--accent-primary)',
-                                            name: "Savings",
+                                            name: t('dashboard.savings'),
                                         },
                                         {
                                             dataKey: "other",
                                             fill: 'var(--accent-secondary)',
-                                            name: "Other",
+                                            name: t('dashboard.other'),
                                         },
                                         {
                                             dataKey: "expense",
                                             fill: 'var(--semantic-warning)',
-                                            name: "Expense",
+                                            name: t('dashboard.expense'),
                                         },
                                         {
                                             dataKey: "tax",
                                             fill: 'var(--semantic-success)',
-                                            name: "Tax",
+                                            name: t('dashboard.tax'),
                                         },
                                     ]}
                                     height={280}
@@ -603,7 +613,7 @@ const FinancialDashboard = () => {
                                     className="text-xl font-bold mb-6"
                                     style={{ color: 'var(--text-primary)' }}
                                 >
-                                    Recent Transactions
+                                    {t('dashboard.recentTransactions')}
                                 </h2>
                                 <div className="overflow-visible rounded-lg">
                                     <table className="w-full">
@@ -827,10 +837,10 @@ const FinancialDashboard = () => {
                         {/* Monthly Metrics - 2 wide columns */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8">
                             <MetricCard
-                                title="Monthly Income"
+                                title={t('dashboard.monthlyIncome')}
                                 value={metrics.income}
                                 trend={incomeTrend}
-                                subtitle="This month"
+                                subtitle={t('dashboard.thisMonth')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -844,10 +854,10 @@ const FinancialDashboard = () => {
                                 }
                             />
                             <MetricCard
-                                title="Monthly Expenses"
+                                title={t('dashboard.monthlyExpenses')}
                                 value={metrics.expenses}
                                 trend={expensesTrend}
-                                subtitle="This month"
+                                subtitle={t('dashboard.thisMonth')}
                                 chart={
                                     <SimpleLineChart
                                         data={monthlyData}
@@ -873,7 +883,7 @@ const FinancialDashboard = () => {
                             >
                                 <div className="mb-6">
                                     <h2 className="text-lg sm:text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                                        {monthlyData[selectedMonth].month} ${currentYear} Summary
+                                        {monthlyData[selectedMonth].month} {currentYear} Summary
                                     </h2>
                                     <p className="text-xs sm:text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
                                         Financial breakdown
@@ -888,7 +898,7 @@ const FinancialDashboard = () => {
                                             border: `1px solid rgba(var(--semantic-success-rgb), 0.19)`
                                         }}
                                     >
-                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Total Income</p>
+                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.income')}</p>
                                         <p className="text-lg sm:text-2xl font-bold mt-1" style={{ color: 'var(--semantic-success)' }}>
                                             {formatCurrency(monthlyData[selectedMonth].income)}
                                         </p>
@@ -900,7 +910,7 @@ const FinancialDashboard = () => {
                                             border: `1px solid rgba(var(--semantic-error-rgb), 0.19)`
                                         }}
                                     >
-                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Total Expenses</p>
+                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.expenses')}</p>
                                         <p className="text-lg sm:text-2xl font-bold mt-1" style={{ color: 'var(--semantic-error)' }}>
                                             {formatCurrency(monthlyData[selectedMonth].expenses)}
                                         </p>
@@ -912,7 +922,7 @@ const FinancialDashboard = () => {
                                             border: `1px solid rgba(var(--accent-primary-rgb), 0.19)`
                                         }}
                                     >
-                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Net Cash Flow</p>
+                                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.netCashFlow')}</p>
                                         <p className="text-lg sm:text-2xl font-bold mt-1" style={{ color: 'var(--accent-primary)' }}>
                                             {formatCurrencyWithSign(monthlyData[selectedMonth].cashFlow, true)}
                                         </p>
@@ -921,7 +931,7 @@ const FinancialDashboard = () => {
 
                                 <div>
                                     <h3 className="text-sm sm:text-base font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
-                                        Expense Breakdown
+                                        {t('dashboard.expenseCategories')}
                                     </h3>
                                     <DonutChart
                                         data={expenseCategories}
@@ -962,7 +972,7 @@ const FinancialDashboard = () => {
                                 }}
                             >
                                 <h2 className="text-lg sm:text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-                                    Recent Transactions
+                                    {t('dashboard.recentTransactions')}
                                 </h2>
                                 <div className="overflow-x-auto flex-1 rounded-lg">
                                     <table className="w-full min-w-max">
