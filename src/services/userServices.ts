@@ -1,7 +1,25 @@
 // Servicios relacionados con usuarios
 import type { AuthResponse, LoginCredentials, RegisterData, User } from '../types/userInterfaces';
 import { getFetch, postFetch, putFetch, deleteFetch, authFetch } from './fetchTypes';
-import { STORAGE_CONFIG } from '../config/api';
+import { STORAGE_CONFIG, API_CONFIG } from '../config/api';
+import { z } from 'zod';
+
+const TokenResponseSchema = z.object({
+  message: z.string().optional(),
+  token: z.string().optional(),
+  access_token: z.string().optional(),
+  refresh_token: z.string().optional(),
+  refreshToken: z.string().optional(),
+  user: z.record(z.string(), z.unknown()).optional(),
+});
+
+type TokenResponse = z.infer<typeof TokenResponseSchema>;
+
+const MessageResponseSchema = z.object({
+  message: z.string(),
+});
+
+type MessageResponse = z.infer<typeof MessageResponseSchema>;
 
 // SERVICIOS DE AUTENTICACIÓN
 
@@ -10,15 +28,16 @@ import { STORAGE_CONFIG } from '../config/api';
  */
 export const loginUser = async (credentials: LoginCredentials) => {
   try {
-    const response = await authFetch('auth/login', credentials);
+    const response = await authFetch<TokenResponse>('auth/login', credentials);
     const payload = response.data;
     // Normalizar a forma { response: true, status, message, data }
     return { response: true, status: response.status || 200, message: payload?.message || 'Login successful', data: payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
     return {
       response: false,
-      status: error?.response?.status || 500,
-      message: error?.response?.data?.message || error.message || error,
+      status: err?.response?.status || 500,
+      message: err?.response?.data?.message || err?.message || 'Login failed',
       data: null,
     };
   }
@@ -29,14 +48,15 @@ export const loginUser = async (credentials: LoginCredentials) => {
  */
 export const registerUser = async (userData: RegisterData) => {
   try {
-    const response = await postFetch('auth/register', userData);
+    const response = await postFetch<MessageResponse>('auth/register', userData);
     const payload = response.data;
     return { response: true, status: response.status || 200, message: payload?.message || 'Registered', data: payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
     return {
       response: false,
-      status: error?.response?.status || 500,
-      message: error?.response?.data?.message || error.message || error,
+      status: err?.response?.status || 500,
+      message: err?.response?.data?.message || err?.message || 'Registration failed',
       data: null,
     };
   }
@@ -47,14 +67,15 @@ export const registerUser = async (userData: RegisterData) => {
  */
 export const logoutUser = async () => {
   try {
-    const response = await postFetch('auth/logout');
+    const response = await postFetch<MessageResponse>('auth/logout');
     const payload = response.data;
     return { response: true, status: response.status || 200, message: payload?.message || 'Logged out', data: payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
     return {
       response: false,
-      status: error?.response?.status || 500,
-      message: error?.response?.data?.message || error.message || error,
+      status: err?.response?.status || 500,
+      message: err?.response?.data?.message || err?.message || 'Logout failed',
       data: null,
     };
   }
@@ -65,15 +86,15 @@ export const logoutUser = async () => {
  */
 export const getUserProfile = async () => {
   try {
-    const response = await getFetch('auth/me');
-    // backend devuelve { user }
+    const response = await getFetch<{ user?: Record<string, unknown>; message?: string }>('auth/me');
     const payload = response.data;
     return { response: true, status: response.status || 200, message: payload?.message || 'Profile fetched', data: payload?.user || payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
     return {
       response: false,
-      status: error?.response?.status || 500,
-      message: error?.response?.data?.message || error.message || error,
+      status: err?.response?.status || 500,
+      message: err?.response?.data?.message || err?.message || 'Failed to fetch profile',
       data: null,
     };
   }
@@ -88,13 +109,13 @@ export const refreshToken = async () => {
     const refresh = localStorage.getItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`);
     if (!refresh) return { response: false, status: 401, message: 'No refresh token', data: null };
 
-    const response = await postFetch('auth/refresh', { refreshToken: refresh });
+    const response = await postFetch<TokenResponse>('auth/refresh', { refreshToken: refresh });
     const payload = response.data;
 
     // Actualizar token y usuario en localStorage si vienen
     if (payload) {
       const newToken = payload.token || payload.access_token;
-      const newRefresh = payload.refresh_token;
+      const newRefresh = payload.refresh_token || payload.refreshToken;
       if (newToken) {
         localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`, newToken);
       }
@@ -102,7 +123,7 @@ export const refreshToken = async () => {
         localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`, newRefresh);
       }
       if (payload.user) {
-        const user = payload.user;
+        const user = payload.user as Record<string, unknown>;
         // Normalizar avatar si viene como "avatars/xxx"
         if (user.avatar && typeof user.avatar === 'string' && !/^https?:\/\//i.test(user.avatar)) {
           const base = API_CONFIG.BASE_URL.replace(/\/$/, '');
@@ -116,11 +137,12 @@ export const refreshToken = async () => {
     }
 
     return { response: true, status: response.status || 200, message: payload?.message || 'Token refreshed', data: payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
     return {
       response: false,
-      status: error?.response?.status || 500,
-      message: error?.response?.data?.message || error.message || error,
+      status: err?.response?.status || 500,
+      message: err?.response?.data?.message || err?.message || 'Token refresh failed',
       data: null,
     };
   }

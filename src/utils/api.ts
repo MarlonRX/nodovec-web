@@ -1,8 +1,8 @@
 import { API_CONFIG } from "../config/api";
 import { authStore } from "../store/auth";
 
-interface FetchOptions extends RequestInit {
-  body?: Record<string, any> | string | FormData;
+interface FetchOptions extends Omit<RequestInit, 'body'> {
+  body?: Record<string, unknown> | string | FormData;
 }
 
 /**

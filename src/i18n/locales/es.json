@@ -99,7 +99,10 @@
         "violet-dusk": "Violeta Crepúsculo",
         "forest-night": "Bosque Nocturno",
         "selector": "Selector de tema",
-        "label": "Tema"
+        "label": "Tema",
+        "toggle": "Cambiar tema",
+        "switchLight": "Cambiar a modo claro",
+        "switchDark": "Cambiar a modo oscuro"
     },
     "languages": {
         "es": "Español",
@@ -118,7 +121,42 @@
         "loading": "Cargando...",
         "unexpectedError": "Error inesperado",
         "demoReadOnly": "Modo demo: Solo lectura",
-        "addNew": "Agregar"
+        "addNew": "Agregar",
+        "show": "Mostrar",
+        "hide": "Ocultar",
+        "reset": "Restablecer",
+        "default": "Por defecto"
+    },
+    "nav": {
+        "dashboard": "Panel",
+        "transactions": "Transacciones",
+        "cards": "Tarjetas",
+        "reports": "Reportes",
+        "more": "Más"
+    },
+    "mobile": {
+        "offline": "Estás sin conexión",
+        "backOnline": "Conexión restablecida",
+        "pullToRefresh": "Desliza para actualizar"
+    },
+    "dashboardCustomizer": {
+        "customize": "Personalizar",
+        "customizeLayout": "Personalizar Diseño",
+        "customizeDashboard": "Personalizar Panel",
+        "widgets": "Widgets",
+        "presets": "Diseños",
+        "resetLayout": "Restablecer por Defecto",
+        "presetDefault": "Por Defecto",
+        "presetMinimal": "Mínimo",
+        "presetAnalytics": "Analíticas",
+        "widgetMetricCards": "Tarjetas de Métricas",
+        "widgetFinancialOverview": "Resumen Financiero",
+        "widgetExpenseCategories": "Categorías de Gastos",
+        "widgetAccountBalances": "Saldos de Cuentas",
+        "widgetRecentTransactions": "Transacciones Recientes",
+        "widgetBudgetProgress": "Progreso de Presupuesto",
+        "widgetSavingsGoals": "Metas de Ahorro",
+        "widgetCardSummary": "Resumen de Tarjetas"
     },
     "months": {
         "1": "Enero", "2": "Febrero", "3": "Marzo", "4": "Abril",
@@ -149,7 +187,17 @@
         "colActions": "Acciones",
         "syncing": "Sincronizando...",
         "cardPaymentsTitle": "Pagos de Tarjeta de Crédito Este Mes",
-        "cardPaymentsActive": "activas"
+        "cardPaymentsActive": "activas",
+        "searchPlaceholder": "Buscar transacciones...",
+        "filters": "Filtros",
+        "allCategories": "Todas las Categorías",
+        "allTypes": "Todos los Tipos",
+        "typeIncome": "Ingreso",
+        "typeExpense": "Gasto",
+        "clearFilters": "Limpiar",
+        "result": "resultado",
+        "results": "resultados",
+        "quickAdd": "Agregar Rápido"
     },
     "cards": {
         "title": "Tarjetas",

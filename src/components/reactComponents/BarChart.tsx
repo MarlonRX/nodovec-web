@@ -76,7 +76,7 @@ export function BarChart({
     const effectiveDatasets = datasetsConfig || defaultDatasets;
     const [dynamicData, setDynamicData] = useState({
         labels,
-        datasets: datasetsConfig.map((config) => ({
+        datasets: effectiveDatasets.map((config) => ({
             label: config.label,
             data: generateRandomData(labels, dataSchema),
             backgroundColor: config.backgroundColor,
@@ -88,7 +88,7 @@ export function BarChart({
             const interval = setInterval(() => {
                 setDynamicData({
                     labels,
-                    datasets: datasetsConfig.map((config) => ({
+                    datasets: effectiveDatasets.map((config) => ({
                         label: config.label,
                         data: generateRandomData(labels, dataSchema),
                         backgroundColor: config.backgroundColor,
@@ -98,7 +98,7 @@ export function BarChart({
 
             return () => clearInterval(interval);
         }
-    }, [movement, labels, datasetsConfig]);
+    }, [movement, labels, effectiveDatasets]);
 
     return (
         <div>
@@ -109,7 +109,7 @@ export function BarChart({
                         ? dynamicData
                         : {
                               labels,
-                              datasets: datasetsConfig.map((config) => ({
+                              datasets: effectiveDatasets.map((config) => ({
                                   label: config.label,
                                   data: generateRandomData(labels, dataSchema),
                                   backgroundColor: config.backgroundColor,

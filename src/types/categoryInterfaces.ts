@@ -13,3 +13,12 @@ export const CategorySchema = z.object({
 });
 
 export type Category = z.infer<typeof CategorySchema>;
+
+export const CreateCategoryDataSchema = z.object({
+  name: z.string(),
+  type: CategoryTypeSchema,
+  color: z.string().optional().default('#3B82F6'),
+  icon: z.string().optional().default('folder'),
+});
+
+export type CreateCategoryData = z.infer<typeof CreateCategoryDataSchema>;

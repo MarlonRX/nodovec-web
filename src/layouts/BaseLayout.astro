@@ -8,6 +8,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { SidebarLayoutManager } from "../components/reactComponents/SidebarLayoutManager";
 import { DebugValidator } from "../components/reactComponents/DebugValidator";
 import { ThemeRestorer } from "../components/reactComponents/ThemeRestorer";
+import { QuickAddFAB } from "../components/reactComponents/QuickAddFAB";
+import { BottomNav } from "../components/reactComponents/BottomNav";
+import { OfflineIndicator } from "../components/reactComponents/OfflineIndicator";
+import { MobileSidebar } from "../components/reactComponents/MobileSidebar";
 
 // Obtener token de las cookies (servidor-side)
 const token = Astro.cookies.get("auth_token")?.value;
@@ -15,6 +19,9 @@ const isAuthenticated = !!token;
 
 // Detectar si estamos en una página de login
 const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/register";
+
+// Detectar si es mobile para conditionally render BottomNav
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -26,56 +33,41 @@ const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/
         <title>{SITE_TITLE}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <script is:inline>
-            const THEME_KEY = 'cash_pilot_theme';
-            const VALID_THEMES = ['light', 'dark', 'custom', 'obsidian', 'midnight-teal', 'ember', 'violet-dusk', 'forest-night'];
-            
-            function restoreTheme() {
-                try {
-                    const t = localStorage.getItem(THEME_KEY);
-                    if(t && VALID_THEMES.includes(t)) {
-                        document.documentElement.setAttribute('data-theme', t);
-                        console.log('[Inline] Theme SET:', t);
-                    } else {
-                        console.warn('[Inline] No valid theme, defaulting');
+            (function() {
+                const THEME_KEY = 'cash_pilot_theme';
+                const VALID_THEMES = ['light', 'dark', 'custom', 'obsidian', 'midnight-teal', 'ember', 'violet-dusk', 'forest-night'];
+
+                function getSystemTheme() {
+                    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+                }
+
+                function restoreTheme() {
+                    try {
+                        var stored = localStorage.getItem(THEME_KEY);
+                        if (stored && VALID_THEMES.includes(stored)) {
+                            document.documentElement.setAttribute('data-theme', stored);
+                        } else {
+                            document.documentElement.setAttribute('data-theme', getSystemTheme());
+                        }
+                    } catch (e) {
                         document.documentElement.setAttribute('data-theme', 'dark');
                     }
-                }catch(e){
-                    console.error('[Inline] Error:', e);
                 }
-            }
-            
-            // Restaurar INMEDIATAMENTE al cargar
-            console.log('[Inline] Initial restore');
-            restoreTheme();
-            
-            // Monitorear cambios cada 50ms (muy agresivo)
-            let lastTheme = localStorage.getItem(THEME_KEY);
-            setInterval(() => {
-                const current = localStorage.getItem(THEME_KEY);
-                if(current !== lastTheme) {
-                    console.log('[Inline] Theme changed detected:', lastTheme, '->', current);
-                    lastTheme = current;
-                    restoreTheme();
-                }
-            }, 50);
-            
-            // Monitorear cambios de URL
-            let lastUrl = location.href;
-            setInterval(() => {
-                if(location.href !== lastUrl) {
-                    console.log('[Inline] URL changed:', lastUrl, '->', location.href);
-                    lastUrl = location.href;
-                    restoreTheme();
-                }
-            }, 100);
-            
-            // Escuchar cambios desde otras pestañas
-            window.addEventListener('storage', (e) => {
-                if(e.key === THEME_KEY) {
-                    console.log('[Inline] Storage event:', e.newValue);
-                    restoreTheme();
-                }
-            });
+
+                restoreTheme();
+
+                window.addEventListener('storage', function(e) {
+                    if (e.key === THEME_KEY) {
+                        restoreTheme();
+                    }
+                });
+
+                window.addEventListener('themeChanged', function(e) {
+                    if (e.detail && VALID_THEMES.includes(e.detail)) {
+                        document.documentElement.setAttribute('data-theme', e.detail);
+                    }
+                });
+            })();
         </script>
     </head>
     <body
@@ -85,25 +77,86 @@ const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/
         <Toaster client:load />
         <DebugValidator client:only="react" />
         <SidebarLayoutManager client:only="react" />
+        <QuickAddFAB client:only="react" />
+        <OfflineIndicator client:only="react" />
         <NavBar />
-        <div class={`flex h-full overflow-hidden ${!isLoginPage ? 'pt-16' : ''}`}>
-            <Sidebar isAuthenticated={isAuthenticated} />
+
+        <!-- Desktop Sidebar -->
+        <Sidebar isAuthenticated={isAuthenticated} />
+
+        <!-- Mobile Sidebar (overlay, not in flow) -->
+        <div id="mobile-sidebar-overlay" class="md:hidden">
+            <div
+                id="mobile-sidebar-backdrop"
+                class="fixed inset-0 bg-black/50 z-30 hidden opacity-0 transition-opacity duration-300 cursor-pointer"
+                onclick="toggleMobileSidebar(false)"
+            ></div>
+            <aside
+                id="mobile-sidebar"
+                class="fixed left-0 top-0 h-full w-72 bg-[var(--bg-primary)] z-40 transform -translate-x-full transition-transform duration-300 flex flex-col cursor-pointer"
+                style="border-right: 1px solid var(--border-primary);"
+            >
+                <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" style="border-bottom: 1px solid var(--border-primary);">
+                    <div class="shrink-0 p-1.5 rounded-md" style="background: var(--accent-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                            <rect width="24" height="24" fill="none"></rect>
+                            <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" fill="none" stroke="var(--border-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold cursor-pointer" style="color: var(--accent-primary);">CashPilot</span>
+                </div>
+                <MobileSidebar client:load />
+            </aside>
+        </div>
+
+        <div class="flex h-full overflow-hidden pt-16">
             <main
                 id="main-content"
                 class="flex-1 w-full transition-all duration-300 flex flex-col overflow-y-auto"
-                style={`background: var(--bg-surface); margin-left: ${isAuthenticated ? '5rem' : '0'};`}
+                style={`background: var(--bg-surface);`}
             >
                 <div class="flex flex-col w-full">
                     <slot />
                 </div>
             </main>
         </div>
-        <!-- Footer removed for single-screen layout -->
+
+        <script is:inline>
+            function toggleMobileSidebar(show) {
+                const backdrop = document.getElementById('mobile-sidebar-backdrop');
+                const sidebar = document.getElementById('mobile-sidebar');
+                const body = document.body;
+
+                if (show === undefined) {
+                    show = sidebar ? sidebar.classList.contains('-translate-x-full') : true;
+                }
+
+                if (show) {
+                    backdrop?.classList.remove('hidden');
+                    sidebar?.classList.remove('-translate-x-full');
+                    body.style.overflow = 'hidden';
+                    requestAnimationFrame(() => {
+                        backdrop?.classList.remove('opacity-0');
+                    });
+                } else {
+                    backdrop?.classList.add('opacity-0');
+                    sidebar?.classList.add('-translate-x-full');
+                    body.style.overflow = '';
+                    setTimeout(() => {
+                        backdrop?.classList.add('hidden');
+                    }, 300);
+                }
+            }
+            window.toggleMobileSidebar = toggleMobileSidebar;
+        </script>
 
         <style>
             @media (max-width: 768px) {
                 #main-content {
-                    margin-left: 0 !important;
+                    padding-bottom: 80px;
+                }
+                #sidebar {
+                    display: none !important;
                 }
             }
         </style>

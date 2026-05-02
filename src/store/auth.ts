@@ -74,10 +74,10 @@ function getInitialState(): AuthState {
   }
 
   // Legacy fallback to old localStorage keys (for migration)
-  const stored = localStorage.getItem('cash_pilot_auth');
-  if (stored) {
+  const legacyStored = localStorage.getItem('cash_pilot_auth');
+  if (legacyStored) {
     try {
-      const parsed = JSON.parse(stored);
+      const parsed = JSON.parse(legacyStored);
 
       // Normalize avatar URL in stored user if necessary
       if (parsed?.user?.avatar && typeof parsed.user.avatar === 'string' && !/^https?:\/\//i.test(parsed.user.avatar)) {
@@ -86,8 +86,8 @@ function getInitialState(): AuthState {
       }
 
       // If we have data in localStorage but no cookie, clear it
-      if (!tokenFromCookie) {
-        localStorage.removeItem(STORAGE_KEY);
+      if (!getCookie(COOKIE_NAME)) {
+        localStorage.removeItem('cash_pilot_auth');
         return {
           token: null,
           user: null,

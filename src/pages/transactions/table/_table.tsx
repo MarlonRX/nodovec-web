@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { ReactNode } from "react";
-import { Plus, Pencil, Trash2, CreditCard } from "lucide-react";
+import { Plus, Pencil, Trash2, CreditCard, Search, X, SlidersHorizontal } from "lucide-react";
 import { MyTable } from "@/components/UIComponents/MyTable";
 import { MySelect } from "@/components/UIComponents/MySelect";
 import { TransactionModal } from "@/components/UIComponents/TransactionModal";
@@ -44,12 +43,56 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
 
+  // Search & Filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [filterType, setFilterType] = useState<'income' | 'expense' | ''>('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+
   const yearOptions = Array.from({ length: 5 }, (_, i) => {
     const year = currentDate.getFullYear() - i;
     return { value: year, label: String(year) };
   });
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: t(`months.${i + 1}`) }));
+
+  const categoryOptions = [
+    { value: '', label: t('transactions.allCategories') },
+    { value: 'salary', label: 'Salary' },
+    { value: 'freelance', label: 'Freelance' },
+    { value: 'investment', label: 'Investment' },
+    { value: 'bonus', label: 'Bonus' },
+    { value: 'other_income', label: 'Other Income' },
+    { value: 'food', label: 'Food' },
+    { value: 'transportation', label: 'Transportation' },
+    { value: 'utilities', label: 'Utilities' },
+    { value: 'entertainment', label: 'Entertainment' },
+    { value: 'healthcare', label: 'Healthcare' },
+    { value: 'shopping', label: 'Shopping' },
+    { value: 'rent', label: 'Rent' },
+    { value: 'other_expense', label: 'Other Expense' },
+  ];
+
+  // Debounce search input (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const hasActiveFilters = debouncedSearch || filterType || filterCategory;
+
+  const clearFilters = useCallback(() => {
+    setSearchQuery('');
+    setDebouncedSearch('');
+    setFilterType('');
+    setFilterCategory('');
+    setCurrentPage(1);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -69,6 +112,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
     window.addEventListener("languageChanged", onLang);
     return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
+
+  // Listen for quick-add creation to refresh table
+  useEffect(() => {
+    const onCreated = () => setRefreshTrigger((prev) => prev + 1);
+    window.addEventListener('transactionCreated', onCreated);
+    return () => window.removeEventListener('transactionCreated', onCreated);
   }, []);
 
   // Load active card purchases for the payments panel
@@ -94,6 +144,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           year: selectedYear,
           month: selectedMonth,
           page: currentPage,
+          ...(debouncedSearch && { search: debouncedSearch }),
+          ...(filterType && { type: filterType }),
+          ...(filterCategory && { category: filterCategory }),
         });
 
         const result = await getTransactions(filters);
@@ -103,25 +156,29 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           // Extraer datos del objeto paginado de Laravel
           const transactions = validatedResult.data.data || [];
           const lastPage = validatedResult.data.last_page || 1;
-          
+          const total = validatedResult.data.total || 0;
+
           setData(transactions);
           setTotalPages(lastPage);
+          setTotalCount(total);
         } else {
           setError(validatedResult.message || "Failed to fetch transactions");
           setData([]);
+          setTotalCount(0);
         }
       } catch (err: any) {
         const errorMessage = err?.message || "Error al cargar transacciones";
-        console.error("Error fetching transactions:", errorMessage);
+        setError(errorMessage);
         toast.error(errorMessage);
         setData([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }
     };
 
     fetchTransactions();
-  }, [selectedYear, selectedMonth, currentPage, refreshTrigger]);
+  }, [selectedYear, selectedMonth, currentPage, refreshTrigger, debouncedSearch, filterType, filterCategory]);
 
   // Load totals for ALL transactions in the selected month/year
   useEffect(() => {
@@ -371,6 +428,107 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
             <span>{t('transactions.addTransaction')}</span>
           </button>
+        </div>
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-(--text-tertiary)" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t('transactions.searchPlaceholder') || 'Search transactions...'}
+                className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-(--bg-secondary) border border-(--border-primary) text-(--text-primary) text-sm placeholder:text-(--text-tertiary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) focus:border-transparent transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-tertiary) hover:text-(--text-primary) transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Filter Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all text-sm font-semibold ${showFilters || hasActiveFilters
+                ? 'bg-(--accent-primary) text-(--text-inverted) border-(--accent-primary)'
+                : 'bg-(--bg-secondary) text-(--text-primary) border-(--border-primary) hover:border-(--accent-primary)'
+                }`}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('transactions.filters') || 'Filters'}</span>
+              {hasActiveFilters && (
+                <span className="ml-1 w-5 h-5 rounded-full bg-(--text-inverted) text-(--accent-primary) text-xs font-bold flex items-center justify-center">
+                  {[debouncedSearch, filterType, filterCategory].filter(Boolean).length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 p-3 rounded-lg bg-(--bg-secondary) border border-(--border-primary)">
+              <MySelect
+                options={[
+                  { value: '', label: t('transactions.allTypes') || 'All Types' },
+                  { value: 'income', label: t('transactions.typeIncome') || 'Income' },
+                  { value: 'expense', label: t('transactions.typeExpense') || 'Expense' },
+                ]}
+                value={filterType}
+                onChange={(e: any) => { setFilterType(e.target.value); setCurrentPage(1); }}
+                className="w-full sm:w-40 h-10 text-sm font-semibold border-none bg-(--bg-primary) rounded-lg"
+              />
+              <MySelect
+                options={categoryOptions}
+                value={filterCategory}
+                onChange={(e: any) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
+                className="w-full sm:w-48 h-10 text-sm font-semibold border-none bg-(--bg-primary) rounded-lg"
+              />
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-1 px-3 py-2 text-xs font-semibold text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)] rounded-lg transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                  {t('transactions.clearFilters') || 'Clear'}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Active Filter Tags */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-(--text-tertiary) font-semibold">
+                {totalCount} {totalCount === 1 ? (t('transactions.result') || 'result') : (t('transactions.results') || 'results')}
+              </span>
+              {debouncedSearch && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--accent-primary) text-(--text-inverted)">
+                  <Search className="w-3 h-3" />
+                  "{debouncedSearch}"
+                  <button onClick={() => setSearchQuery('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              {filterType && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--bg-secondary) text-(--text-primary) border border-(--border-primary)">
+                  {filterType}
+                  <button onClick={() => setFilterType('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+              {filterCategory && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--bg-secondary) text-(--text-primary) border border-(--border-primary)">
+                  {filterCategory.replace(/_/g, ' ')}
+                  <button onClick={() => setFilterCategory('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Totales - Grid responsive */}

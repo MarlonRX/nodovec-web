@@ -24,8 +24,6 @@ export function getBackendUrl(): string {
   return envUrl;
 }
 
-console.log('API Base URL:', getBackendUrl());
-
 export const API_CONFIG = {
   // URL base se calcula dinámicamente
   get BASE_URL(): string {

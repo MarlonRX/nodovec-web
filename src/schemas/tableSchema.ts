@@ -99,6 +99,9 @@ export const FiltersSchema = z.object({
   year: z.number().int().optional(),
   month: z.number().int().optional(),
   page: z.number().int().optional(),
+  search: z.string().optional(),
+  type: z.enum(['income', 'expense']).optional(),
+  category: z.string().optional(),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

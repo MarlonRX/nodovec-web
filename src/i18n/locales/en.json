@@ -99,7 +99,10 @@
         "violet-dusk": "Violet Dusk",
         "forest-night": "Forest Night",
         "selector": "Theme selector",
-        "label": "Theme"
+        "label": "Theme",
+        "toggle": "Toggle theme",
+        "switchLight": "Switch to light mode",
+        "switchDark": "Switch to dark mode"
     },
     "languages": {
         "es": "Español",
@@ -118,7 +121,42 @@
         "loading": "Loading...",
         "unexpectedError": "Unexpected error",
         "demoReadOnly": "Demo mode: Read-only",
-        "addNew": "Add"
+        "addNew": "Add",
+        "show": "Show",
+        "hide": "Hide",
+        "reset": "Reset",
+        "default": "Default"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "transactions": "Transactions",
+        "cards": "Cards",
+        "reports": "Reports",
+        "more": "More"
+    },
+    "mobile": {
+        "offline": "You are offline",
+        "backOnline": "Back online",
+        "pullToRefresh": "Pull to refresh"
+    },
+    "dashboardCustomizer": {
+        "customize": "Customize",
+        "customizeLayout": "Customize Layout",
+        "customizeDashboard": "Customize Dashboard",
+        "widgets": "Widgets",
+        "presets": "Presets",
+        "resetLayout": "Reset to Default",
+        "presetDefault": "Default",
+        "presetMinimal": "Minimal",
+        "presetAnalytics": "Analytics",
+        "widgetMetricCards": "Metric Cards",
+        "widgetFinancialOverview": "Financial Overview",
+        "widgetExpenseCategories": "Expense Categories",
+        "widgetAccountBalances": "Account Balances",
+        "widgetRecentTransactions": "Recent Transactions",
+        "widgetBudgetProgress": "Budget Progress",
+        "widgetSavingsGoals": "Savings Goals",
+        "widgetCardSummary": "Card Summary"
     },
     "months": {
         "1": "January", "2": "February", "3": "March", "4": "April",
@@ -149,7 +187,17 @@
         "colActions": "Actions",
         "syncing": "Syncing...",
         "cardPaymentsTitle": "Credit Card Payments Due This Month",
-        "cardPaymentsActive": "active"
+        "cardPaymentsActive": "active",
+        "searchPlaceholder": "Search transactions...",
+        "filters": "Filters",
+        "allCategories": "All Categories",
+        "allTypes": "All Types",
+        "typeIncome": "Income",
+        "typeExpense": "Expense",
+        "clearFilters": "Clear",
+        "result": "result",
+        "results": "results",
+        "quickAdd": "Quick Add"
     },
     "cards": {
         "title": "Cards",

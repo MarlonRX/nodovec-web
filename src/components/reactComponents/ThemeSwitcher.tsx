@@ -10,10 +10,8 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
   // Solo leer del localStorage, NO escribir
   useEffect(() => {
-    console.log('[ThemeSwitcher] Init');
     const stored = getStoredTheme();
     if (stored && THEMES.includes(stored)) {
-      console.log('[ThemeSwitcher] Read theme:', stored);
       setLocalTheme(stored);
     }
     setIsInitialized(true);
@@ -21,7 +19,6 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
   // Solo escribir cuando el usuario CAMBIA el tema manualmente
   const handleThemeChange = (newTheme: ThemeName) => {
-    console.log('[ThemeSwitcher] User changed theme:', newTheme);
     setLocalTheme(newTheme);
     setTheme(newTheme);  // Solo aquí escribimos a localStorage
   };
@@ -29,10 +26,9 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
   // stay in sync if otro componente cambia el tema (UserComponent, etc.)
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     const onThemeChanged = (e: Event) => {
       const t = (e as CustomEvent).detail as ThemeName;
-      console.log('[ThemeSwitcher] External theme change:', t);
       setLocalTheme(t);
     };
     window.addEventListener('themeChanged', onThemeChanged);
@@ -95,7 +91,7 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
               style={{ minWidth: compact ? undefined : 0 }}
             >
               <span
-                className={`w-4 h-4 rounded-full border shrink-0`} 
+                className={`w-4 h-4 rounded-full border shrink-0`}
                 style={{ backgroundColor: SWATCHES[t] }}
               />
 
@@ -111,4 +107,3 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
     </div>
   );
 }
-

@@ -21,7 +21,7 @@ const { isAuthenticated = false } = Astro.props as Props;
     id="sidebar"
     style={`background: var(--bg-primary); border-color: var(--border-primary);`}
     class="fixed left-0 top-0 h-screen w-64 transition-all duration-300 overflow-y-auto overflow-x-hidden z-20 flex-col md:flex"
-> 
+>
     <!-- Header with Logo -->
     <div
         class="sidebar-header flex items-center gap-3 px-6 py-4"
@@ -124,10 +124,10 @@ const { isAuthenticated = false } = Astro.props as Props;
     </nav>
 </aside>
 
-<!-- Toggle Button - Always Visible -->
+<!-- Toggle Button - Desktop Only -->
 <div
     id="sidebar-toggle-container"
-    class="fixed left-0 bottom-1 z-20 transition-all duration-300 flex items-center justify-center overflow-hidden"
+    class="fixed left-0 bottom-1 z-20 transition-all duration-300 flex items-center justify-center overflow-hidden hidden md:flex"
     style={`background: var(--bg-primary); width: 5rem; height: 3rem;`}
 >
     <SidebarToggle client:load />
@@ -160,25 +160,6 @@ const { isAuthenticated = false } = Astro.props as Props;
 
     aside.open {
         width: 16rem;
-    }
-
-    @media (max-width: 768px) {
-        aside {
-            padding-top: 4rem;
-        }
-
-        aside.open {
-            display: flex;
-        }
-
-        aside.collapsed {
-            display: none;
-        }
-
-        #sidebar-toggle-container {
-            width: 4rem !important;
-            left: 0;
-        }
     }
 
     .sidebar-link {
@@ -247,7 +228,7 @@ const { isAuthenticated = false } = Astro.props as Props;
     }
 
     aside.collapsed ~ #sidebar-toggle-container {
-        width: 4rem;
+        width: 5rem;
     }
 </style>
 </>
