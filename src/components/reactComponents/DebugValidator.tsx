@@ -2,33 +2,32 @@ import { useEffect } from 'react';
 import { STORAGE_CONFIG } from '../../config/api';
 
 /**
- * Component that runs debug validation in production builds
- * Exported as a client-only component to ensure it runs after React hydration
+ * Debug validation component for development builds.
+ * No-ops in production to avoid console noise.
  */
 export const DebugValidator: React.FC = () => {
-  console.log('[DV] Render START');
-  
+  const isDev = import.meta.env.DEV;
+
   useEffect(() => {
-    console.log('[DV] useEffect START');
-    console.log('[DV] Location:', window.location.href);
+    if (!isDev) return;
+
     const tokenKey = `${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`;
+    // eslint-disable-next-line no-console
     console.log('[DV] Auth:', localStorage.getItem(tokenKey) ? 'YES' : 'NO');
-    
-    // Capture React errors
+
     const originalError = console.error;
-    console.error = function(...args: any[]) {
+    console.error = function (...args: any[]) {
       if (args[0]?.includes?.('Invalid hook call')) {
+        // eslint-disable-next-line no-console
         console.log('[DV] HOOK ERROR CAPTURED! Stack:', new Error().stack);
       }
       originalError.apply(console, args);
     };
-    
+
     return () => {
-      console.log('[DV] useEffect CLEANUP');
       console.error = originalError;
     };
-  }, []);
-  
-  console.log('[DV] Render END');
+  }, [isDev]);
+
   return null;
 };

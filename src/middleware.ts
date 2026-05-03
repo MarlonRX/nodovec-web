@@ -3,7 +3,9 @@
  * Las rutas protegidas requieren token válido
  * Las rutas públicas pueden ser accedidas sin autenticación
  */
-export const onRequest = (context, next) => {
+import type { MiddlewareHandler } from 'astro';
+
+export const onRequest: MiddlewareHandler = (context, next) => {
   // Obtener token del cookie
   const token = context.cookies.get("auth_token")?.value;
 

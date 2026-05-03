@@ -30,7 +30,9 @@ export interface ExpenseCategory {
 export interface Transaction {
   id: number;
   date: string;
+  rawDate: string;
   category: string;
+  description: string;
   amount: string;
   icon: string;
   type: 'income' | 'expense';
@@ -42,6 +44,7 @@ export interface DashboardData {
   accountBalancesData: AccountBalance[];
   expenseCategories: ExpenseCategory[];
   recentTransactions: Transaction[];
+  allTransactions: Transaction[];
 }
 
 // Month name mapping
@@ -158,17 +161,18 @@ function processTransactionsToDashboard(
       value: Math.round((value / totalExpenses) * 100) || 0,
     }));
 
-  // Get recent transactions (last 7)
-  const recentTransactions: Transaction[] = transactions
+  // Map all transactions with raw date for month filtering
+  const allTransactions: Transaction[] = transactions
     .slice()
     .reverse()
-    .slice(0, 7)
     .map((transaction: any, index: number) => {
       const rawAmount = parseFloat(transaction.amount) || 0;
       return {
         id: index + 1,
         date: formatDate(transaction.date),
+        rawDate: transaction.date,
         category: transaction.category,
+        description: transaction.description || '',
         amount: `${transaction.type === "income" ? "+" : "-"}$${Math.abs(
           rawAmount
         ).toFixed(2)}`,
@@ -177,6 +181,9 @@ function processTransactionsToDashboard(
         rawAmount: rawAmount,
       };
     });
+
+  // Get recent transactions (last 7 overall)
+  const recentTransactions = allTransactions.slice(0, 7);
 
   // Use demo account balances (we don't have this data in our schema)
   const demoData = dashboardDataJson as DashboardData;
@@ -187,7 +194,21 @@ function processTransactionsToDashboard(
     accountBalancesData,
     expenseCategories,
     recentTransactions,
+    allTransactions,
   };
+}
+
+/**
+ * Filter transactions by month index (0-11)
+ */
+export function filterTransactionsByMonth(
+  transactions: Transaction[],
+  monthIndex: number
+): Transaction[] {
+  return transactions.filter((t) => {
+    const date = new Date(t.rawDate);
+    return date.getMonth() === monthIndex;
+  });
 }
 
 /**
@@ -300,7 +321,12 @@ export async function getDashboardData(): Promise<DashboardData> {
  * Returns demo data from JSON file
  */
 function getDemoData(): DashboardData {
-  return dashboardDataJson as DashboardData;
+  const data = dashboardDataJson as DashboardData;
+  // Ensure allTransactions exists for demo data (same as recent if missing)
+  return {
+    ...data,
+    allTransactions: data.allTransactions || data.recentTransactions || [],
+  };
 }
 
 /**
@@ -318,5 +344,6 @@ function getEmptyDashboard(): DashboardData {
     accountBalancesData: [],
     expenseCategories: [],
     recentTransactions: [],
+    allTransactions: [],
   };
 }

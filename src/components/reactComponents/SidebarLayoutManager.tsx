@@ -5,12 +5,8 @@ import React, { useEffect } from 'react';
  * Handles margin adjustments and DOM synchronization after React hydration completes
  */
 export const SidebarLayoutManager: React.FC = () => {
-  console.log('[SLM] Render START');
-  
   useEffect(() => {
-    console.log('[SLM] useEffect START');
     if (typeof window === 'undefined') {
-      console.log('[SLM] SSR detected, skipping');
       return;
     }
 
@@ -19,7 +15,6 @@ export const SidebarLayoutManager: React.FC = () => {
       const mainContent = document.getElementById('main-content');
 
       if (!sidebar || !mainContent) {
-        console.log('[SLM] Elements not found, skipping update');
         return;
       }
 
@@ -37,7 +32,6 @@ export const SidebarLayoutManager: React.FC = () => {
     const sidebar = document.getElementById('sidebar');
     if (sidebar) {
       const observer = new MutationObserver(() => {
-        console.log('[SLM] Mutation detected');
         updateMainMargin();
       });
 
@@ -48,13 +42,11 @@ export const SidebarLayoutManager: React.FC = () => {
 
       // Cleanup
       return () => {
-        console.log('[SLM] useEffect CLEANUP');
         observer.disconnect();
       };
     }
   }, []);
 
-  console.log('[SLM] Render END');
   // This component doesn't render anything
   return null;
 };

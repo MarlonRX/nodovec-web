@@ -9,12 +9,13 @@ export function MenuToggle({ isSidebar = false }: MenuToggleProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleClick = () => {
-        setIsOpen(!isOpen);
+        const newState = !isOpen;
+        setIsOpen(newState);
 
-        if (isSidebar) {
-            const sidebar = document.getElementById("sidebar");
-            if (sidebar) {
-                sidebar.classList.toggle("hidden");
+        if (isSidebar && typeof window !== 'undefined') {
+            // Call global function from BaseLayout
+            if (window.toggleMobileSidebar) {
+                window.toggleMobileSidebar();
             }
         } else {
             const mobileMenu = document.getElementById("mobile-menu");
@@ -30,7 +31,7 @@ export function MenuToggle({ isSidebar = false }: MenuToggleProps) {
         <button
             id={buttonId}
             onClick={handleClick}
-            className="p-2 rounded-md transition-colors duration-200 focus:outline-none"
+            className="p-2 rounded-md transition-colors duration-200 focus:outline-none touch-target"
             style={{
                 color: "var(--accent-primary)",
             }}

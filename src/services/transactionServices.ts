@@ -1,11 +1,10 @@
 // Servicios relacionados con transacciones
 import { Filters } from '@/schemas/tableSchema';
 import { getFetch, postFetch, putFetch, deleteFetch } from './fetchTypes';
-import type { AxiosResponse, AxiosError } from 'axios';
+import type { AxiosResponse } from 'axios';
 import axios from 'axios';
 import { isDemoMode, filterTransactionsByDate } from '@/lib/demoUtils';
 import { DEMO_TRANSACTIONS } from '@/data/demoData';
-import { id } from 'zod/v4/locales';
 
 // SERVICIOS DE TRANSACCIONES
 

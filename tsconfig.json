@@ -1,18 +1,27 @@
 {
-    "include": [".astro/types.d.ts", "**/*", "src/services/fetchTypes.ts"],
-    "exclude": ["dist"],
+    "include": ["src/**/*", ".astro/types.d.ts", "**/*.ts", "**/*.tsx"],
+    "exclude": ["dist", "node_modules", "src/types/generated.d.ts"],
     "compilerOptions": {
         "baseUrl": ".",
+        "target": "ES2022",
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
         "paths": {
             "@/*": ["src/*"]
         },
+        "strict": true,
         "strictNullChecks": true,
+        "noImplicitAny": true,
+        "strictFunctionTypes": true,
         "jsx": "react-jsx",
         "jsxImportSource": "react",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
-        "noEmit": true
+        "noEmit": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
     }
 }

@@ -71,14 +71,18 @@ const handleSuccess = (
 };
 
 /**
- * GET - Obtener datos
+ * Perform an authenticated GET request.
+ * @param endpoint - API endpoint path (e.g., 'transactions')
+ * @param params - Optional query parameters
+ * @returns Axios response
+ * @throws Error on network or HTTP errors
  */
-export const getFetch = async (
-  endpoint: string, 
-  params?: Record<string, any>
-): Promise<AxiosResponse> => {
+export const getFetch = async <T = unknown>(
+  endpoint: string,
+  params?: Record<string, unknown>
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.get(endpoint, { params });
+    const response = await axiosInstance.get<T>(endpoint, { params });
     return handleSuccess(response);
   } catch (error) {
     throw handleError(error);
@@ -86,14 +90,18 @@ export const getFetch = async (
 };
 
 /**
- * POST - Crear/Enviar datos
+ * Perform an authenticated POST request.
+ * @param endpoint - API endpoint path
+ * @param data - Request body payload
+ * @returns Axios response
+ * @throws Error on network or HTTP errors
  */
-export const postFetch = async (
-  endpoint: string, 
-  data?: any
-): Promise<AxiosResponse> => {
+export const postFetch = async <T = unknown>(
+  endpoint: string,
+  data?: unknown
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.post(endpoint, data);
+    const response = await axiosInstance.post<T>(endpoint, data);
     return handleSuccess(response);
   } catch (error) {
     throw handleError(error);
@@ -101,14 +109,18 @@ export const postFetch = async (
 };
 
 /**
- * PUT - Actualizar datos completamente
+ * Perform an authenticated PUT request.
+ * @param endpoint - API endpoint path
+ * @param data - Request body payload
+ * @returns Axios response
+ * @throws Error on network or HTTP errors
  */
-export const putFetch = async (
-  endpoint: string, 
-  data?: any
-): Promise<AxiosResponse> => {
+export const putFetch = async <T = unknown>(
+  endpoint: string,
+  data?: unknown
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.put(endpoint, data);
+    const response = await axiosInstance.put<T>(endpoint, data);
     return handleSuccess(response);
   } catch (error) {
     throw handleError(error);
@@ -118,12 +130,12 @@ export const putFetch = async (
 /**
  * PATCH - Actualizar datos parcialmente
  */
-export const patchFetch = async (
-  endpoint: string, 
-  data?: any
-): Promise<AxiosResponse> => {
+export const patchFetch = async <T = unknown>(
+  endpoint: string,
+  data?: unknown
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.patch(endpoint, data);
+    const response = await axiosInstance.patch<T>(endpoint, data);
     return handleSuccess(response);
   } catch (error) {
     throw handleError(error);
@@ -131,13 +143,16 @@ export const patchFetch = async (
 };
 
 /**
- * DELETE - Eliminar datos
+ * Perform an authenticated DELETE request.
+ * @param endpoint - API endpoint path
+ * @returns Axios response
+ * @throws Error on network or HTTP errors
  */
-export const deleteFetch = async (
+export const deleteFetch = async <T = unknown>(
   endpoint: string
-): Promise<AxiosResponse> => {
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.delete(endpoint);
+    const response = await axiosInstance.delete<T>(endpoint);
     return handleSuccess(response);
   } catch (error) {
     throw handleError(error);
@@ -145,38 +160,42 @@ export const deleteFetch = async (
 };
 
 /**
- * POST - Para autenticación (login)
+ * Perform an authentication POST request and persist tokens to storage.
+ * @param endpoint - Auth endpoint path (e.g., 'auth/login')
+ * @param credentials - Login credentials object
+ * @returns Axios response with token data
+ * @throws Error on invalid credentials or network failure
  */
-export const authFetch = async (
-  endpoint: string, 
-  credentials: any
-): Promise<AxiosResponse> => {
+export const authFetch = async <T extends Record<string, unknown> = Record<string, unknown>>(
+  endpoint: string,
+  credentials: unknown
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await axiosInstance.post(endpoint, credentials);
-    const tokenData = response.data || {};
+    const response = await axiosInstance.post<T>(endpoint, credentials);
+    const tokenData = response.data || ({} as Record<string, unknown>);
 
     // Normalizar nombres de token (token | access_token) y almacenar refresh token
-    const accessToken = tokenData.token || tokenData.access_token;
-    const refreshToken = tokenData.refresh_token || tokenData.refreshToken;
+    const accessToken = (tokenData as Record<string, unknown>).token || (tokenData as Record<string, unknown>).access_token;
+    const refreshToken = (tokenData as Record<string, unknown>).refresh_token || (tokenData as Record<string, unknown>).refreshToken;
 
     if (typeof window !== 'undefined') {
       if (accessToken) {
-        localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`, accessToken);
+        localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.TOKEN_KEY}`, String(accessToken));
       }
 
       if (refreshToken) {
-        localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`, refreshToken);
+        localStorage.setItem(`${STORAGE_CONFIG.PREFIX}${STORAGE_CONFIG.REFRESH_TOKEN_KEY}`, String(refreshToken));
       }
 
-      if (tokenData.user) {
+      if ((tokenData as Record<string, unknown>).user) {
         // Mapear nombre completo si existe first_name/last_name
-        const user = tokenData.user;
+        const user = (tokenData as Record<string, unknown>).user as Record<string, unknown>;
 
         // Normalizar avatar: si backend devuelve "avatars/xxx.jpg" u "avatars/..." convertir a URL pública
         if (user.avatar && typeof user.avatar === 'string' && !/^https?:\/\//i.test(user.avatar)) {
           const base = API_CONFIG.BASE_URL.replace(/\/$/, '');
           // asegurar que no dupliquemos 'storage/'
-          const avatarPath = user.avatar.replace(/^\/*(storage\/)?/, '');
+          const avatarPath = String(user.avatar).replace(/^\/*(storage\/)?/, '');
           user.avatar = `${base}/storage/${avatarPath}`;
         }
 
@@ -193,8 +212,9 @@ export const authFetch = async (
 };
 
 /**
- * Verificar si hay token de autenticación
- * IMPORTANTE: Usa authStore como source of truth
+ * Check if the user is currently authenticated.
+ * Uses authStore as the source of truth.
+ * @returns True if authenticated, false otherwise
  */
 export const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
@@ -202,8 +222,9 @@ export const isAuthenticated = (): boolean => {
 };
 
 /**
- * Obtener usuario actual
- * IMPORTANTE: Usa authStore como source of truth
+ * Get the currently authenticated user.
+ * Uses authStore as the source of truth.
+ * @returns User object or null if not authenticated
  */
 export const getCurrentUser = (): any | null => {
   if (typeof window === 'undefined') return null;

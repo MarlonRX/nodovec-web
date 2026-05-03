@@ -21,13 +21,14 @@ export const SidebarHoverStyles: React.FC = () => {
       const invertedText = (rootStyles.getPropertyValue('--text-inverted') || '#ffffff').trim();
 
       sidebarLinks.forEach((link) => {
-        link.addEventListener('mouseenter', function () {
-          (this as HTMLElement).style.color = invertedText;
-          (this as HTMLElement).style.backgroundColor = `rgba(${accentRgb}, ${sidebarHoverAlpha})`;
+        const el = link as HTMLElement;
+        el.addEventListener('mouseenter', () => {
+          el.style.color = invertedText;
+          el.style.backgroundColor = `rgba(${accentRgb}, ${sidebarHoverAlpha})`;
         });
-        link.addEventListener('mouseleave', function () {
-          (this as HTMLElement).style.color = secondaryColor;
-          (this as HTMLElement).style.backgroundColor = 'transparent';
+        el.addEventListener('mouseleave', () => {
+          el.style.color = secondaryColor;
+          el.style.backgroundColor = 'transparent';
         });
       });
     }, 100);
