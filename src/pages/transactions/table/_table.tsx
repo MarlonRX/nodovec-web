@@ -241,6 +241,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         setIsModalOpen(false);
         setEditingTransaction(null);
         setRefreshTrigger(prev => prev + 1);
+        window.dispatchEvent(new CustomEvent('transactionCreated'));
       } else {
         toast.error(result.message || t('transactions.errorCreate'));
       }
@@ -258,6 +259,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       if (result.response) {
         toast.success(t('transactions.deleted'));
         setRefreshTrigger(prev => prev + 1);
+        window.dispatchEvent(new CustomEvent('transactionCreated'));
       } else {
         toast.error(result.message || t('transactions.errorDelete'));
       }

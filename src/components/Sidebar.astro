@@ -70,7 +70,7 @@ const { isAuthenticated = false } = Astro.props as Props;
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="home" />
-                <span class="text-sm font-medium ml-3">
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
                     <TranslatedText
                         translationKey="sidebar.dashboard"
                         client:load
@@ -86,7 +86,7 @@ const { isAuthenticated = false } = Astro.props as Props;
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="transactions" />
-                <span class="text-sm font-medium ml-3">
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
                     <TranslatedText
                         translationKey="sidebar.transactions"
                         client:load
@@ -102,9 +102,25 @@ const { isAuthenticated = false } = Astro.props as Props;
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="cards" />
-                <span class="text-sm font-medium ml-3">
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
                     <TranslatedText
                         translationKey="sidebar.cards"
+                        client:load
+                    />
+                </span>
+            </a>
+
+            <!-- Savings Goals -->
+            <a
+                href="/savings-goals/table"
+                id="sidebar-savings-goals"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="savings" />
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
+                    <TranslatedText
+                        translationKey="sidebar.savingsGoals"
                         client:load
                     />
                 </span>
@@ -118,7 +134,7 @@ const { isAuthenticated = false } = Astro.props as Props;
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="preferences" />
-                <span class="text-sm font-medium ml-3">Preferencias</span>
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">Preferencias</span>
             </a>
         </div>
     </nav>
@@ -205,7 +221,10 @@ const { isAuthenticated = false } = Astro.props as Props;
     aside.collapsed .sidebar-footer span {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s ease-in-out;
+        width: 0;
+        margin-left: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
     }
 
     aside.open nav span:not([class*="h-6"]),

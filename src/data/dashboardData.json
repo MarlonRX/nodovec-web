@@ -28,12 +28,12 @@
     { "name": "Others", "value": 5 }
   ],
   "recentTransactions": [
-    { "id": 1, "date": "23/03/2025", "category": "Bases Card", "amount": "-$100.00", "icon": "trophy" },
-    { "id": 2, "date": "23/05/2025", "category": "Accounthibs", "amount": "-$50.00", "icon": "folder" },
-    { "id": 3, "date": "23/05/2025", "category": "Payssnt & Service", "amount": "+$100.00", "icon": "bank" },
-    { "id": 4, "date": "22/05/2025", "category": "Recert Transaction", "amount": "-$50.00", "icon": "bell" },
-    { "id": 5, "date": "23/05/2025", "category": "Taxanos", "amount": "+$20.00", "icon": "car" },
-    { "id": 6, "date": "20/05/2025", "category": "Invoices", "amount": "-$0.00", "icon": "document" },
-    { "id": 7, "date": "20/05/2025", "category": "Calculated", "amount": "-$50.00", "icon": "user" }
+    { "id": 1, "date": "23/03/2025", "category": "Bases Card", "description": "Monthly base card payment", "amount": "-$100.00", "icon": "trophy", "type": "expense", "rawAmount": 100 },
+    { "id": 2, "date": "23/05/2025", "category": "Accounthibs", "description": "Account maintenance fee", "amount": "-$50.00", "icon": "folder", "type": "expense", "rawAmount": 50 },
+    { "id": 3, "date": "23/05/2025", "category": "Payssnt & Service", "description": "Freelance project payment", "amount": "+$100.00", "icon": "bank", "type": "income", "rawAmount": 100 },
+    { "id": 4, "date": "22/05/2025", "category": "Recert Transaction", "description": "Grocery shopping at supermarket", "amount": "-$50.00", "icon": "bell", "type": "expense", "rawAmount": 50 },
+    { "id": 5, "date": "23/05/2025", "category": "Taxanos", "description": "Tax refund received", "amount": "+$20.00", "icon": "car", "type": "income", "rawAmount": 20 },
+    { "id": 6, "date": "20/05/2025", "category": "Invoices", "description": "Utility bill payment", "amount": "-$0.00", "icon": "document", "type": "expense", "rawAmount": 0 },
+    { "id": 7, "date": "20/05/2025", "category": "Calculated", "description": "Dinner with friends", "amount": "-$50.00", "icon": "user", "type": "expense", "rawAmount": 50 }
   ]
 }

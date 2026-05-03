@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SavingsGoalsTable from "./_list";
+
+export const prerender = false;
+---
+
+<BaseLayout>
+    <SavingsGoalsTable client:only="react" />
+</BaseLayout>

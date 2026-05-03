@@ -27,7 +27,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                         className="text-sm font-semibold"
                         style={{ color: 'var(--text-secondary)' }}
                     >
-                        {value}/{max}
+                        {Math.round(percentage)}%
                     </span>
                 )}
             </div>
