@@ -50,7 +50,6 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [filterCategory, setFilterCategory] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-
   const yearOptions = Array.from({ length: 5 }, (_, i) => {
     const year = currentDate.getFullYear() - i;
     return { value: year, label: String(year) };
@@ -353,8 +352,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         render: (_: any, row: Transaction): ReactNode => (
           <div className="flex gap-2">
             <button
-              onClick={(e) => { 
-                e.stopPropagation(); 
+              onClick={(e) => {
+                e.stopPropagation();
                 if (!demoMode) handleEdit(row);
                 else toast.info(t('common.demoReadOnly'));
               }}
@@ -365,8 +364,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
               <Pencil className="w-4 h-4" />
             </button>
             <button
-              onClick={(e) => { 
-                e.stopPropagation(); 
+              onClick={(e) => {
+                e.stopPropagation();
                 if (!demoMode) setTransactionToDelete(row.uuid as string);
                 else toast.info(t('common.demoReadOnly'));
               }}
