@@ -5,7 +5,8 @@
 export function getBackendUrl(): string {
   // Solo en el navegador (cliente)
   if (typeof window === 'undefined') {
-    return 'http://backend:8080'; // SSR fallback para servidor
+    const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
+    return envUrl || 'http://backend:8080';
   }
 
   const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
@@ -15,12 +16,15 @@ export function getBackendUrl(): string {
   // construir URL dinámicamente (estamos en producción)
   if (envUrl && (envUrl.includes('localhost') || envUrl.includes('127.0.0.1'))) {
     if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
-      // Estamos en producción, usar mismo dominio que el frontend
       return `${window.location.protocol}//${window.location.host}`;
     }
   }
   
-  // En todos los otros casos, usar PUBLIC_API_BASE_URL tal cual
+  // Si no hay env URL, usar el mismo origen que el frontend
+  if (!envUrl) {
+    return window.location.origin;
+  }
+  
   return envUrl;
 }
 
