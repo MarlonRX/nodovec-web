@@ -2,6 +2,10 @@
     "name": "cashpilot-web",
     "type": "module",
     "version": "0.0.1",
+    "packageManager": "bun@1.2.12",
+    "engines": {
+        "node": ">=20.0.0"
+    },
     "scripts": {
         "dev": "bun run --bun node_modules/astro/astro.js dev",
         "build": "bun run --bun node_modules/astro/astro.js build",
