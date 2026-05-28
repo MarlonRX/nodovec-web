@@ -38,6 +38,11 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
+# Lockfiles (only bun.lock is used, others conflict with Nixpacks detection)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
 # Dependency directories
 node_modules/
 jspm_packages/
