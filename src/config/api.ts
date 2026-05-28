@@ -25,7 +25,13 @@ export function getBackendUrl(): string {
     return window.location.origin;
   }
   
-  return envUrl;
+  // Forzar HTTPS si el frontend se sirve en HTTPS (previene mixed-content)
+  const apiUrl = new URL(envUrl);
+  if (window.location.protocol === 'https:') {
+    apiUrl.protocol = 'https:';
+  }
+  
+  return apiUrl.origin;
 }
 
 export const API_CONFIG = {
