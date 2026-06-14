@@ -3,10 +3,22 @@
 
 // Detectar URL base del backend EN TIEMPO DE EJECUCIÓN
 export function getBackendUrl(): string {
-  // Solo en el navegador (cliente)
+  // Solo en el servidor
   if (typeof window === 'undefined') {
-    const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
+    const envUrl = import.meta.env.PUBLIC_API_BASE_URL || process.env.PUBLIC_API_BASE_URL;
     return envUrl || 'http://backend:8080';
+  }
+
+  // Intentar leer la variable inyectada dinámicamente en el layout (tiempo de ejecución del cliente)
+  const runtimeUrl = (window as any).PUBLIC_API_BASE_URL;
+  if (runtimeUrl) {
+    const hostname = window.location.hostname;
+    if (runtimeUrl.includes('localhost') || runtimeUrl.includes('127.0.0.1')) {
+      if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        return `${window.location.protocol}//${window.location.host}`;
+      }
+    }
+    return runtimeUrl;
   }
 
   const envUrl = import.meta.env.PUBLIC_API_BASE_URL;
