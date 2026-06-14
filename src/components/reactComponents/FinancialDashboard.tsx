@@ -205,8 +205,11 @@ const FinancialDashboard = () => {
     }
     const percentageChange =
       ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100;
+    const roundedValue = isFinite(percentageChange)
+      ? Math.round(Math.abs(percentageChange) * 100) / 100
+      : 0;
     return {
-      value: isFinite(percentageChange) ? Math.abs(percentageChange) : 0,
+      value: roundedValue,
       isPositive: percentageChange >= 0,
     };
   };
@@ -236,46 +239,48 @@ const FinancialDashboard = () => {
         t={t}
       />
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 sm:pb-32">
-        <Suspense
-          fallback={
-            <LoadingState message={t("dashboard.loadingView") || "Loading view..."} />
-          }
-        >
-          {viewMode === "year" ? (
-            <YearView
-              monthlyData={monthlyData}
-              accountBalancesData={accountBalancesData}
-              expenseCategories={expenseCategories}
-              recentTransactions={recentTransactions}
-              metrics={metrics}
-              incomeTrend={incomeTrend}
-              expensesTrend={expensesTrend}
-              cashFlowTrend={cashFlowTrend}
-              cashFlowDomain={cashFlowDomain}
-              incomeDomain={incomeDomain}
-              expensesDomain={expensesDomain}
-              t={t}
-              currentYear={currentYear}
-              activeGoal={activeGoal}
-            />
-          ) : (
-            <MonthView
-              monthlyData={monthlyData}
-              expenseCategories={expenseCategories}
-              monthTransactions={monthTransactions}
-              selectedMonth={selectedMonth}
-              metrics={metrics}
-              incomeTrend={incomeTrend}
-              expensesTrend={expensesTrend}
-              cashFlowTrend={cashFlowTrend}
-              incomeDomain={incomeDomain}
-              expensesDomain={expensesDomain}
-              t={t}
-              currentYear={currentYear}
-            />
-          )}
-        </Suspense>
+      <div className="flex-1 overflow-y-auto w-full">
+        <div className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-32">
+          <Suspense
+            fallback={
+              <LoadingState message={t("dashboard.loadingView") || "Loading view..."} />
+            }
+          >
+            {viewMode === "year" ? (
+              <YearView
+                monthlyData={monthlyData}
+                accountBalancesData={accountBalancesData}
+                expenseCategories={expenseCategories}
+                recentTransactions={recentTransactions}
+                metrics={metrics}
+                incomeTrend={incomeTrend}
+                expensesTrend={expensesTrend}
+                cashFlowTrend={cashFlowTrend}
+                cashFlowDomain={cashFlowDomain}
+                incomeDomain={incomeDomain}
+                expensesDomain={expensesDomain}
+                t={t}
+                currentYear={currentYear}
+                activeGoal={activeGoal}
+              />
+            ) : (
+              <MonthView
+                monthlyData={monthlyData}
+                expenseCategories={expenseCategories}
+                monthTransactions={monthTransactions}
+                selectedMonth={selectedMonth}
+                metrics={metrics}
+                incomeTrend={incomeTrend}
+                expensesTrend={expensesTrend}
+                cashFlowTrend={cashFlowTrend}
+                incomeDomain={incomeDomain}
+                expensesDomain={expensesDomain}
+                t={t}
+                currentYear={currentYear}
+              />
+            )}
+          </Suspense>
+        </div>
       </div>
     </div>
   );

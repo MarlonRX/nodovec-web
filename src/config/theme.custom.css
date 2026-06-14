@@ -9,9 +9,11 @@ html[data-theme="custom"] {
   --text-inverted: #ffffff;
 
   --accent-primary: #ff6f61;
+  --accent-primary-rgb: 255, 111, 97;
   --accent-secondary: #b2f5ea;
   --accent-hover: #ff5a4b;
 
   --border-primary: #e6edf2;
   --border-secondary: #dbeef3;
+  --bg-surface-rgb: 255, 255, 255;
 }

@@ -16,4 +16,5 @@ html[data-theme="light"] {
 
   --border-primary: #e6edf3;
   --border-secondary: #cbd5e1;
+  --bg-surface-rgb: 248, 250, 252;
 }

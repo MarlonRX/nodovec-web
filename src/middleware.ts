@@ -17,26 +17,30 @@ export const onRequest: MiddlewareHandler = (context, next) => {
 
   const path = context.url.pathname;
 
-  // Si intenta acceder a ruta protegida sin token -> redirigir a login
+  // Si intenta acceder a ruta protegida sin token -> redirigir a demo (modulo por defecto)
   // PERO permitir /dashboard en modo preview/desarrollo para testing
   if (protectedRoutes.some(route => path.startsWith(route)) && !token) {
     // Check if in preview/dev mode by looking at environment or referrer
     const allowPreviewMode = process.env.NODE_ENV !== "production";
     
     if (!allowPreviewMode) {
-      return context.redirect("/login");
+      return context.redirect("/demo");
     }
     // In preview/dev, allow accessing dashboard for testing
   }
 
   // Si está en login/register/demo pero tiene token válido -> redirigir a dashboard
-  if ((path === "/login" || path === "/register") && token) {
+  if ((path === "/login" || path === "/register" || path === "/demo") && token) {
     return context.redirect("/dashboard");
   }
 
-  // Si está en home (/) pero tiene token -> redirigir a dashboard
-  if (path === "/" && token) {
-    return context.redirect("/dashboard");
+  // Si está en home (/)
+  if (path === "/") {
+    if (token) {
+      return context.redirect("/dashboard");
+    } else {
+      return context.redirect("/demo");
+    }
   }
 
   return next();

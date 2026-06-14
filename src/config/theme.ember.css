@@ -1,20 +1,19 @@
 /* Brasa Nocturna — oscuro cálido con toques anaranjados */
 html[data-theme="ember"] {
-  --bg-primary: #0f0d0c;
-  --bg-surface: #171414;
-  --bg-secondary: #121111;
+  --bg-primary: #0a0807;
+  --bg-surface: #12100f;
+  --bg-secondary: #0e0c0b;
 
-  --text-primary: #fff7ef;
-  --text-secondary: #d7c7b8;
-  --text-inverted: #0f0d0c;
+  --text-primary: #fdfaf7;
+  --text-secondary: #c9b19e;
+  --text-inverted: #0a0807;
 
-  --accent-primary: #ff8a3d; /* brasa */
-  --accent-primary-rgb: 255, 138, 61;
-  --accent-secondary: #3a2418;
-  --accent-hover: #ff7a1a;
+  --accent-primary: #f97316; /* brasa vibrante */
+  --accent-primary-rgb: 249, 115, 22;
+  --accent-secondary: #2c160a;
+  --accent-hover: #ea580c;
 
-  --border-primary: #241a18;
-  --border-secondary: #2c201d;
-
-  --sidebar-hover-alpha: 0.13;
+  --border-primary: rgba(255, 255, 255, 0.05);
+  --border-secondary: rgba(255, 255, 255, 0.09);
+  --bg-surface-rgb: 18, 16, 15;
 }

@@ -1,20 +1,19 @@
 /* Violeta Crepúsculo — oscuro con matiz violeta */
 html[data-theme="violet-dusk"] {
-  --bg-primary: #0c0810;
-  --bg-surface: #151026;
-  --bg-secondary: #0e0a16;
+  --bg-primary: #07040a;
+  --bg-surface: #100a1c;
+  --bg-secondary: #0a0612;
 
   --text-primary: #f5f3ff;
-  --text-secondary: #bdb4d8;
-  --text-inverted: #0c0810;
+  --text-secondary: #a78bfa;
+  --text-inverted: #07040a;
 
-  --accent-primary: #9b7bff; /* violeta */
-  --accent-primary-rgb: 155, 123, 255;
-  --accent-secondary: #2e2342;
-  --accent-hover: #8a63ff;
+  --accent-primary: #8b5cf6; /* violeta */
+  --accent-primary-rgb: 139, 92, 246;
+  --accent-secondary: #24163b;
+  --accent-hover: #7c3aed;
 
-  --border-primary: #231b31;
-  --border-secondary: #2a2238;
-
-  --sidebar-hover-alpha: 0.11;
+  --border-primary: rgba(255, 255, 255, 0.05);
+  --border-secondary: rgba(255, 255, 255, 0.09);
+  --bg-surface-rgb: 16, 10, 28;
 }

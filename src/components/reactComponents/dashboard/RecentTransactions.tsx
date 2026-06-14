@@ -100,7 +100,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
               </span>
             </td>
             <td
-              className={`font-bold text-right ${compact ? "py-2 px-2 text-[11px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs sm:text-sm"}`}
+              className={`font-bold text-right font-financial ${compact ? "py-2 px-2 text-[11px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs sm:text-sm"}`}
               style={{
                 color:
                   transaction.type === "income"

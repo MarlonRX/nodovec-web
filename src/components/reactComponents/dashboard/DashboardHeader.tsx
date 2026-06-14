@@ -32,7 +32,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       background: `linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-primary) 100%)`,
     }}
   >
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="min-w-0">
           <h1

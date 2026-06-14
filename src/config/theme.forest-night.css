@@ -1,20 +1,19 @@
 /* Bosque Nocturno — oscuro con matiz verde/terroso */
 html[data-theme="forest-night"] {
-  --bg-primary: #08110c;
-  --bg-surface: #0f1712;
-  --bg-secondary: #0b130e;
+  --bg-primary: #040906;
+  --bg-surface: #0a110d;
+  --bg-secondary: #070d09;
 
-  --text-primary: #eef8f1;
-  --text-secondary: #abc3b1;
-  --text-inverted: #08110c;
+  --text-primary: #f0fdf4;
+  --text-secondary: #86efac;
+  --text-inverted: #040906;
 
-  --accent-primary: #6ee7b7; /* verde suave */
-  --accent-primary-rgb: 110, 231, 183;
-  --accent-secondary: #123826;
-  --accent-hover: #5fd6a8;
+  --accent-primary: #10b981; /* verde esmeralda */
+  --accent-primary-rgb: 16, 185, 129;
+  --accent-secondary: #062f1e;
+  --accent-hover: #059669;
 
-  --border-primary: #14261d;
-  --border-secondary: #1a3529;
-
-  --sidebar-hover-alpha: 0.12;
+  --border-primary: rgba(255, 255, 255, 0.05);
+  --border-secondary: rgba(255, 255, 255, 0.09);
+  --bg-surface-rgb: 10, 17, 13;
 }

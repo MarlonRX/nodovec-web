@@ -1,20 +1,19 @@
 /* Medianoche Turquesa — oscuro con matiz turquesa */
 html[data-theme="midnight-teal"] {
-  --bg-primary: #071016;
-  --bg-surface: #0d1a22;
-  --bg-secondary: #0b1418;
+  --bg-primary: #050b0f;
+  --bg-surface: #0a131a;
+  --bg-secondary: #070e12;
 
-  --text-primary: #e7f6f5;
-  --text-secondary: #9ac1bf;
-  --text-inverted: #071016;
+  --text-primary: #f2fbf9;
+  --text-secondary: #8bc3c0;
+  --text-inverted: #050b0f;
 
   --accent-primary: #2dd4bf; /* turquesa */
   --accent-primary-rgb: 45, 212, 191;
-  --accent-secondary: #12333a;
-  --accent-hover: #22c3ad;
+  --accent-secondary: #0f2a30;
+  --accent-hover: #14b8a6;
 
-  --border-primary: #132428;
-  --border-secondary: #0f3135;
-
-  --sidebar-hover-alpha: 0.14;
+  --border-primary: rgba(255, 255, 255, 0.05);
+  --border-secondary: rgba(255, 255, 255, 0.09);
+  --bg-surface-rgb: 10, 19, 26;
 }

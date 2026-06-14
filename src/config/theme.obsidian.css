@@ -1,20 +1,19 @@
 /* Obsidiana — oscuro profundo con acento frío */
 html[data-theme="obsidian"] {
-  --bg-primary: #0b0b0d;
-  --bg-surface: #121214;
-  --bg-secondary: #0f1113;
+  --bg-primary: #050508;
+  --bg-surface: #0b0c10;
+  --bg-secondary: #08080b;
 
-  --text-primary: #e6eef8;
-  --text-secondary: #9aa6b2;
-  --text-inverted: #0b0b0d;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-inverted: #050508;
 
-  --accent-primary: #6cc3ff; /* hielo */
-  --accent-primary-rgb: 108, 195, 255;
-  --accent-secondary: #263142;
-  --accent-hover: #53b0ff;
+  --accent-primary: #00e5ff; /* hielo eléctrico */
+  --accent-primary-rgb: 0, 229, 255;
+  --accent-secondary: #1e293b;
+  --accent-hover: #00b8cc;
 
-  --border-primary: #1a1c1f;
-  --border-secondary: #222428;
-
-  --sidebar-hover-alpha: 0.12;
+  --border-primary: rgba(255, 255, 255, 0.04);
+  --border-secondary: rgba(255, 255, 255, 0.08);
+  --bg-surface-rgb: 11, 12, 16;
 }
