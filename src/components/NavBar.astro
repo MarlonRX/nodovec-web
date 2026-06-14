@@ -4,10 +4,6 @@ import { LoginButton } from "./reactComponents/LoginButton";
 import { MenuToggle } from "./reactComponents/MenuToggle";
 import { ThemeToggle } from "./reactComponents/ThemeToggle";
 
-// Detectar si el usuario está autenticado
-const token = Astro.cookies.get("auth_token")?.value;
-const isAuthenticated = !!token;
-
 // No renderizar NavBar en la página de login o register
 const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/register";
 ---
@@ -27,14 +23,14 @@ const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/
             <div class="flex-1"></div>
 
             <div class="hidden md:flex items-center space-x-4">
-                {isAuthenticated && <ThemeToggle client:only="react" />}
+                <ThemeToggle client:only="react" />
                 <LanguageSelector client:load />
                 <LoginButton client:load />
             </div>
 
             <!-- Mobile: Theme toggle on right -->
             <div class="md:hidden flex items-center">
-                {isAuthenticated && <ThemeToggle client:only="react" />}
+                <ThemeToggle client:only="react" />
             </div>
         </div>
     </div>

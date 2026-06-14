@@ -113,9 +113,6 @@ export function LoginButton() {
                     </div>
                     <span className="text-sm font-medium">{loginText}</span>
                 </a>
-
-                {/* Selector de tema (compacto) */}
-                <ThemeSwitcher compact />
             </div>
         );
     }
