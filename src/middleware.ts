@@ -5,7 +5,7 @@
  */
 import type { MiddlewareHandler } from 'astro';
 
-export const onRequest: MiddlewareHandler = (context, next) => {
+export const onRequest: MiddlewareHandler = async (context, next) => {
   // Obtener token del cookie
   const token = context.cookies.get("auth_token")?.value;
 
@@ -36,5 +36,22 @@ export const onRequest: MiddlewareHandler = (context, next) => {
     }
   }
 
-  return next();
+  const response = await next();
+
+  // Si la ruta no existe (404) y no es un recurso estático -> redirigir según sesión
+  if (response.status === 404) {
+    const isStaticAsset = path.startsWith("/_astro/") || 
+                          path.startsWith("/images/") || 
+                          (path.split("/").pop() || "").includes(".");
+                          
+    if (!isStaticAsset) {
+      if (token) {
+        return context.redirect("/dashboard");
+      } else {
+        return context.redirect("/demo");
+      }
+    }
+  }
+
+  return response;
 };
