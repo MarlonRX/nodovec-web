@@ -390,5 +390,12 @@
         "other_expense": "Other Expense",
         "expense": "Expense",
         "post": "Post"
+    },
+    "unauthorized": {
+        "title": "Unauthorized Access",
+        "message": "You do not have permission to access this module. Please log in or use the demo version.",
+        "goLogin": "Log In",
+        "goDemo": "Try Demo Mode",
+        "goHome": "Go Home"
     }
 }

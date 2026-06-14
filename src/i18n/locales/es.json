@@ -390,5 +390,12 @@
         "other_expense": "Otro Gasto",
         "expense": "Gasto",
         "post": "Correo"
+    },
+    "unauthorized": {
+        "title": "Acceso No Autorizado",
+        "message": "No tienes permiso para acceder a este módulo. Por favor, inicia sesión o prueba la versión demo.",
+        "goLogin": "Iniciar Sesión",
+        "goDemo": "Probar Demo",
+        "goHome": "Ir al Inicio"
     }
 }

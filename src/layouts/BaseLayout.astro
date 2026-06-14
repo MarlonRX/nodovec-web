@@ -87,7 +87,7 @@ const backendUrl = import.meta.env.PUBLIC_API_BASE_URL || process.env.PUBLIC_API
         <Toaster client:load />
         <DebugValidator client:only="react" />
         <SidebarLayoutManager client:only="react" />
-        <QuickAddFAB client:only="react" />
+        {isAuthenticated && <QuickAddFAB client:only="react" />}
         <OfflineIndicator client:only="react" />
         <NavBar />
 

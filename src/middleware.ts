@@ -10,23 +10,16 @@ export const onRequest: MiddlewareHandler = (context, next) => {
   const token = context.cookies.get("auth_token")?.value;
 
   // Rutas públicas que NO requieren autenticación
-  const publicRoutes = ["/", "/login", "/register", "/demo"];
+  const publicRoutes = ["/", "/login", "/register", "/demo", "/unauthorized"];
   
   // Rutas protegidas que SÍ requieren autenticación
-  const protectedRoutes = ["/dashboard", "/transactions"];
+  const protectedRoutes = ["/dashboard", "/transactions", "/cards", "/savings-goals", "/preferences"];
 
   const path = context.url.pathname;
 
-  // Si intenta acceder a ruta protegida sin token -> redirigir a demo (modulo por defecto)
-  // PERO permitir /dashboard en modo preview/desarrollo para testing
+  // Si intenta acceder a ruta protegida sin token -> redirigir a demo
   if (protectedRoutes.some(route => path.startsWith(route)) && !token) {
-    // Check if in preview/dev mode by looking at environment or referrer
-    const allowPreviewMode = process.env.NODE_ENV !== "production";
-    
-    if (!allowPreviewMode) {
-      return context.redirect("/demo");
-    }
-    // In preview/dev, allow accessing dashboard for testing
+    return context.redirect("/demo");
   }
 
   // Si está en login/register/demo pero tiene token válido -> redirigir a dashboard

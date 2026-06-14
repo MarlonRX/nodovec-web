@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { translate, getCurrentLanguage } from "../i18n";
+
+export const prerender = false;
+
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
+---
+
+<BaseLayout>
+  <div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Icon / Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: rgba(var(--semantic-warning-rgb, 245, 158, 11), 0.1); border: 2px solid var(--semantic-warning, #f59e0b);">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="var(--semantic-warning, #f59e0b)" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-(--text-primary) mb-2 tracking-tight">
+          {t("unauthorized.title")}
+        </h1>
+        <p class="text-(--text-secondary) text-sm font-medium px-4">
+          {t("unauthorized.message")}
+        </p>
+      </div>
+
+      <!-- Action Buttons Card -->
+      <div class="bg-(--bg-surface) border border-(--border-primary) rounded-2xl p-6 sm:p-8 shadow-xl text-center space-y-4">
+        <!-- Log In Button -->
+        <a
+          href="/login"
+          class="w-full block text-center px-6 py-3.5 bg-(--accent-primary) text-(--text-inverted) font-black text-sm uppercase tracking-wider rounded-xl hover:bg-(--accent-hover) transition-all shadow-lg hover:shadow-(--accent-primary)/30 hover:-translate-y-0.5 active:translate-y-0"
+        >
+          {t("unauthorized.goLogin")}
+        </a>
+
+        <!-- Try Demo Button -->
+        <a
+          href="/demo"
+          class="w-full block text-center px-6 py-3.5 bg-(--bg-secondary) text-(--text-primary) font-black text-sm uppercase tracking-wider rounded-xl border-2 border-(--border-primary) hover:border-(--accent-primary) transition-all"
+        >
+          {t("unauthorized.goDemo")}
+        </a>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-4 my-2">
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+          <span class="text-xs text-(--text-tertiary) uppercase font-bold">or</span>
+          <div class="flex-1 h-px bg-(--border-primary)"></div>
+        </div>
+
+        <!-- Back to Home -->
+        <a
+          href="/"
+          class="inline-block text-sm font-bold text-(--text-secondary) hover:text-(--accent-primary) transition-colors hover:underline"
+        >
+          {t("unauthorized.goHome")}
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
