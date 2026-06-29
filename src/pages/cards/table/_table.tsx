@@ -8,6 +8,7 @@ import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal
 import { getCards, createCard, updateCard, deleteCard } from "@/services/cardServices";
 import { CardPaginatedResponseSchema, type Card } from "@/schemas/tableSchema";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { formatMonthYear } from "@/utils/dateFormat";
 import { toast } from "sonner";
 
 export const CardsTable = () => {
@@ -118,7 +119,7 @@ export const CardsTable = () => {
     },
     {
       key: 'expiry_date', label: t('cards.colExpiry'), sortable: false,
-      render: (value: string): ReactNode => new Date(value).toLocaleDateString('en-US', { month: '2-digit', year: '2-digit' }),
+      render: (value: string): ReactNode => <span className="font-mono text-xs">{formatMonthYear(value)}</span>,
     },
     {
       key: 'is_active', label: t('cards.colStatus'), sortable: false,

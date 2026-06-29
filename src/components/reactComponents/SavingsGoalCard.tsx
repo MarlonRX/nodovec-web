@@ -16,6 +16,7 @@ import type { SavingsGoal, GoalContribution } from '../../types/savingsGoalInter
 import AnimatedProgressCircle from './AnimatedProgressCircle';
 import { GOAL_ICONS } from './goalIcons';
 import { translate, getCurrentLanguage, type Language } from '../../i18n';
+import { formatDateShort } from '../../utils/dateFormat';
 import { updateContribution, deleteContribution } from '../../services/savingsGoalServices';
 import { toast } from 'sonner';
 import { MyCurrencyInput } from '../UIComponents/MyCurrencyInput';
@@ -471,10 +472,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
                       </div>
                       <div className="flex items-center gap-2 ml-2">
                         <p className="text-xs whitespace-nowrap" style={{ color: 'var(--text-secondary)' }}>
-                          {new Date(contribution.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
-                            day: 'numeric',
-                            month: 'short',
-                          })}
+                          {formatDateShort(contribution.created_at)}
                         </p>
                         <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
                           <button

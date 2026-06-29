@@ -8,6 +8,7 @@ import { getCardPurchases, createCardPurchase, updateCardPurchase, deleteCardPur
 import { getCards } from "@/services/cardServices";
 import { CardPurchasePaginatedResponseSchema, type CardPurchase, type Card } from "@/schemas/tableSchema";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { formatDate } from "@/utils/dateFormat";
 import { toast } from "sonner";
 
 interface Props { cardUuid: string; }
@@ -165,7 +166,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
     },
     {
       key: 'purchase_date', label: t('purchaseForm.columnDate'), sortable: true,
-      render: (v: string) => new Date(v).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US'),
+      render: (v: string) => <span className="font-mono text-xs">{formatDate(v)}</span>,
     },
     {
       key: 'actions', label: t('purchaseForm.columnActions'), sortable: false,

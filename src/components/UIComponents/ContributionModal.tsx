@@ -5,6 +5,7 @@ import { MyTextArea } from './MyTextArea';
 import type { SavingsGoal } from '@/types/savingsGoalInterfaces';
 import AnimatedProgressCircle from '../reactComponents/AnimatedProgressCircle';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
+import { formatDateShort } from '@/utils/dateFormat';
 
 interface ContributionModalProps {
   isOpen: boolean;
@@ -214,11 +215,7 @@ export const ContributionModal = ({
                       )}
                     </div>
                     <p className="text-xs whitespace-nowrap ml-3" style={{ color: 'var(--text-secondary)' }}>
-                      {new Date(contribution.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {formatDateShort(contribution.created_at)}
                     </p>
                   </div>
                 ))}

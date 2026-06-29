@@ -12,6 +12,7 @@ import { TransactionPaginatedResponseSchema, FiltersSchema } from "@/schemas/tab
 import { STORAGE_CONFIG } from "@/config/api";
 import { isDemoMode } from "@/lib/demoUtils";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { formatDate } from "@/utils/dateFormat";
 import { toast } from "sonner";
 
 interface Props {
@@ -323,7 +324,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     sortable: boolean;
     render?: (value: any, row: Transaction) => ReactNode;
   }> = [
-      { key: 'date', label: t('transactions.colDate'), sortable: true, render: (value: any): ReactNode => new Date(value).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US') },
+      { key: 'date', label: t('transactions.colDate'), sortable: true, render: (value: any): ReactNode => <span className="font-mono text-xs">{formatDate(value)}</span> },
       { key: 'description', label: t('transactions.colDescription'), sortable: true },
       {
         key: 'category', label: t('transactions.colCategory'), sortable: true,
