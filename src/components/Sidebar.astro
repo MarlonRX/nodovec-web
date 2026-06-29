@@ -5,6 +5,7 @@ import { SidebarIcons } from "./reactComponents/SidebarIcons";
 import { SidebarHoverStyles } from "./reactComponents/SidebarHoverStyles";
 import { colorConfig } from "../styles/colorConfig";
 import { TranslatedText } from "./reactComponents/TranslatedText";
+import { translate, getCurrentLanguage } from "../i18n";
 
 // Obtener prop del layout
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const { isAuthenticated = false } = Astro.props as Props;
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
 ---
 
 {isAuthenticated && (
@@ -134,7 +137,12 @@ const { isAuthenticated = false } = Astro.props as Props;
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="preferences" />
-                <span class="text-sm font-medium ml-3 whitespace-nowrap">Preferencias</span>
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
+                    <TranslatedText
+                        translationKey="sidebar.preferences"
+                        client:load
+                    />
+                </span>
             </a>
         </div>
     </nav>

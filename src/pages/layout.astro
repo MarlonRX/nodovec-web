@@ -1,14 +1,18 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import { colorConfig } from "../styles/colorConfig";
+import { translate, getCurrentLanguage } from "../i18n";
 import NavBar from "../components/NavBar.astro";
 import Sidebar from "../components/Sidebar.astro";
 
 interface Props {
-  title?: string;
+    title?: string;
 }
 
 const { title = SITE_TITLE } = Astro.props;
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -51,7 +55,7 @@ const { title = SITE_TITLE } = Astro.props;
                 class="text-center text-sm"
                 style="color: var(--text-secondary);"
             >
-                &copy; 2025 CashPilot. All rights reserved.
+                &copy; {year} CashPilot. {lang === "es" ? "Todos los derechos reservados." : "All rights reserved."}
             </p>
         </footer>
 

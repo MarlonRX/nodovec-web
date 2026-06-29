@@ -2,8 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { PasswordInput } from "../components/reactComponents/PasswordInput";
 import { LoadingSpinner } from "../components/reactComponents/LoadingSpinner";
+import { translate, getCurrentLanguage } from "../i18n";
 
 export const prerender = false;
+
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
 
 // Si ya está autenticado, redirigir al dashboard
 const token = Astro.cookies.get("auth_token");
@@ -18,7 +22,7 @@ if (token) {
       <!-- Logo / Header -->
       <div class="text-center mb-8">
         <h1 class="text-4xl font-black text-(--text-primary) mb-2 tracking-tight">CashPilot</h1>
-        <p class="text-(--text-secondary) text-sm uppercase tracking-widest">Sign in to your account</p>
+        <p class="text-(--text-secondary) text-sm uppercase tracking-widest">{t("auth.signInToAccount")}</p>
       </div>
 
       <!-- Login Form -->
@@ -27,7 +31,7 @@ if (token) {
           <!-- Email Input -->
           <div>
             <label for="email" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
-              Email Address
+              {t("auth.email")}
             </label>
             <input
               type="email"
@@ -42,7 +46,7 @@ if (token) {
           <!-- Password Input -->
           <div>
             <label for="password" class="block text-sm font-bold text-(--text-primary) mb-2 uppercase tracking-wide">
-              Password
+              {t("auth.password")}
             </label>
             <PasswordInput 
               id="password"
@@ -64,7 +68,7 @@ if (token) {
             type="submit"
             class="w-full px-6 py-3 bg-(--accent-primary) text-(--text-inverted) font-black text-sm uppercase tracking-wider rounded-xl hover:bg-(--accent-hover) transition-all shadow-lg hover:shadow-(--accent-primary)/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <span id="button-text">Sign In</span>
+            <span id="button-text">{t("auth.signIn")}</span>
             <span id="loading-spinner" class="hidden">
               <LoadingSpinner client:only="react" />
             </span>
@@ -74,7 +78,7 @@ if (token) {
         <!-- Divider -->
         <div class="flex items-center gap-4 my-6">
           <div class="flex-1 h-px bg-(--border-primary)"></div>
-          <span class="text-xs text-(--text-tertiary) uppercase font-bold">or</span>
+          <span class="text-xs text-(--text-tertiary) uppercase font-bold">{t("auth.or")}</span>
           <div class="flex-1 h-px bg-(--border-primary)"></div>
         </div>
 
@@ -83,16 +87,16 @@ if (token) {
           href="/demo"
           class="w-full block text-center px-6 py-3 bg-(--bg-secondary) text-(--text-primary) font-black text-sm uppercase tracking-wider rounded-xl border-2 border-(--border-primary) hover:border-(--accent-primary) transition-all"
         >
-          Try Demo Mode
+          {t("auth.tryDemoMode")}
         </a>
       </div>
 
       <!-- Sign Up Link -->
       <div class="text-center mt-6">
         <p class="text-(--text-secondary) text-sm">
-          Don't have an account?
+          {t("auth.noAccount")}
           <a href="/register" class="text-(--accent-primary) font-bold hover:underline">
-            Sign up here
+            {t("auth.signUpHere")}
           </a>
         </p>
       </div>
@@ -100,7 +104,7 @@ if (token) {
       <!-- Back to Home -->
       <div class="text-center mt-4">
         <a href="/" class="text-(--text-tertiary) text-xs hover:text-(--text-secondary) transition-colors">
-          ← Back to Home
+          {t("auth.backHome")}
         </a>
       </div>
     </div>
@@ -110,7 +114,8 @@ if (token) {
 <script>
   import { toast } from "sonner";
   import { authStore } from "../store/auth";
-import { loginUser } from "@/services/userServices";
+  import { loginUser } from "@/services/userServices";
+  import { translate, getCurrentLanguage } from "@/i18n";
 
   const form = document.getElementById("login-form") as HTMLFormElement;
   const errorMsg = document.getElementById("error-message") as HTMLDivElement;
@@ -118,6 +123,16 @@ import { loginUser } from "@/services/userServices";
   const btnText = document.getElementById("button-text") as HTMLSpanElement;
   const spinner = document.getElementById("loading-spinner") as HTMLSpanElement;
   const submitBtn = form.querySelector("button[type='submit']") as HTMLButtonElement;
+
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    let text = translate(key, getCurrentLanguage());
+    if (vars) {
+      for (const [k, v] of Object.entries(vars)) {
+        text = text.replace(`{${k}}`, String(v));
+      }
+    }
+    return text;
+  };
 
   function showError(message: string) {
     errorText.textContent = message;
@@ -128,6 +143,13 @@ import { loginUser } from "@/services/userServices";
     errorMsg.classList.add("hidden");
   }
 
+  function refreshSubmitText() {
+    btnText.textContent = t("auth.signIn");
+  }
+
+  refreshSubmitText();
+  window.addEventListener("languageChanged", refreshSubmitText);
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     hideError();
@@ -137,7 +159,7 @@ import { loginUser } from "@/services/userServices";
 
     // Validaciones básicas
     if (!email || !password) {
-      showError("Please fill in all fields");
+      showError(t("auth.fillAllFields"));
       return;
     }
 
@@ -149,15 +171,13 @@ import { loginUser } from "@/services/userServices";
     try {
       const resp = await loginUser({ email, password });
 
-      console.log("Login response:", resp);
-
       if (resp.response === true) {
         // Guardar en el store
         authStore.login(resp.data.token, resp.data.user);
         
         // Mostrar toast de éxito
         const userName = resp.data.user?.first_name || email;
-        toast.success(`Welcome back, ${userName}!`);
+        toast.success(t("auth.welcomeBack", { name: userName }));
         
         // Redirigir al dashboard
         setTimeout(() => {
@@ -165,11 +185,11 @@ import { loginUser } from "@/services/userServices";
         }, 1500);
       } else {
         // Mostrar error
-        const errorMessage = resp.message || "Login failed";
+        const errorMessage = resp.message || t("auth.loginFailed");
         
         let displayError = errorMessage;
-        if (errorMessage.includes("Invalid email or password")) {
-          displayError = "Invalid email or password. Please try again.";
+        if (errorMessage.toLowerCase().includes("invalid email or password")) {
+          displayError = t("auth.invalidCredentials");
         }
         
         showError(displayError);
@@ -177,7 +197,7 @@ import { loginUser } from "@/services/userServices";
       }
     } catch (error) {
       console.log("Network error during login:", error);
-      const errorMessage = "Network error. Please check your connection and try again.";
+      const errorMessage = t("auth.networkError");
       showError(errorMessage);
       toast.error(errorMessage);
     } finally {

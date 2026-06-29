@@ -1,8 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { FeatureIcon } from "../components/reactComponents/FeatureIcon";
+import { translate, getCurrentLanguage } from "../i18n";
 
 export const prerender = false;
+
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
 
 // Middleware ya maneja los redirects, así que no necesitamos lógica aquí
 ---
@@ -12,19 +16,19 @@ export const prerender = false;
     <!-- Hero Section -->
     <div class="max-w-2xl text-center">
       <div class="inline-block px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full mb-6">
-        <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Welcome to</span>
+        <span class="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{t("landing.welcomeTo")}</span>
       </div>
-      
+
       <h1 class="text-6xl font-black text-(--text-primary) mb-4 tracking-tight">
         CashPilot
       </h1>
-      
+
       <p class="text-xl text-(--text-secondary) mb-2 leading-relaxed">
-        Take control of your finances with powerful, intuitive transaction management
+        {t("landing.heroSubtitle")}
       </p>
-      
+
       <p class="text-(--text-tertiary) mb-12">
-        Track income, manage expenses, and visualize your financial health in real-time
+        {t("landing.heroDescription")}
       </p>
 
       <!-- Features Grid -->
@@ -33,19 +37,19 @@ export const prerender = false;
           <div class="text-3xl text-blue-500">
             <FeatureIcon client:load icon="dashboard" size={32} />
           </div>
-          <p class="text-sm font-bold text-(--text-secondary) uppercase">Real-time Dashboard</p>
+          <p class="text-sm font-bold text-(--text-secondary) uppercase">{t("landing.realTimeDashboard")}</p>
         </div>
         <div class="flex flex-col items-center gap-2">
           <div class="text-3xl text-green-500">
             <FeatureIcon client:load icon="transactions" size={32} />
           </div>
-          <p class="text-sm font-bold text-(--text-secondary) uppercase">Track Transactions</p>
+          <p class="text-sm font-bold text-(--text-secondary) uppercase">{t("landing.trackTransactions")}</p>
         </div>
         <div class="flex flex-col items-center gap-2">
           <div class="text-3xl text-purple-500">
             <FeatureIcon client:load icon="analytics" size={32} />
           </div>
-          <p class="text-sm font-bold text-(--text-secondary) uppercase">Smart Analytics</p>
+          <p class="text-sm font-bold text-(--text-secondary) uppercase">{t("landing.smartAnalytics")}</p>
         </div>
       </div>
 
@@ -59,7 +63,7 @@ export const prerender = false;
           <span class="text-xl text-yellow-600 dark:text-yellow-400">
             <FeatureIcon client:load icon="demo" size={20} />
           </span>
-          Try Demo First
+          {t("landing.tryDemoFirst")}
           <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
         </a>
 
@@ -71,7 +75,7 @@ export const prerender = false;
           <span class="text-xl">
             <FeatureIcon client:load icon="security" size={20} />
           </span>
-          Sign In
+          {t("landing.signIn")}
           <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
         </a>
       </div>
@@ -79,9 +83,9 @@ export const prerender = false;
       <!-- Sign Up Link -->
       <div class="mt-8">
         <p class="text-(--text-secondary) text-sm">
-          New to CashPilot?
+          {t("landing.newToCashpilot")}
           <a href="/register" class="text-(--accent-primary) font-bold hover:underline">
-            Create an account
+            {t("landing.createAccount")}
           </a>
         </p>
       </div>
@@ -90,7 +94,7 @@ export const prerender = false;
     <!-- Features Section -->
     <div class="max-w-4xl w-full mt-20 pt-20 border-t border-(--border-primary)">
       <h2 class="text-3xl font-black text-(--text-primary) text-center mb-12 uppercase tracking-tight">
-        Why Choose CashPilot?
+        {t("landing.whyChoose")}
       </h2>
 
       <div class="grid md:grid-cols-2 gap-8">
@@ -98,9 +102,9 @@ export const prerender = false;
           <div class="text-4xl mb-3 text-amber-500">
             <FeatureIcon client:load icon="lightbulb" size={40} />
           </div>
-          <h3 class="font-black text-(--text-primary) mb-2 uppercase">Smart Categorization</h3>
+          <h3 class="font-black text-(--text-primary) mb-2 uppercase">{t("landing.smartCategorization")}</h3>
           <p class="text-(--text-secondary) text-sm">
-            Automatically categorize transactions with color-coded badges for quick visual reference
+            {t("landing.smartCategorizationDesc")}
           </p>
         </div>
 
@@ -108,9 +112,9 @@ export const prerender = false;
           <div class="text-4xl mb-3 text-red-500">
             <FeatureIcon client:load icon="target" size={40} />
           </div>
-          <h3 class="font-black text-(--text-primary) mb-2 uppercase">Budget Control</h3>
+          <h3 class="font-black text-(--text-primary) mb-2 uppercase">{t("landing.budgetControl")}</h3>
           <p class="text-(--text-secondary) text-sm">
-            Set budgets by category and receive alerts when you're approaching your limits
+            {t("landing.budgetControlDesc")}
           </p>
         </div>
 
@@ -118,9 +122,9 @@ export const prerender = false;
           <div class="text-4xl mb-3 text-cyan-500">
             <FeatureIcon client:load icon="mobile" size={40} />
           </div>
-          <h3 class="font-black text-(--text-primary) mb-2 uppercase">Responsive Design</h3>
+          <h3 class="font-black text-(--text-primary) mb-2 uppercase">{t("landing.responsiveDesign")}</h3>
           <p class="text-(--text-secondary) text-sm">
-            Access your finances from any device - desktop, tablet, or mobile
+            {t("landing.responsiveDesignDesc")}
           </p>
         </div>
 
@@ -128,9 +132,9 @@ export const prerender = false;
           <div class="text-4xl mb-3 text-emerald-500">
             <FeatureIcon client:load icon="secure" size={40} />
           </div>
-          <h3 class="font-black text-(--text-primary) mb-2 uppercase">Secure & Private</h3>
+          <h3 class="font-black text-(--text-primary) mb-2 uppercase">{t("landing.securePrivate")}</h3>
           <p class="text-(--text-secondary) text-sm">
-            Your financial data is encrypted and protected with enterprise-grade security
+            {t("landing.securePrivateDesc")}
           </p>
         </div>
       </div>
@@ -140,27 +144,27 @@ export const prerender = false;
     <div class="max-w-2xl w-full mt-20 p-8 bg-blue-500/5 border-2 border-blue-500/20 rounded-2xl">
       <h3 class="font-black text-(--text-primary) mb-3 uppercase tracking-tight flex items-center gap-2">
         <FeatureIcon client:load icon="demo" size={24}/>
-        Try Demo Mode
+        {t("landing.tryDemoMode")}
       </h3>
       <p class="text-(--text-secondary) text-sm mb-4">
-        Want to explore CashPilot without signing up? Click "Try Demo First" above to see all features in action with sample data. No registration required!
+        {t("landing.demoInfoDesc")}
       </p>
       <p class="text-(--text-tertiary) text-xs">
-        Demo mode is read-only. Create an account to start managing your real transactions.
+        {t("landing.demoReadonlyNote")}
       </p>
     </div>
 
     <!-- Footer -->
     <div class="max-w-2xl w-full mt-20 pt-8 border-t border-(--border-primary) text-center">
       <p class="text-(--text-tertiary) text-xs uppercase tracking-widest mb-4">
-        Made with ❤️ for financial freedom
+        {t("landing.madeWith", { heart: t("landing.heart") })}
       </p>
       <div class="flex justify-center gap-4 text-sm">
-        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">Privacy</a>
+        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">{t("landing.privacy")}</a>
         <span class="text-(--border-primary)">•</span>
-        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">Terms</a>
+        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">{t("landing.terms")}</a>
         <span class="text-(--border-primary)">•</span>
-        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">Support</a>
+        <a href="#" class="text-(--text-secondary) hover:text-(--accent-primary) transition-colors">{t("landing.support")}</a>
       </div>
     </div>
   </div>

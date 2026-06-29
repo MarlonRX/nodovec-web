@@ -1,8 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { UserComponent } from "@/components/reactComponents/UserComponent";
+import { translate, getCurrentLanguage } from "../i18n";
 
 export const prerender = false;
+
+const lang = getCurrentLanguage();
+const t = (key: string) => translate(key, lang);
 ---
 
 <BaseLayout>
@@ -11,11 +15,10 @@ export const prerender = false;
       <!-- Page header -->
       <div class="mb-6">
         <h1 class="text-3xl font-black mb-2" style="color: var(--text-primary)">
-          Preferencias
+          {t("preferences.title")}
         </h1>
         <p class="text-sm" style="color: var(--text-secondary)">
-          Ajusta la apariencia y otras preferencias de la aplicación. Elige un
-          tema en el recuadro "Tema" a la izquierda.
+          {t("preferences.description")}
         </p>
       </div>
 
