@@ -650,6 +650,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         onSubmit={handleSubmitTransaction}
         isLoading={isSubmitting}
         initialData={editingTransaction}
+        defaultYear={selectedYear}
+        defaultMonth={selectedMonth}
       />
 
       <DeleteConfirmModal

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { X } from "lucide-react";
 import Decimal from "decimal.js";
 import type { Transaction } from "@/schemas/tableSchema";
@@ -16,6 +16,9 @@ interface TransactionModalProps {
   onSubmit: (transaction: Partial<Transaction>) => void;
   isLoading?: boolean;
   initialData?: Transaction | null;
+  /** When provided, the default date is the 1st of that month and date picker is restricted to that month's range */
+  defaultYear?: number;
+  defaultMonth?: number;
 }
 
 export const TransactionModal = ({
@@ -24,11 +27,27 @@ export const TransactionModal = ({
   onSubmit,
   isLoading = false,
   initialData = null,
+  defaultYear,
+  defaultMonth,
 }: TransactionModalProps) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [lang, setLang] = useState<Language>(getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
+
+  // Calculate date range when defaultYear/defaultMonth are provided (from transactions table view)
+  const dateRange = useMemo(() => {
+    if (defaultYear != null && defaultMonth != null) {
+      const monthPadded = String(defaultMonth).padStart(2, "0");
+      const daysInMonth = new Date(defaultYear, defaultMonth, 0).getDate();
+      return {
+        min: `${defaultYear}-${monthPadded}-01`,
+        max: `${defaultYear}-${monthPadded}-${daysInMonth}`,
+        defaultDate: `${defaultYear}-${monthPadded}-01`,
+      };
+    }
+    return null;
+  }, [defaultYear, defaultMonth]);
 
   useEffect(() => {
     const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
@@ -57,7 +76,7 @@ export const TransactionModal = ({
     amount: "",
     type: "expense" as "income" | "expense",
     category: "food",
-    date: new Date().toISOString().split("T")[0],
+    date: dateRange?.defaultDate ?? new Date().toISOString().split("T")[0],
     is_paid: "paid",
   };
 
@@ -190,7 +209,16 @@ export const TransactionModal = ({
                 value={formData.date}
                 onChange={handleChange}
                 required
+                min={dateRange?.min}
+                max={dateRange?.max}
               />
+              {dateRange && (
+                <p className="text-xs text-(--text-tertiary) mt-1">
+                  {defaultMonth && defaultYear
+                    ? `${String(defaultMonth).padStart(2, "0")}-${defaultYear}`
+                    : ""}
+                </p>
+              )}
             </div>
 
             <div className="col-span-1">
