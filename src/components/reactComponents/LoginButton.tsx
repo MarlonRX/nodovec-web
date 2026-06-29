@@ -1,7 +1,7 @@
 import { User, LogOut, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { translate } from "../../i18n";
+import { translate, getCurrentLanguage, type Language } from "../../i18n";
 import { authStore, type AuthUser } from "../../store/auth";
 import { logoutUser } from "../../services/userServices";
 import { toast } from "sonner";
@@ -9,10 +9,13 @@ import { MyButton } from "../ui/my-button";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export function LoginButton() {
-    const [loginText, setLoginText] = useState("Log in");
+    const [loginText, setLoginText] = useState(translate("navbar.login"));
+    const [logoutLabel, setLogoutLabel] = useState(translate("auth.logOut"));
     const [authenticatedUser, setAuthenticatedUser] = useState<AuthUser | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [lang, setLang] = useState<Language>(getCurrentLanguage());
+    const t = (key: string) => translate(key, lang);
 
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [modalPos, setModalPos] = useState<{ top: number; left: number } | null>(null);
@@ -43,6 +46,7 @@ export function LoginButton() {
     useEffect(() => {
         // Cargar la traducción inicial
         setLoginText(translate("navbar.login"));
+        setLogoutLabel(translate("auth.logOut"));
 
         // Obtener usuario actual del store
         setAuthenticatedUser(authStore.getUser());
@@ -55,12 +59,16 @@ export function LoginButton() {
         // Escuchar cambios de idioma
         const handleLanguageChange = () => {
             setLoginText(translate("navbar.login"));
+            setLogoutLabel(translate("auth.logOut"));
         };
 
+        const handleLangEvent = (e: Event) => setLang((e as CustomEvent).detail as Language);
         window.addEventListener("languageChanged", handleLanguageChange);
+        window.addEventListener("languageChanged", handleLangEvent);
 
         return () => {
             window.removeEventListener("languageChanged", handleLanguageChange);
+            window.removeEventListener("languageChanged", handleLangEvent);
             unsubscribe();
         };
     }, []);
@@ -71,18 +79,18 @@ export function LoginButton() {
             const result = await logoutUser();
             if (result.response) {
                 authStore.logout();
-                toast.success(result.message || "Logged out successfully");
+                toast.success(result.message || translate("auth.loggedOutSuccess"));
                 setIsModalOpen(false);
                 setTimeout(() => {
                     window.location.href = "/login";
                 }, 500);
             } else {
-                toast.error(result.message || "Logout failed");
+                toast.error(result.message || translate("auth.logoutFailed"));
                 authStore.logout();
             }
         } catch (error) {
             console.error("Logout error:", error);
-            toast.error("An error occurred while logging out");
+            toast.error(translate("auth.logoutError"));
             authStore.logout();
         } finally {
             setIsLoggingOut(false);
@@ -101,7 +109,7 @@ export function LoginButton() {
                         color: 'var(--text-inverted)',
                         border: "none",
                     }}
-                    aria-label="Login"
+                    aria-label={t("auth.signIn")}
                 >
                     <div
                         className="w-8 h-8 rounded-full flex items-center justify-center"
@@ -133,7 +141,7 @@ export function LoginButton() {
                     background: 'transparent',
                     color: 'var(--text-inverted)',
                 }}
-                aria-label="User menu"
+                aria-label={t("auth.userMenu")}
             >
                 {authenticatedUser.avatar ? (
                     <img
@@ -205,7 +213,7 @@ export function LoginButton() {
                             className="w-full"
                         >
                             <LogOut size={18} />
-                            <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
+                            <span>{isLoggingOut ? translate("auth.loggingOut") : logoutLabel}</span>
                         </MyButton>
                     </div>
                 </>,

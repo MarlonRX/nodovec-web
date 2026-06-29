@@ -143,19 +143,19 @@ export function UserComponent() {
           // actualizar authStore para que LoginButton y demás muestren la nueva URL
           authStore.updateUser({ avatar: url });
           window.dispatchEvent(new CustomEvent("avatarChanged", { detail: url }));
-          const msg = (resp as any).data?.message || "Avatar actualizado";
+          const msg = (resp as any).data?.message || t('user.avatarUpdated');
           toast.success(msg);
           return;
         }
 
         // Si el servicio devolvió { response: false, message: '...' }, mostrar mensaje
         if ((resp as any)?.response === false) {
-          toast.error((resp as any).message || "Error subiendo avatar");
+          toast.error((resp as any).message || t('user.avatarUploadError'));
         }
         // Si no vino URL, continuar con preview local
       } catch (err: any) {
         console.error("avatar upload error", err);
-        toast.error(err?.response?.data?.message || "Error subiendo avatar — se usará preview local");
+        toast.error(err?.response?.data?.message || t('user.avatarUploadErrorLocal'));
         // continuar para crear preview local
       }
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Calculator } from "lucide-react";
 import type { CardPurchase } from "@/schemas/tableSchema";
 import { useFormHandler } from "@/hooks/useFormHandler";
@@ -7,6 +7,7 @@ import { MyDatePicker } from "./MyDatePicker";
 import { MyCurrencyInput } from "./MyCurrencyInput";
 import { MySelect } from "./MySelect";
 import { MyTextArea } from "./MyTextArea";
+import { translate, getCurrentLanguage, type Language } from "@/i18n";
 
 interface CardPurchaseModalProps {
   isOpen: boolean;
@@ -25,6 +26,14 @@ function calcInstallment(total: number, installments: number, annualRate: number
 
 export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false, initialData = null }: CardPurchaseModalProps) => {
   const [preview, setPreview] = useState<number | null>(null);
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
 
   const initial = {
     description: "",
@@ -92,7 +101,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-black text-(--text-primary) tracking-tight uppercase">
-              {initialData ? "Edit Purchase" : "New Credit Purchase"}
+              {initialData ? t("purchaseForm.edit") : t("purchaseForm.new")}
             </h2>
             <button onClick={() => { resetForm(); onClose(); }} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
@@ -101,12 +110,12 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
-              <MyInput label="Description" name="description" value={formData.description} onChange={handleChange} placeholder="e.g., TV Samsung 55" required />
+              <MyInput label={t("purchaseForm.description")} name="description" value={formData.description} onChange={handleChange} placeholder={t("purchaseForm.descriptionPlaceholder")} required />
             </div>
 
             <div>
               <MyCurrencyInput
-                label="Total Amount"
+                label={t("purchaseForm.totalAmount")}
                 name="total_amount"
                 value={formData.total_amount}
                 onChange={(e) => setFormData({ ...formData, total_amount: e.target.value })}
@@ -115,12 +124,12 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
             </div>
 
             <div>
-              <MyDatePicker label="Purchase Date" name="purchase_date" value={formData.purchase_date} onChange={handleChange} required />
+              <MyDatePicker label={t("purchaseForm.purchaseDate")} name="purchase_date" value={formData.purchase_date} onChange={handleChange} required />
             </div>
 
             <div>
               <MyInput
-                label="Installments (# cuotas)"
+                label={t("purchaseForm.installments")}
                 name="installments"
                 type="number"
                 min="1"
@@ -133,7 +142,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
             <div>
               <MyInput
-                label="Annual Interest Rate (%)"
+                label={t("purchaseForm.annualRate")}
                 name="interest_rate"
                 type="number"
                 min="0"
@@ -146,7 +155,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
             {initialData && (
               <div>
                 <MyInput
-                  label="Current Installment"
+                  label={t("purchaseForm.currentInstallment")}
                   name="current_installment"
                   type="number"
                   min="1"
@@ -158,7 +167,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
             )}
 
             <div className={initialData ? "" : "md:col-span-2"}>
-              <MyInput label="Category (optional)" name="category" value={formData.category} onChange={handleChange} placeholder="e.g., Electronics" />
+              <MyInput label={t("purchaseForm.categoryOptional")} name="category" value={formData.category} onChange={handleChange} placeholder={t("purchaseForm.categoryPlaceholder")} />
             </div>
 
             {/* Live installment preview */}
@@ -167,7 +176,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
                 style={{ backgroundColor: 'rgba(var(--accent-primary-rgb),0.06)', borderColor: 'rgba(var(--accent-primary-rgb),0.2)' }}>
                 <Calculator size={20} style={{ color: 'var(--accent-primary)' }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>Monthly Payment</p>
+                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>{t("purchaseForm.monthlyPayment")}</p>
                   <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>
                     ${fmtCurrency(preview)}
                     <span className="text-sm font-normal ml-2" style={{ color: 'var(--text-secondary)' }}>
@@ -181,11 +190,11 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
             <div className="flex gap-3 pt-2 col-span-1 md:col-span-2">
               <button type="button" onClick={() => { resetForm(); onClose(); }}
                 className="flex-1 px-4 py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) transition-all font-bold uppercase tracking-wider text-sm">
-                Cancel
+                {t("purchaseForm.cancel")}
               </button>
               <button type="submit" disabled={isLoading}
                 className="flex-1 px-4 py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-all font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 hover:-translate-y-0.5 text-sm">
-                {isLoading ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Purchase" : "Create Purchase")}
+                {isLoading ? (initialData ? t("purchaseForm.updating") : t("purchaseForm.creating")) : (initialData ? t("purchaseForm.update") : t("purchaseForm.create"))}
               </button>
             </div>
           </form>

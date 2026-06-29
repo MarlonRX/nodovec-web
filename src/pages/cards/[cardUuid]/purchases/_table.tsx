@@ -7,6 +7,7 @@ import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal
 import { getCardPurchases, createCardPurchase, updateCardPurchase, deleteCardPurchase, advanceInstallment } from "@/services/cardPurchaseServices";
 import { getCards } from "@/services/cardServices";
 import { CardPurchasePaginatedResponseSchema, type CardPurchase, type Card } from "@/schemas/tableSchema";
+import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { toast } from "sonner";
 
 interface Props { cardUuid: string; }
@@ -23,6 +24,14 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = (key: string) => translate(key, lang);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
 
   // Load card info
   useEffect(() => {
@@ -51,7 +60,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
           setData([]);
         }
       } catch (err: any) {
-        toast.error(err?.message || "Error loading purchases");
+        toast.error(err?.message || t("purchaseForm.loadingError"));
         setData([]);
       } finally {
         setLoading(false);
@@ -68,15 +77,15 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
         : await createCardPurchase(cardUuid, purchaseData);
 
       if (result.response) {
-        toast.success(editingPurchase ? "Purchase updated" : "Purchase created");
+        toast.success(editingPurchase ? t("purchaseForm.purchaseUpdated") : t("purchaseForm.purchaseCreated"));
         setIsModalOpen(false);
         setEditingPurchase(null);
         setRefreshTrigger(p => p + 1);
       } else {
-        toast.error(result.message || "Error processing purchase");
+        toast.error(result.message || t("purchaseForm.errorProcessing"));
       }
     } catch (err: any) {
-      toast.error(err?.message || "Unexpected error");
+      toast.error(err?.message || t("common.unexpectedError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -87,13 +96,13 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
     try {
       const result = await deleteCardPurchase(cardUuid, uuid);
       if (result.response) {
-        toast.success("Purchase deleted");
+        toast.success(t("purchaseForm.purchaseDeleted"));
         setRefreshTrigger(p => p + 1);
       } else {
-        toast.error(result.message || "Error deleting purchase");
+        toast.error(result.message || t("purchaseForm.errorDeleting"));
       }
     } catch (err: any) {
-      toast.error(err?.message || "Unexpected error");
+      toast.error(err?.message || t("common.unexpectedError"));
     } finally {
       setPurchaseToDelete(null);
       setIsDeleting(false);
@@ -103,10 +112,10 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
   const handleAdvance = async (purchase: CardPurchase) => {
     const result = await advanceInstallment(cardUuid, purchase.uuid);
     if (result.response) {
-      toast.success(`Installment advanced to ${purchase.current_installment + 1}`);
+      toast.success(t("purchases.installmentAdvanced").replace("{n}", String(purchase.current_installment + 1)).replace("{total}", String(purchase.installments)));
       setRefreshTrigger(p => p + 1);
     } else {
-      toast.error(result.message || "Error advancing installment");
+      toast.error(result.message || t("purchaseForm.errorAdvancing"));
     }
   };
 
@@ -118,21 +127,21 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
   const completedPurchases = data.filter(p => p.current_installment > p.installments).length;
 
   const columns: Array<{ key: keyof CardPurchase | 'progress' | 'actions'; label: string; sortable: boolean; render?: (value: any, row: CardPurchase) => ReactNode }> = [
-    { key: 'description', label: 'Description', sortable: true },
+    { key: 'description', label: t('purchaseForm.columnDescription'), sortable: true },
     {
-      key: 'total_amount', label: 'Total', sortable: false,
+      key: 'total_amount', label: t('purchaseForm.columnTotal'), sortable: false,
       render: (v: number) => <span className="font-bold text-(--text-primary)">${fmt(v)}</span>,
     },
     {
-      key: 'installment_amount', label: 'Monthly', sortable: false,
+      key: 'installment_amount', label: t('purchaseForm.columnMonthly'), sortable: false,
       render: (v: number) => <span className="font-bold" style={{ color: 'var(--accent-primary)' }}>${fmt(v)}</span>,
     },
     {
-      key: 'interest_rate', label: 'Rate', sortable: false,
+      key: 'interest_rate', label: t('purchaseForm.columnRate'), sortable: false,
       render: (v: number) => <span className="text-xs text-(--text-secondary)">{v}%</span>,
     },
     {
-      key: 'progress', label: 'Installments', sortable: false,
+      key: 'progress', label: t('purchaseForm.columnInstallments'), sortable: false,
       render: (_: any, row: CardPurchase): ReactNode => {
         const pct = Math.round((row.current_installment - 1) / row.installments * 100);
         const done = row.current_installment > row.installments;
@@ -140,7 +149,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
           <div className="flex flex-col gap-1 min-w-[120px]">
             <div className="flex items-center justify-between text-xs">
               <span style={{ color: done ? 'var(--semantic-success)' : 'var(--text-secondary)' }}>
-                {done ? 'Paid off' : `${row.current_installment}/${row.installments}`}
+                {done ? t('purchaseForm.paidOff') : `${row.current_installment}/${row.installments}`}
               </span>
               <span style={{ color: 'var(--text-tertiary)' }}>{pct}%</span>
             </div>
@@ -155,26 +164,26 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
       },
     },
     {
-      key: 'purchase_date', label: 'Date', sortable: true,
-      render: (v: string) => new Date(v).toLocaleDateString(),
+      key: 'purchase_date', label: t('purchaseForm.columnDate'), sortable: true,
+      render: (v: string) => new Date(v).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US'),
     },
     {
-      key: 'actions', label: 'Actions', sortable: false,
+      key: 'actions', label: t('purchaseForm.columnActions'), sortable: false,
       render: (_: any, row: CardPurchase): ReactNode => (
         <div className="flex gap-1.5">
           {row.current_installment <= row.installments && (
             <button onClick={(e) => { e.stopPropagation(); handleAdvance(row); }}
-              title="Advance installment"
+              title={t('purchaseForm.advanceInstallment')}
               className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)]">
               <RotateCw className="w-4 h-4" />
             </button>
           )}
           <button onClick={(e) => { e.stopPropagation(); setEditingPurchase(row); setIsModalOpen(true); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)" title="Edit">
+            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)" title={t('purchaseForm.editTitle')}>
             <Pencil className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); setPurchaseToDelete(row.uuid); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]" title="Delete">
+            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]" title={t('purchaseForm.deleteTitle')}>
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -188,7 +197,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-100 flex items-center justify-center">
           <div className="bg-(--bg-surface) p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-t-(--accent-primary) border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">Loading...</p>
+            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">{t('purchaseForm.loading')}</p>
           </div>
         </div>
       )}
@@ -198,20 +207,20 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <a href="/cards/table" className="text-(--text-tertiary) text-xs font-bold uppercase tracking-widest hover:text-(--accent-primary) transition-colors">Cards</a>
+              <a href="/cards/table" className="text-(--text-tertiary) text-xs font-bold uppercase tracking-widest hover:text-(--accent-primary) transition-colors">{t('purchaseForm.breadCrumbCards')}</a>
               <ChevronRight size={12} className="text-(--text-tertiary)" />
-              <span className="text-(--text-secondary) text-xs font-bold uppercase tracking-widest">Purchases</span>
+              <span className="text-(--text-secondary) text-xs font-bold uppercase tracking-widest">{t('purchaseForm.breadCrumbPurchases')}</span>
             </div>
             <h2 className="text-2xl md:text-4xl font-black text-(--text-primary) tracking-tight uppercase flex items-center gap-3">
               <CreditCard size={28} style={{ color: 'var(--accent-primary)' }} />
-              {card ? `${card.name} •••• ${card.last_four}` : 'Card Purchases'}
+              {card ? `${card.name} •••• ${card.last_four}` : t('purchaseForm.title')}
             </h2>
-            {card && <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest mt-1">{card.bank} · Credit Card</p>}
+            {card && <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
           </div>
           <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
             className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
-            Add Purchase
+            {t('purchaseForm.addPurchase')}
           </button>
         </div>
 
@@ -219,15 +228,15 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
         {data.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">Monthly Due</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.monthlyDue')}</p>
               <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>${fmt(totalMonthlyDue)}</p>
             </div>
             <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">Active</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.active')}</p>
               <p className="text-2xl font-black text-(--text-primary)">{activePurchases}</p>
             </div>
             <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">Completed</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.completed')}</p>
               <p className="text-2xl font-black" style={{ color: 'var(--semantic-success)' }}>{completedPurchases}</p>
             </div>
           </div>
@@ -243,12 +252,12 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
               <TrendingUp className="w-10 h-10 text-(--accent-primary)" />
             </div>
             <div>
-              <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">No purchases yet</h3>
-              <p className="text-(--text-secondary) text-sm mb-6">Add your first credit purchase to start tracking installments.</p>
+              <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">{t('purchaseForm.noPurchasesYet')}</h3>
+              <p className="text-(--text-secondary) text-sm mb-6">{t('purchaseForm.addYourFirst')}</p>
               <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
                 className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
-                Add Your First Purchase
+                {t('purchaseForm.addFirstPurchase')}
               </button>
             </div>
           </div>

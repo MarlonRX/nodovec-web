@@ -1,4 +1,6 @@
+import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
+import { translate, getCurrentLanguage, type Language } from "@/i18n";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -13,11 +15,23 @@ export const DeleteConfirmModal = ({
   isOpen,
   onClose,
   onConfirm,
-  title = "Delete Transaction?",
-  description = "This action cannot be undone. This will permanently remove the transaction from our servers and update your balances.",
+  title,
+  description,
   isLoading = false,
 }: DeleteConfirmModalProps) => {
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
+
   if (!isOpen) return null;
+
+  const finalTitle = title ?? t("delete.deleteTransactionTitle");
+  const finalDescription = description ?? t("delete.deleteTransactionDescription");
 
   return (
     <>
@@ -30,7 +44,7 @@ export const DeleteConfirmModal = ({
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-black text-(--text-primary) tracking-tight uppercase">
-              {title}
+              {finalTitle}
             </h2>
             <button
               onClick={onClose}
@@ -41,7 +55,7 @@ export const DeleteConfirmModal = ({
           </div>
 
           <p className="text-(--text-secondary) font-medium italic mb-8">
-            {description}
+            {finalDescription}
           </p>
 
           <div className="flex gap-4">
@@ -51,7 +65,7 @@ export const DeleteConfirmModal = ({
               disabled={isLoading}
               className="flex-1 px-6 py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-all font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Cancel
+              {t("delete.cancel")}
             </button>
             <button
               type="button"
@@ -59,7 +73,7 @@ export const DeleteConfirmModal = ({
               disabled={isLoading}
               className="flex-1 px-6 py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-all font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
             >
-              {isLoading ? "Deleting..." : "Confirm Delete"}
+              {isLoading ? t("delete.deleting") : t("delete.confirm")}
             </button>
           </div>
         </div>

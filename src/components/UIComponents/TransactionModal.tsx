@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 import Decimal from "decimal.js";
 import type { Transaction } from "@/schemas/tableSchema";
@@ -8,6 +8,7 @@ import { MySelect } from "./MySelect";
 import { MyDatePicker } from "./MyDatePicker";
 import { MyTextArea } from "./MyTextArea";
 import { MyCurrencyInput } from "./MyCurrencyInput";
+import { translate, getCurrentLanguage, type Language } from "@/i18n";
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -26,21 +27,29 @@ export const TransactionModal = ({
 }: TransactionModalProps) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
 
   const categoryOptions = [
-    { value: "salary", label: "Salary" },
-    { value: "freelance", label: "Freelance" },
-    { value: "investment", label: "Investment" },
-    { value: "bonus", label: "Bonus" },
-    { value: "other_income", label: "Other Income" },
-    { value: "food", label: "Food" },
-    { value: "transportation", label: "Transportation" },
-    { value: "utilities", label: "Utilities" },
-    { value: "entertainment", label: "Entertainment" },
-    { value: "healthcare", label: "Healthcare" },
-    { value: "shopping", label: "Shopping" },
-    { value: "rent", label: "Rent" },
-    { value: "other_expense", label: "Other Expense" },
+    { value: "salary", label: t("transactionForm.categorySalary") },
+    { value: "freelance", label: t("transactionForm.categoryFreelance") },
+    { value: "investment", label: t("transactionForm.categoryInvestment") },
+    { value: "bonus", label: t("transactionForm.categoryBonus") },
+    { value: "other_income", label: t("transactionForm.categoryOtherIncome") },
+    { value: "food", label: t("transactionForm.categoryFood") },
+    { value: "transportation", label: t("transactionForm.categoryTransportation") },
+    { value: "utilities", label: t("transactionForm.categoryUtilities") },
+    { value: "entertainment", label: t("transactionForm.categoryEntertainment") },
+    { value: "healthcare", label: t("transactionForm.categoryHealthcare") },
+    { value: "shopping", label: t("transactionForm.categoryShopping") },
+    { value: "rent", label: t("transactionForm.categoryRent") },
+    { value: "other_expense", label: t("transactionForm.categoryOtherExpense") },
   ];
 
   const initialFormData = {
@@ -59,12 +68,12 @@ export const TransactionModal = ({
       try {
         amountValue = new Decimal(data.amount || "0");
       } catch {
-        alert("Invalid amount format");
+        alert(t("transactionForm.invalidAmount"));
         return;
       }
 
       if (amountValue.isNaN() || amountValue.lessThanOrEqualTo(0)) {
-        alert("Please enter a valid amount greater than 0");
+        alert(t("transactionForm.amountGreaterThanZero"));
         return;
       }
 
@@ -157,11 +166,11 @@ export const TransactionModal = ({
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
               <h2 className="text-xl md:text-2xl font-black text-(--text-primary) tracking-tight uppercase">
-                {initialData ? "Edit Transaction" : "New Transaction"}
+                {initialData ? t("transactionForm.edit") : t("transactionForm.new")}
               </h2>
               {!isLoggedIn && (
                 <p className="text-xs text-(--text-secondary) mt-1 font-medium italic">
-                  Saving as draft (will be deleted if account not created)
+                  {t("transactionForm.savingAsDraft")}
                 </p>
               )}
             </div>
@@ -176,7 +185,7 @@ export const TransactionModal = ({
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             <div className="col-span-1">
               <MyDatePicker
-                label="Date"
+                label={t("transactionForm.date")}
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
@@ -186,13 +195,13 @@ export const TransactionModal = ({
 
             <div className="col-span-1">
               <MySelect
-                label="Type"
+                label={t("transactionForm.type")}
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
                 options={[
-                  { value: "expense", label: "Expense" },
-                  { value: "income", label: "Income" },
+                  { value: "expense", label: t("transactionForm.typeExpense") },
+                  { value: "income", label: t("transactionForm.typeIncome") },
                 ]}
                 required
               />
@@ -202,20 +211,20 @@ export const TransactionModal = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <MySelect
-                    label="Payment Status"
+                    label={t("transactionForm.paymentStatus")}
                     name="is_paid"
                     value={formData.is_paid}
                     onChange={handleChange}
                     options={[
-                      { value: "paid", label: "Paid" },
-                      { value: "unpaid", label: "Unpaid" },
+                      { value: "paid", label: t("transactionForm.statusPaid") },
+                      { value: "unpaid", label: t("transactionForm.statusUnpaid") },
                     ]}
                     required
                   />
                 </div>
                 <div>
                   <MyCurrencyInput
-                    label="Amount"
+                    label={t("transactionForm.amount")}
                     name="amount"
                     value={formData.amount}
                     onChange={handleAmountChange}
@@ -227,7 +236,7 @@ export const TransactionModal = ({
 
             <div className="col-span-1">
               <MySelect
-                label="Category"
+                label={t("transactionForm.category")}
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
@@ -238,11 +247,11 @@ export const TransactionModal = ({
 
             <div className="col-span-1 md:col-span-2">
               <MyTextArea
-                label="Description"
+                label={t("transactionForm.description")}
                 name="description"
                 value={formData.description}
                 onChange={handleTextAreaChange}
-                placeholder="e.g., Coffee, Salary..."
+                placeholder={t("transactionForm.descriptionPlaceholder")}
                 rows={3}
                 required
               />
@@ -254,7 +263,7 @@ export const TransactionModal = ({
                 onClick={handleClose}
                 className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-all font-bold uppercase tracking-wider text-sm md:text-base"
               >
-                Cancel
+                {t("transactionForm.cancel")}
               </button>
               <button
                 type="submit"
@@ -262,8 +271,8 @@ export const TransactionModal = ({
                 className="flex-1 px-4 py-2 md:py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-all font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
               >
                 {isLoading
-                  ? (initialData ? "Updating..." : "Creating...")
-                  : (initialData ? "Update Transaction" : "Create Transaction")
+                  ? (initialData ? t("transactionForm.updating") : t("transactionForm.creating"))
+                  : (initialData ? t("transactionForm.update") : t("transactionForm.create"))
                 }
               </button>
             </div>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { translate, getCurrentLanguage, type Language } from '../../i18n';
 
 interface PasswordInputProps {
   id: string;
@@ -10,9 +11,9 @@ interface PasswordInputProps {
   className?: string;
 }
 
-export function PasswordInput({ 
-  id, 
-  name, 
+export function PasswordInput({
+  id,
+  name,
   placeholder = "••••••••",
   required = true,
   showRequirements = false,
@@ -20,6 +21,22 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const t = useCallback((key: string, vars?: Record<string, string | number>) => {
+    let text = translate(key, lang);
+    if (vars) {
+      for (const [k, v] of Object.entries(vars)) {
+        text = text.replace(`{${k}}`, String(v));
+      }
+    }
+    return text;
+  }, [lang]);
+
+  useEffect(() => {
+    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
+    window.addEventListener("languageChanged", onLang);
+    return () => window.removeEventListener("languageChanged", onLang);
+  }, []);
 
   // Validar requisitos
   const requirements = {
@@ -65,41 +82,41 @@ export function PasswordInput({
 
       {showRequirements && password && (
         <div className="mt-3 p-3 bg-(--bg-secondary) border border-(--border-primary) rounded-lg">
-          <p className="text-xs font-bold text-(--text-secondary) mb-2 uppercase">Password Requirements:</p>
+          <p className="text-xs font-bold text-(--text-secondary) mb-2 uppercase">{t("auth.passwordRequirements")}</p>
           <ul className="space-y-1 text-xs">
             <li className={`flex items-center gap-2 ${requirements.length ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.length ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>
                 {requirements.length ? '✓' : '○'}
               </span>
-              At least 8 characters ({password.length}/8)
+              {t("auth.atLeast8Chars", { count: password.length })}
             </li>
             <li className={`flex items-center gap-2 ${requirements.uppercase ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.uppercase ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>
                 {requirements.uppercase ? '✓' : '○'}
               </span>
-              One uppercase letter (A-Z)
+              {t("auth.oneUppercase")}
             </li>
             <li className={`flex items-center gap-2 ${requirements.lowercase ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.lowercase ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>
                 {requirements.lowercase ? '✓' : '○'}
               </span>
-              One lowercase letter (a-z)
+              {t("auth.oneLowercase")}
             </li>
             <li className={`flex items-center gap-2 ${requirements.digit ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.digit ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>
                 {requirements.digit ? '✓' : '○'}
               </span>
-              One digit (0-9)
+              {t("auth.oneDigit")}
             </li>
             <li className={`flex items-center gap-2 ${requirements.special ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.special ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>
                 {requirements.special ? '✓' : '○'}
               </span>
-              One special character (!@#$%^&*)
+              {t("auth.oneSpecial")}
             </li>
           </ul>
           {allRequirementsMet && (
-            <p className="text-xs text-green-500 font-bold mt-2">✓ Password is strong!</p>
+            <p className="text-xs text-green-500 font-bold mt-2">{t("auth.passwordStrong")}</p>
           )}
         </div>
       )}
