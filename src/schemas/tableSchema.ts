@@ -102,6 +102,9 @@ export const FiltersSchema = z.object({
   search: z.string().optional(),
   type: z.enum(['income', 'expense']).optional(),
   category: z.string().optional(),
+  order_by: z.string().optional(),
+  sort_direction: z.enum(['asc', 'desc']).optional(),
+  page_size: z.number().int().optional(),
 });
 
 export type Filters = z.infer<typeof FiltersSchema>;

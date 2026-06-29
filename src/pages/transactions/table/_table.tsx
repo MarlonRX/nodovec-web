@@ -37,6 +37,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [loadingTotals, setLoadingTotals] = useState(false);
   const [activePurchases, setActivePurchases] = useState<CardPurchase[]>([]);
   const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [sortField, setSortField] = useState<string>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const t = (key: string) => translate(key, lang);
 
   const currentDate = new Date();
@@ -58,20 +60,20 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: t(`months.${i + 1}`) }));
 
   const categoryOptions = [
-    { value: '', label: t('transactions.allCategories') },
-    { value: 'salary', label: 'Salary' },
-    { value: 'freelance', label: 'Freelance' },
-    { value: 'investment', label: 'Investment' },
-    { value: 'bonus', label: 'Bonus' },
-    { value: 'other_income', label: 'Other Income' },
-    { value: 'food', label: 'Food' },
-    { value: 'transportation', label: 'Transportation' },
-    { value: 'utilities', label: 'Utilities' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'shopping', label: 'Shopping' },
-    { value: 'rent', label: 'Rent' },
-    { value: 'other_expense', label: 'Other Expense' },
+    { value: '', label: t('transactionForm.allCategories') },
+    { value: 'salary', label: t('transactionForm.categorySalary') },
+    { value: 'freelance', label: t('transactionForm.categoryFreelance') },
+    { value: 'investment', label: t('transactionForm.categoryInvestment') },
+    { value: 'bonus', label: t('transactionForm.categoryBonus') },
+    { value: 'other_income', label: t('transactionForm.categoryOtherIncome') },
+    { value: 'food', label: t('transactionForm.categoryFood') },
+    { value: 'transportation', label: t('transactionForm.categoryTransportation') },
+    { value: 'utilities', label: t('transactionForm.categoryUtilities') },
+    { value: 'entertainment', label: t('transactionForm.categoryEntertainment') },
+    { value: 'healthcare', label: t('transactionForm.categoryHealthcare') },
+    { value: 'shopping', label: t('transactionForm.categoryShopping') },
+    { value: 'rent', label: t('transactionForm.categoryRent') },
+    { value: 'other_expense', label: t('transactionForm.categoryOtherExpense') },
   ];
 
   // Debounce search input (300ms)
@@ -143,6 +145,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           year: selectedYear,
           month: selectedMonth,
           page: currentPage,
+          page_size: itemsPerPage,
+          order_by: sortField,
+          sort_direction: sortDirection,
           ...(debouncedSearch && { search: debouncedSearch }),
           ...(filterType && { type: filterType }),
           ...(filterCategory && { category: filterCategory }),
@@ -152,7 +157,6 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         const validatedResult = TransactionPaginatedResponseSchema.parse(result);
 
         if (validatedResult.response) {
-          // Extraer datos del objeto paginado de Laravel
           const transactions = validatedResult.data.data || [];
           const lastPage = validatedResult.data.last_page || 1;
           const total = validatedResult.data.total || 0;
@@ -161,12 +165,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           setTotalPages(lastPage);
           setTotalCount(total);
         } else {
-          setError(validatedResult.message || "Failed to fetch transactions");
+          setError(validatedResult.message || t("transactionForm.failedToFetch"));
           setData([]);
           setTotalCount(0);
         }
       } catch (err: any) {
-        const errorMessage = err?.message || "Error al cargar transacciones";
+        const errorMessage = err?.message || t("transactions.errorLoad");
         setError(errorMessage);
         toast.error(errorMessage);
         setData([]);
@@ -177,9 +181,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     };
 
     fetchTransactions();
-  }, [selectedYear, selectedMonth, currentPage, refreshTrigger, debouncedSearch, filterType, filterCategory]);
+  }, [selectedYear, selectedMonth, currentPage, refreshTrigger, debouncedSearch, filterType, filterCategory, sortField, sortDirection, itemsPerPage]);
 
-  // Load totals for ALL transactions in the selected month/year
+  // Load totals matching the same filters as the transaction list
   useEffect(() => {
     const fetchTotals = async () => {
       setLoadingTotals(true);
@@ -187,6 +191,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         const filters = FiltersSchema.parse({
           year: selectedYear,
           month: selectedMonth,
+          ...(debouncedSearch && { search: debouncedSearch }),
+          ...(filterType && { type: filterType }),
+          ...(filterCategory && { category: filterCategory }),
         });
 
         const result = await getTransactionsTotals(filters);
@@ -209,10 +216,16 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     };
 
     fetchTotals();
-  }, [selectedYear, selectedMonth, refreshTrigger]);
+  }, [selectedYear, selectedMonth, refreshTrigger, debouncedSearch, filterType, filterCategory]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleSortChange = (field: string, direction: 'asc' | 'desc') => {
+    setSortField(field);
+    setSortDirection(direction);
+    setCurrentPage(1); // Reset to page 1 when sort changes
   };
 
   const handleYearChange = (year: number) => {
@@ -310,7 +323,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     sortable: boolean;
     render?: (value: any, row: Transaction) => ReactNode;
   }> = [
-      { key: 'date', label: t('transactions.colDate'), sortable: true, render: (value: any): ReactNode => new Date(value).toLocaleDateString() },
+      { key: 'date', label: t('transactions.colDate'), sortable: true, render: (value: any): ReactNode => new Date(value).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US') },
       { key: 'description', label: t('transactions.colDescription'), sortable: true },
       {
         key: 'category', label: t('transactions.colCategory'), sortable: true,
@@ -599,6 +612,9 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             onRowClick={onRowClick}
             variant="excel"
             showPagination={true}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onSortChange={handleSortChange}
           />
         )}
         {!error && data.length === 0 && (

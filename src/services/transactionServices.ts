@@ -360,10 +360,15 @@ export const getTransactionsTotals = async (filters?: Filters) => {
 };
 
 /**
- * Obtener TODAS las transacciones de un mes (sin limitación de paginación)
+ * Obtener TODAS las transacciones de un período (sin limitación de paginación)
  * Itera por páginas si es necesario para obtener todas las transacciones
+ * Propaga los mismos filtros (search, type, category) que la vista principal
  */
-export const getAllTransactionsForMonth = async (year: number, month: number) => {
+export const getAllTransactionsForMonth = async (
+  year: number,
+  month: number,
+  extraFilters?: { search?: string; type?: 'income' | 'expense'; category?: string }
+) => {
   // Modo demo: combinar todas las transacciones del mes
   if (isDemoMode()) {
     try {
@@ -382,14 +387,21 @@ export const getAllTransactionsForMonth = async (year: number, month: number) =>
     }
   }
 
-  // Modo autenticado: obtener todas las páginas
+  // Modo autenticado: obtener todas las páginas con los filtros aplicados
   try {
     const allTransactions: any[] = [];
     let page = 1;
     let hasMorePages = true;
 
     while (hasMorePages) {
-      const result = await getTransactions({ year, month, page });
+      const result = await getTransactions({
+        year,
+        month,
+        page,
+        ...(extraFilters?.search && { search: extraFilters.search }),
+        ...(extraFilters?.type && { type: extraFilters.type }),
+        ...(extraFilters?.category && { category: extraFilters.category }),
+      });
       
       if (result.response && result.data?.data && result.data.data.length > 0) {
         allTransactions.push(...result.data.data);
