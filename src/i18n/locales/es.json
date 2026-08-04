@@ -79,6 +79,7 @@
         "cards": "Tarjetas",
         "savingsGoals": "Metas de Ahorro",
         "movement_dashboard": "Panel de Movimientos",
+        "preferences": "Preferencias",
         "logout": "Cerrar Sesión"
     },
     "user": {
@@ -449,6 +450,10 @@
         "paymentStatus": "Estado de Pago",
         "statusPaid": "Pagado",
         "statusUnpaid": "Pendiente",
+        "fixedExpense": "Gasto fijo",
+        "fixedExpenseTooltip": "Este gasto se volverá a crear automáticamente todos los meses el mismo día.",
+        "fixedIncome": "Ingreso fijo",
+        "fixedIncomeTooltip": "Este ingreso se volverá a crear automáticamente todos los meses el mismo día.",
         "amount": "Monto",
         "category": "Categoría",
         "description": "Descripción",
@@ -573,8 +578,5 @@
     },
     "layout": {
         "footerCopyright": "© {year} CashPilot. Todos los derechos reservados."
-    },
-    "sidebar": {
-        "preferences": "Preferencias"
     }
 }

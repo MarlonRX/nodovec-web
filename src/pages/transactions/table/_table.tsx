@@ -43,8 +43,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const t = (key: string) => translate(key, lang);
 
   const currentDate = new Date();
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(String(currentDate.getFullYear()));
+  const [selectedMonth, setSelectedMonth] = useState(String(currentDate.getMonth() + 1));
 
   // Search & Filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,10 +55,10 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [totalCount, setTotalCount] = useState(0);
   const yearOptions = Array.from({ length: 5 }, (_, i) => {
     const year = currentDate.getFullYear() - i;
-    return { value: year, label: String(year) };
+    return { value: String(year), label: String(year) };
   });
 
-  const monthOptions = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: t(`months.${i + 1}`) }));
+  const monthOptions = Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: t(`months.${i + 1}`) }));
 
   const categoryOptions = [
     { value: '', label: t('transactionForm.allCategories') },
@@ -143,8 +143,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       setError(null);
       try {
         const filters = FiltersSchema.parse({
-          year: selectedYear,
-          month: selectedMonth,
+          year: Number(selectedYear),
+          month: Number(selectedMonth),
           page: currentPage,
           page_size: itemsPerPage,
           order_by: sortField,
@@ -190,8 +190,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       setLoadingTotals(true);
       try {
         const filters = FiltersSchema.parse({
-          year: selectedYear,
-          month: selectedMonth,
+          year: Number(selectedYear),
+          month: Number(selectedMonth),
           ...(debouncedSearch && { search: debouncedSearch }),
           ...(filterType && { type: filterType }),
           ...(filterCategory && { category: filterCategory }),
@@ -229,14 +229,14 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     setCurrentPage(1); // Reset to page 1 when sort changes
   };
 
-  const handleYearChange = (year: number) => {
+  const handleYearChange = (year: string) => {
     setSelectedYear(year);
-    setCurrentPage(1); // Reset pagination
+    setCurrentPage(1);
   };
 
-  const handleMonthChange = (month: number) => {
+  const handleMonthChange = (month: string) => {
     setSelectedMonth(month);
-    setCurrentPage(1); // Reset pagination
+    setCurrentPage(1);
   };
 
   const handleSubmitTransaction = async (transactionData: Partial<Transaction>) => {
@@ -417,13 +417,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 <MySelect
                   options={yearOptions}
                   value={selectedYear}
-                  onChange={(e: any) => handleYearChange(Number(e.target.value))}
+                  onChange={(e: any) => handleYearChange(e.target.value)}
                   className="w-32 md:w-48 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
                 <MySelect
                   options={monthOptions}
                   value={selectedMonth}
-                  onChange={(e: any) => handleMonthChange(Number(e.target.value))}
+                  onChange={(e: any) => handleMonthChange(e.target.value)}
                   className="w-32 md:w-56 h-10 md:h-12 text-sm md:text-base font-bold border-none bg-(--bg-secondary) rounded-lg md:rounded-xl"
                 />
               </div>
@@ -650,8 +650,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
         onSubmit={handleSubmitTransaction}
         isLoading={isSubmitting}
         initialData={editingTransaction}
-        defaultYear={selectedYear}
-        defaultMonth={selectedMonth}
+        defaultYear={Number(selectedYear)}
+        defaultMonth={Number(selectedMonth)}
       />
 
       <DeleteConfirmModal

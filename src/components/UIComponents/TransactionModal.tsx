@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import Decimal from "decimal.js";
 import type { Transaction } from "@/schemas/tableSchema";
 import { STORAGE_CONFIG } from "@/config/api";
@@ -8,6 +8,13 @@ import { MySelect } from "./MySelect";
 import { MyDatePicker } from "./MyDatePicker";
 import { MyTextArea } from "./MyTextArea";
 import { MyCurrencyInput } from "./MyCurrencyInput";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
 
 interface TransactionModalProps {
@@ -78,6 +85,7 @@ export const TransactionModal = ({
     category: "food",
     date: dateRange?.defaultDate ?? new Date().toISOString().split("T")[0],
     is_paid: "paid",
+    is_fixed: false,
   };
 
   const { formData, handleChange, handleSubmit, resetForm, setFormData } = useFormHandler({
@@ -102,6 +110,7 @@ export const TransactionModal = ({
         type: data.type,
         category: data.category,
         transaction_date: data.date,
+        is_fixed: data.is_fixed,
       };
 
       if (initialData?.id) {
@@ -129,6 +138,7 @@ export const TransactionModal = ({
             ? new Date(initialData.date).toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0],
           is_paid: (initialData as any).is_paid || "paid",
+          is_fixed: Boolean((initialData as any).is_fixed),
         });
       } else {
         resetForm();
@@ -271,6 +281,51 @@ export const TransactionModal = ({
                 options={categoryOptions}
                 required
               />
+            </div>
+
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3">
+                <label className="flex cursor-pointer items-center gap-2.5">
+                  <Checkbox
+                    checked={Boolean(formData.is_fixed)}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_fixed: checked === true })
+                    }
+                    aria-label={
+                      formData.type === "income"
+                        ? t("transactionForm.fixedIncome")
+                        : t("transactionForm.fixedExpense")
+                    }
+                  />
+                  <span className="text-sm font-medium text-(--text-primary)">
+                    {formData.type === "income"
+                      ? t("transactionForm.fixedIncome")
+                      : t("transactionForm.fixedExpense")}
+                  </span>
+                </label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex size-5 items-center justify-center rounded-full text-(--text-secondary) transition-colors hover:text-(--accent-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary)/50"
+                        aria-label={
+                          formData.type === "income"
+                            ? t("transactionForm.fixedIncomeTooltip")
+                            : t("transactionForm.fixedExpenseTooltip")
+                        }
+                      >
+                        <Info className="size-3.5" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {formData.type === "income"
+                        ? t("transactionForm.fixedIncomeTooltip")
+                        : t("transactionForm.fixedExpenseTooltip")}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
 
             <div className="col-span-1 md:col-span-2">

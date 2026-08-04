@@ -171,6 +171,7 @@
         "cards": "Cards",
         "savingsGoals": "Savings Goals",
         "movement_dashboard": "Movement Dashboard",
+        "preferences": "Preferences",
         "logout": "Log Out"
     },
     "user": {
@@ -449,6 +450,10 @@
         "paymentStatus": "Payment Status",
         "statusPaid": "Paid",
         "statusUnpaid": "Unpaid",
+        "fixedExpense": "Fixed expense",
+        "fixedExpenseTooltip": "This expense will be automatically recreated every month on the same day.",
+        "fixedIncome": "Fixed income",
+        "fixedIncomeTooltip": "This income will be automatically recreated every month on the same day.",
         "amount": "Amount",
         "category": "Category",
         "description": "Description",
@@ -573,8 +578,5 @@
     },
     "layout": {
         "footerCopyright": "© {year} CashPilot. All rights reserved."
-    },
-    "sidebar": {
-        "preferences": "Preferences"
     }
 }
