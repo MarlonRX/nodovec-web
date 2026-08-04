@@ -16,7 +16,10 @@ export const useFormHandler = <T extends Record<string, any>>({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    const value = e.target instanceof HTMLInputElement && e.target.type === "checkbox"
+      ? e.target.checked
+      : e.target.value;
     setFormData((prev) => ({
       ...prev,
       [name]: value,

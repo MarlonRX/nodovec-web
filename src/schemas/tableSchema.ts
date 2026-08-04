@@ -21,6 +21,15 @@ export const TableConfigSchema = z.object({
 
 export type TableConfig = z.infer<typeof TableConfigSchema>;
 
+const BooleanLikeSchema = z.preprocess(
+  (value) => {
+    if (value === 1 || value === '1') return true;
+    if (value === 0 || value === '0') return false;
+    return value;
+  },
+  z.boolean(),
+);
+
 // Transaction-specific schema (matches backend DB columns exactly)
 export const TransactionSchema = z.object({
   id: z.number(),
@@ -30,6 +39,7 @@ export const TransactionSchema = z.object({
   type: z.enum(['income', 'expense']),
   amount: z.coerce.number(),
   category: z.string(),
+  is_fixed: BooleanLikeSchema.optional().default(false),
   description: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),

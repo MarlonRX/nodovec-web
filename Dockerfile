@@ -1,5 +1,5 @@
 # Etapa 1: Build
-FROM oven/bun:1 AS builder
+FROM oven/bun:1.2.12 AS builder
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json bun.lock ./
 
 # Instalar dependencias
-RUN bun install
+RUN bun install --frozen-lockfile
 
 # Copiar código fuente
 COPY . .
@@ -16,13 +16,13 @@ COPY . .
 RUN bun run build
 
 # Etapa 2: Runtime
-FROM oven/bun:1
+FROM oven/bun:1.2.12
 
 WORKDIR /app
 
 # Instalar solo dependencias de producción
 COPY package.json bun.lock ./
-RUN bun install --production
+RUN bun install --frozen-lockfile --production
 
 # Copiar el build desde la etapa anterior
 COPY --from=builder /app/dist ./dist

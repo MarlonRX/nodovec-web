@@ -10,13 +10,15 @@ CashPilot frontend built with Astro 5 + React 18.
 - **Charts**: Recharts, Chart.js, ApexCharts, lightweight-charts
 - **Validation**: Zod v4
 - **Build**: Vite (via Astro)
-- **Runtime**: Bun
+- **Runtime and package manager**: Bun 1.2.12
+
+El proyecto usa exclusivamente Bun. No se deben generar ni usar `package-lock.json`, `pnpm-lock.yaml` o `yarn.lock`.
 
 ## Setup
 
 ```bash
 # Install dependencies
-bun install
+bun install --frozen-lockfile
 
 # Environment
 cp .env.example .env

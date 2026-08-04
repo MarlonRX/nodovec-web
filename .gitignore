@@ -11,14 +11,14 @@
 # FuseBox cache
 # Gatsby files
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-# Lockfiles (only bun.lock is used, others conflict with Nixpacks detection)
+# Lockfiles other than Bun's are not allowed
 # Logs
 # Microbundle cache
 # Next.js build output
 # Nuxt.js build / generate output
 # Optional REPL history
 # Optional eslint cache
-# Optional npm cache directory
+# Optional Bun cache directory
 # Optional stylelint cache
 # Output of 'npm pack'
 # Runtime data
@@ -50,6 +50,7 @@
 *.tsbuildinfo
 .DS_Store
 .astro/
+.turbo/
 .cache
 .cache/
 .docusaurus
@@ -98,11 +99,11 @@ logs
 node_modules/
 npm-debug.log*
 out
-package-lock.json
+**/package-lock.json
 pids
-pnpm-lock.yaml
+**/pnpm-lock.yaml
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 web_modules/
-yarn-debug.log*
-yarn-error.log*
-yarn.lock
+**/yarn-debug.log*
+**/yarn-error.log*
+**/yarn.lock

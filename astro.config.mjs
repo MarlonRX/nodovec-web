@@ -16,8 +16,5 @@ export default defineConfig({
     integrations: [mdx(), sitemap(), react()],
     vite: {
         plugins: [tailwindcss()],
-        ssr: {
-            external: ["mysql2"],
-        },
     },
 });
