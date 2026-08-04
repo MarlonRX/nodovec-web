@@ -3,8 +3,9 @@ FROM oven/bun:1.2.12 AS builder
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Copiar archivos de dependencias y scripts de preinstall
 COPY package.json bun.lock ./
+COPY scripts/ ./scripts/
 
 # Instalar dependencias
 RUN bun install --frozen-lockfile
@@ -22,6 +23,7 @@ WORKDIR /app
 
 # Instalar solo dependencias de producción
 COPY package.json bun.lock ./
+COPY scripts/ ./scripts/
 RUN bun install --frozen-lockfile --production
 
 # Copiar el build desde la etapa anterior
