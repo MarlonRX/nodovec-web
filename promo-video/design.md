@@ -1,4 +1,4 @@
-# CashPilot Promotional Video Design
+# NodoVec Promotional Video Design
 
 ## Brand Colors
 - Background: #0f0f12 (deep dark)

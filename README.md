@@ -1,6 +1,6 @@
-# CashPilot Web
+# NodoVec Web
 
-CashPilot frontend built with Astro 5 + React 18.
+NodoVec frontend built with Astro 5 + React 18.
 
 ## Stack
 - **Framework**: Astro 5.16

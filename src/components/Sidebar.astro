@@ -57,7 +57,7 @@ const t = (key: string) => translate(key, lang);
                 class="text-lg font-bold truncate"
                 style={`color: var(--accent-primary);`}
             >
-                CashPilot
+                NodoVec
             </span>
         </div>
     </div>
@@ -81,6 +81,18 @@ const t = (key: string) => translate(key, lang);
                 </span>
             </a>
 
+            <a
+                href="/financings"
+                id="sidebar-financings"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                style={`color: var(--text-secondary);`}
+            >
+                <SidebarIcons client:load icon="financing" />
+                <span class="text-sm font-medium ml-3 whitespace-nowrap">
+                    <TranslatedText translationKey="sidebar.financing" client:load />
+                </span>
+            </a>
+
             <!-- Transactions -->
             <a
                 href="/transactions/table"
@@ -92,22 +104,6 @@ const t = (key: string) => translate(key, lang);
                 <span class="text-sm font-medium ml-3 whitespace-nowrap">
                     <TranslatedText
                         translationKey="sidebar.transactions"
-                        client:load
-                    />
-                </span>
-            </a>
-
-            <!-- Cards -->
-            <a
-                href="/cards/table"
-                id="sidebar-cards"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
-                style={`color: var(--text-secondary);`}
-            >
-                <SidebarIcons client:load icon="cards" />
-                <span class="text-sm font-medium ml-3 whitespace-nowrap">
-                    <TranslatedText
-                        translationKey="sidebar.cards"
                         client:load
                     />
                 </span>

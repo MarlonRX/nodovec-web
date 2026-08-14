@@ -12,7 +12,7 @@ export default defineConfig({
     adapter: node({
         mode: "standalone",
     }),
-    site: "https://cashpilot.com",
+    site: "https://nodovec.com",
     integrations: [mdx(), sitemap(), react()],
     vite: {
         plugins: [tailwindcss()],

@@ -1,4 +1,4 @@
-// Configuración de la API para CashPilot Frontend
+// Configuración de la API para NodoVec Frontend
 // Este archivo centraliza todas las configuraciones relacionadas con la API
 
 // Detectar URL base del backend EN TIEMPO DE EJECUCIÓN
@@ -81,13 +81,13 @@ export const API_CONFIG = {
 } as const;
 
 export const APP_CONFIG = {
-  NAME: import.meta.env.PUBLIC_APP_NAME || 'CashPilot',
+  NAME: import.meta.env.PUBLIC_APP_NAME || 'NodoVec',
   VERSION: import.meta.env.PUBLIC_APP_VERSION || '1.0.0',
   DEV_MODE: import.meta.env.PUBLIC_DEV_MODE === 'true',
 } as const;
 
 export const STORAGE_CONFIG = {
-  PREFIX: import.meta.env.PUBLIC_STORAGE_PREFIX || 'cashpilot_',
+  PREFIX: import.meta.env.PUBLIC_STORAGE_PREFIX || 'nodovec_',
   TOKEN_KEY: import.meta.env.PUBLIC_TOKEN_STORAGE_KEY || 'auth_token',
   REFRESH_TOKEN_KEY: import.meta.env.PUBLIC_REFRESH_TOKEN_STORAGE_KEY || 'refresh_token',
   USER_KEY: import.meta.env.PUBLIC_USER_STORAGE_KEY || 'user_data',

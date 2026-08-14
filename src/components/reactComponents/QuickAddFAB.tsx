@@ -6,7 +6,7 @@ import { createTransaction } from '@/services/transactionServices';
 import { toast } from 'sonner';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
 
-const RECENT_CATEGORIES_KEY = 'cashpilot_recent_categories';
+const RECENT_CATEGORIES_KEY = 'nodovec_recent_categories';
 const MAX_RECENT = 5;
 
 function getRecentCategories(): string[] {

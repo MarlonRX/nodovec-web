@@ -1,5 +1,5 @@
 /**
- * Demo mode utilities for CashPilot
+ * Demo mode utilities for NodoVec
  * Handles detection and management of demo vs real user modes
  */
 import { authStore } from '../store/auth';
