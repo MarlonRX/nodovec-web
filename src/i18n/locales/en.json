@@ -279,6 +279,8 @@
         "noTransactionsHint": "Start tracking your money by adding your first transaction!",
         "totalIncome": "Total Income",
         "totalExpense": "Total Expense",
+        "totalFixedIncome": "Total Fixed Income",
+        "totalFixedExpense": "Total Fixed Expense",
         "netBalance": "Net Balance",
         "created": "Transaction created",
         "updated": "Transaction updated",

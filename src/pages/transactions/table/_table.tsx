@@ -566,13 +566,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             <div>
               {fixedTotals.income ? (
                 <div className="flex flex-col items-center md:items-start ml-5">
-                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactionForm.totalFixedIncome')}</span>
+                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalFixedIncome')}</span>
                   <span className="text-(--semantic-success) font-black text-sm md:text-base">+ ${formatCurrency(fixedTotals.income)}</span>
                 </div>
               ) : null}
               {fixedTotals.expense ? (
                 <div className="flex flex-col items-center md:items-start mt-2 ml-5">
-                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactionForm.totalFixedExpense')}</span>
+                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalFixedExpense')}</span>
                   <span className="text-(--semantic-error) font-black text-sm md:text-base">- ${formatCurrency(fixedTotals.expense)}</span>
                 </div>
               ) : null}

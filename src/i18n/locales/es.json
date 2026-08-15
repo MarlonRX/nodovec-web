@@ -186,6 +186,8 @@
         "addFirstTransaction": "Agrega tu Primera Transacción",
         "noTransactions": "Aún no hay transacciones",
         "noTransactionsHint": "¡Empieza a rastrear tu dinero agregando tu primera transacción!",
+        "totalFixedIncome": "Total Ingresos Fijos",
+        "totalFixedExpense": "Total Gastos Fijos",
         "totalIncome": "Total Ingresos",
         "totalExpense": "Total Gastos",
         "netBalance": "Balance Neto",
