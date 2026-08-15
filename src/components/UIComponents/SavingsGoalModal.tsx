@@ -183,7 +183,7 @@ export const SavingsGoalModal = ({
                 label={t('savingsGoals.deadlineOptional') || 'Deadline (optional)'}
                 name="deadline"
                 value={formData.deadline}
-                onChange={handleChange}
+                onChange={(e) => handleChange({ target: { name: 'deadline', value: e.target.value } })}
               />
             </div>
 

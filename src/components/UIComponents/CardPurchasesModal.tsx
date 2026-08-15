@@ -10,6 +10,7 @@ import { MyDatePicker } from "./MyDatePicker";
 import { MyCurrencyInput } from "./MyCurrencyInput";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { toast } from "sonner";
+import { calculateInstallment, formatMoney, money } from "@/utils/cardFinance";
 
 interface Props {
   isOpen: boolean;
@@ -18,14 +19,7 @@ interface Props {
   onBalanceChange?: () => void;
 }
 
-function calcInstallment(total: number, installments: number, annualRate: number): number {
-  if (!total || !installments) return 0;
-  if (annualRate <= 0) return total / installments;
-  const r = annualRate / 100 / 12;
-  return total * (r * Math.pow(1 + r, installments)) / (Math.pow(1 + r, installments) - 1);
-}
-
-function fmt(n: number) {
+function fmt(n: string | number) {
   return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
@@ -46,7 +40,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [preview, setPreview] = useState<number | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -56,7 +50,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
     onSubmit: async (data) => {
       setIsSubmitting(true);
       try {
-        const payload = { description: data.description, total_amount: parseFloat(data.total_amount) || 0, installments: parseInt(data.installments) || 1, interest_rate: parseFloat(data.interest_rate) || 0, purchase_date: data.purchase_date, category: data.category || null, current_installment: parseInt(data.current_installment) || 1 };
+        const payload = { description: data.description, total_amount: data.total_amount || "0", installments: Number.parseInt(data.installments, 10) || 1, interest_rate: data.interest_rate || "0", purchase_date: data.purchase_date, category: data.category || null, current_installment: Number.parseInt(data.current_installment, 10) || 1 };
         const result = editingPurchase?.uuid ? await updateCardPurchase(card.uuid, editingPurchase.uuid, payload) : await createCardPurchase(card.uuid, payload);
         if (result.response) {
           toast.success(editingPurchase ? t('purchases.updated') : t('purchases.created'));
@@ -74,10 +68,10 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
   });
 
   useEffect(() => {
-    const total = parseFloat(formData.total_amount) || 0;
-    const inst = parseInt(formData.installments) || 1;
-    const rate = parseFloat(formData.interest_rate) || 0;
-    setPreview(total > 0 ? calcInstallment(total, inst, rate) : null);
+    const total = formData.total_amount || "0";
+    const inst = Number.parseInt(formData.installments, 10) || 1;
+    const rate = formData.interest_rate || "0";
+    setPreview(Number(total) > 0 ? calculateInstallment(total, inst, rate).toFixed(2) : null);
   }, [formData.total_amount, formData.installments, formData.interest_rate]);
 
   const loadPurchases = async (page = currentPage) => {
@@ -120,9 +114,9 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
   };
 
   const activePurchases = purchases.filter(p => p.current_installment <= p.installments);
-  const totalMonthly = activePurchases.reduce((s, p) => s + p.installment_amount, 0);
-  const totalDebt = activePurchases.reduce((s, p) => s + p.installment_amount * (p.installments - p.current_installment + 1), 0);
-  const available = card.credit_limit != null ? card.credit_limit - totalDebt : null;
+  const totalMonthly = activePurchases.reduce((s, p) => s.plus(money(p.installment_amount)), money(0));
+  const totalDebt = activePurchases.reduce((s, p) => s.plus(money(p.installment_amount).times(Math.max(0, p.installments - p.current_installment + 1))), money(0));
+  const available = card.credit_limit != null ? money(card.credit_limit).minus(totalDebt) : null;
 
   if (!isOpen) return null;
 
@@ -142,9 +136,9 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
           </div>
 
           <div className="grid grid-cols-3 divide-x divide-(--border-primary) border-b border-(--border-primary) shrink-0">
-            {[{ label: t('purchases.monthlyDue'), value: `$${fmt(totalMonthly)}`, color: 'var(--accent-primary)' },
-              { label: t('purchases.totalDebt'), value: `$${fmt(totalDebt)}`, color: 'var(--text-primary)' },
-              { label: t('purchases.available'), value: available != null ? `$${fmt(available)}` : '—', color: available != null && available >= 0 ? 'var(--semantic-success)' : 'var(--semantic-error)' }
+            {[{ label: t('purchases.monthlyDue'), value: `$${formatMoney(totalMonthly)}`, color: 'var(--accent-primary)' },
+              { label: t('purchases.totalDebt'), value: `$${formatMoney(totalDebt)}`, color: 'var(--text-primary)' },
+              { label: t('purchases.available'), value: available != null ? `$${formatMoney(available)}` : '—', color: available != null && !available.isNegative() ? 'var(--semantic-success)' : 'var(--semantic-error)' }
             ].map(({ label, value, color }) => (
               <div key={label} className="p-3 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-(--text-tertiary)">{label}</p>
@@ -172,7 +166,13 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                     <MyInput label={t('purchases.labelDescription')} name="description" value={formData.description} onChange={handleChange} placeholder="e.g., TV Samsung 55" required />
                   </div>
                   <MyCurrencyInput label={t('purchases.labelTotalAmount')} name="total_amount" value={formData.total_amount} onChange={(e) => setFormData({ ...formData, total_amount: e.target.value })} required />
-                  <MyDatePicker label={t('purchases.labelPurchaseDate')} name="purchase_date" value={formData.purchase_date} onChange={handleChange} required />
+                  <MyDatePicker 
+                    label={t('purchases.labelPurchaseDate')} 
+                    name="purchase_date" 
+                    value={formData.purchase_date} 
+                    onChange={(e) => handleChange({ target: { name: 'purchase_date', value: e.target.value } })} 
+                    required 
+                  />
                   <MyInput label={t('purchases.labelInstallments')} name="installments" type="number" min="1" max="120" value={formData.installments} onChange={handleChange} required />
                   <MyInput label={t('purchases.labelRate')} name="interest_rate" type="number" min="0" step="0.01" value={formData.interest_rate} onChange={handleChange} />
                   {editingPurchase && <MyInput label={t('purchases.labelCurrentInstallment')} name="current_installment" type="number" min="1" max={formData.installments} value={formData.current_installment} onChange={handleChange} />}
@@ -183,7 +183,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                       <Calculator size={16} style={{ color: 'var(--accent-primary)' }} />
                       <span className="text-xs text-(--text-secondary)">{t('purchases.monthlyPayment')}:</span>
                       <span className="font-black" style={{ color: 'var(--accent-primary)' }}>${fmt(preview)}</span>
-                      <span className="text-xs text-(--text-secondary)">× {formData.installments} = ${fmt(preview * parseInt(formData.installments || '1'))}</span>
+                       <span className="text-xs text-(--text-secondary)">× {formData.installments} = ${formatMoney(money(preview).times(Number(formData.installments || '1')))}</span>
                     </div>
                   )}
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 interface MyTextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -17,9 +18,14 @@ export const MyTextArea = React.forwardRef<HTMLTextAreaElement, MyTextAreaProps>
         <textarea
           ref={ref}
           autoComplete="off"
-          className={`w-full px-3 py-2 border border-(--border-primary) rounded-md bg-(--bg-surface) text-(--text-primary) placeholder-text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) transition-all resize-none ${
-            error ? "border-red-500 focus:ring-red-500" : ""
-          } ${className || ""}`}
+          className={cn(
+            "w-full px-3 py-2 rounded-lg border text-sm resize-none",
+            "bg-(--bg-surface) text-(--text-primary) placeholder:text-(--text-secondary)",
+            "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
+            "outline-none transition-all duration-200",
+            error && "border-red-500 focus:border-red-500 focus:ring-red-500/30",
+            className
+          )}
           {...props}
         />
         {error && (

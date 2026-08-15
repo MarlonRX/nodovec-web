@@ -1,7 +1,7 @@
-import { Home, Zap, BarChart3, LogOut, Settings, CreditCard, PiggyBank } from "lucide-react";
+import { Home, Zap, BarChart3, LogOut, Settings, PiggyBank, Landmark } from "lucide-react";
 
 interface SidebarIconsProps {
-    icon: "home" | "transactions" | "cards" | "movement" | "logout" | "preferences" | "savings";
+    icon: "home" | "transactions" | "financing" | "movement" | "logout" | "preferences" | "savings";
 }
 
 export function SidebarIcons({ icon }: SidebarIconsProps) {
@@ -20,8 +20,8 @@ export function SidebarIcons({ icon }: SidebarIconsProps) {
             return <Home {...iconProps} />;
         case "transactions":
             return <Zap {...iconProps} />;
-        case "cards":
-            return <CreditCard {...iconProps} />;
+        case "financing":
+            return <Landmark {...iconProps} />;
         case "movement":
             return <BarChart3 {...iconProps} />;
         case "logout":

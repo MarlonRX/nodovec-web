@@ -61,3 +61,23 @@ export const getActivePurchasesSummary = async () => {
     return { response: false, message: 'Unexpected error', data: [] };
   }
 };
+
+export const getCardPayments = async (cardUuid: string, purchaseUuid: string) => {
+  try {
+    const response: AxiosResponse = await getFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to fetch payments', data: [] };
+    return { response: false, message: 'Unexpected error', data: [] };
+  }
+};
+
+export const createCardPayment = async (cardUuid: string, purchaseUuid: string, data: { amount: string; payment_date: string; notes?: string | null }) => {
+  try {
+    const response: AxiosResponse = await postFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to register payment', data: null };
+    return { response: false, message: 'Unexpected error', data: null };
+  }
+};

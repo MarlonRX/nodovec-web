@@ -13,23 +13,8 @@ const t = (key: string) => translate(key, lang);
   <main class="w-full min-h-[72vh]">
     <div class="table-page-container">
       <!-- Page header -->
-      <div class="mb-6">
-        <h1 class="text-3xl font-black mb-2" style="color: var(--text-primary)">
-          {t("preferences.title")}
-        </h1>
-        <p class="text-sm" style="color: var(--text-secondary)">
-          {t("preferences.description")}
-        </p>
-      </div>
-
-      <!-- Single, focused Profile panel (perfil, idioma, moneda, tema) -->
-      <div class="flex justify-center w-full">
-        <section class="max-w-6xl w-full mx-auto rounded-xl p-8 md:p-10 bg-(--bg-surface) border border-(--border-primary) shadow-md">
-          <div class="mt-4">
-            <UserComponent client:load />
-          </div>
-        </section>
-      </div>
+      <UserComponent client:load />
+      
     </div>
   </main>
 </BaseLayout>

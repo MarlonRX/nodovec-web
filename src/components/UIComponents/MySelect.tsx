@@ -1,4 +1,6 @@
 import React from "react";
+import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MySelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -16,24 +18,32 @@ export const MySelect = React.forwardRef<HTMLSelectElement, MySelectProps>(
             {label}
           </label>
         )}
-        <select
-          ref={ref}
-          className={`w-full px-3 py-2 border border-(--border-primary) rounded-md bg-(--bg-surface) text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) transition-all cursor-pointer ${
-            error ? "border-red-500 focus:ring-red-500" : ""
-          } ${className || ""}`}
-          {...props}
-        >
-          {placeholder && (
-            <option value="" disabled selected>
-              {placeholder}
-            </option>
-          )}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            ref={ref}
+            className={cn(
+              "w-full appearance-none px-3 py-2 pr-8 rounded-lg border text-sm",
+              "bg-(--bg-surface) text-(--text-primary)",
+              "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
+              "outline-none transition-all duration-200 cursor-pointer",
+              error && "border-red-500 focus:border-red-500 focus:ring-red-500/30",
+              className
+            )}
+            {...props}
+          >
+            {placeholder && (
+              <option value="" disabled>
+                {placeholder}
+              </option>
+            )}
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-(--text-secondary) pointer-events-none" />
+        </div>
         {error && (
           <p className="text-xs text-red-500">{error}</p>
         )}

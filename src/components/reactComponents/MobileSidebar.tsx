@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Zap, CreditCard, Settings } from 'lucide-react';
+import { Home, Zap, Settings, Landmark } from 'lucide-react';
 import { translate, getCurrentLanguage, type Language } from '../../i18n';
 
 const NAV_ITEMS = [
   { key: 'dashboard', icon: Home, path: '/' },
   { key: 'transactions', icon: Zap, path: '/transactions/table' },
-  { key: 'cards', icon: CreditCard, path: '/cards/table' },
+  { key: 'financing', icon: Landmark, path: '/financings' },
   { key: 'preferences', icon: Settings, path: '/preferences' },
 ] as const;
 

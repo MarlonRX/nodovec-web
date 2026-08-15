@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { FinancingsPage } from "./_page";
+
+export const prerender = false;
+---
+
+<BaseLayout>
+  <FinancingsPage client:load />
+</BaseLayout>

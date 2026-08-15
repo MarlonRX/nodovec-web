@@ -1,12 +1,4 @@
 import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Column } from "@/schemas/tableSchema";
 
@@ -158,15 +150,15 @@ export const MyTable = <T extends { id: string | number }>({
           : 'rounded-lg md:rounded-xl bg-(--bg-surface) shadow-md border border-(--border-primary) hover:shadow-lg transition-all duration-300'
       }`}>
         <div className={variant === 'excel' ? "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar" : "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar"}>
-          <Table className={`w-full border-collapse min-w-full ${variant === 'excel' ? 'bg-(--bg-surface)' : 'bg-(--bg-surface)'}`}>
-            <TableHeader className={variant === 'excel' ? "sticky top-0 z-10" : ""}>
-              <TableRow className={`${
+          <table className={`w-full border-collapse min-w-full ${variant === 'excel' ? 'bg-(--bg-surface)' : 'bg-(--bg-surface)'}`}>
+            <thead className={variant === 'excel' ? "sticky top-0 z-10" : ""}>
+              <tr className={`${
                 variant === 'excel'
                   ? 'bg-(--bg-secondary) border-b-2 border-(--border-primary) h-10'
                   : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) border-b-2 border-(--accent-primary) h-14'
               }`}>
                 {columns.map(column => (
-                  <TableHead
+                  <th
                     key={String(column.key)}
                     className={`${
                       variant === 'excel'
@@ -179,14 +171,14 @@ export const MyTable = <T extends { id: string | number }>({
                       sortKey={column.key}
                       isSortable={column.sortable !== false}
                     />
-                  </TableHead>
+                  </th>
                 ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+              </tr>
+            </thead>
+            <tbody>
               {displayData.length > 0 ? (
                 displayData.map((row, index) => (
-                  <TableRow
+                  <tr
                     key={row.id}
                     className={`${
                       variant === 'excel'
@@ -202,7 +194,7 @@ export const MyTable = <T extends { id: string | number }>({
                     {columns.map(column => {
                       const value = (row as any)[column.key];
                       return (
-                        <TableCell
+                        <td
                           key={String(column.key)}
                           className={`${
                             variant === 'excel'
@@ -213,20 +205,20 @@ export const MyTable = <T extends { id: string | number }>({
                           {column.render
                             ? (column.render(value, row) as React.ReactNode)
                             : String(value ?? '')}
-                        </TableCell>
+                        </td>
                       );
                     })}
-                  </TableRow>
+                  </tr>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="px-6 py-8 text-center text-(--text-secondary)">
+                <tr>
+                  <td colSpan={columns.length} className="px-6 py-8 text-center text-(--text-secondary)">
                     No items found
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
       </div>
 

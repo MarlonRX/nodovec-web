@@ -13,7 +13,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const publicRoutes = ["/", "/login", "/register", "/demo", "/unauthorized"];
   
   // Rutas protegidas que SÍ requieren autenticación
-  const protectedRoutes = ["/dashboard", "/transactions", "/cards", "/savings-goals", "/preferences"];
+  const protectedRoutes = ["/dashboard", "/transactions", "/financings", "/savings-goals", "/preferences"];
 
   const path = context.url.pathname;
 

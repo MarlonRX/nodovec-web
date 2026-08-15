@@ -8,6 +8,7 @@ import { MyCurrencyInput } from "./MyCurrencyInput";
 import { MySelect } from "./MySelect";
 import { MyTextArea } from "./MyTextArea";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { calculateInstallment, formatMoney, money } from "@/utils/cardFinance";
 
 interface CardPurchaseModalProps {
   isOpen: boolean;
@@ -17,15 +18,8 @@ interface CardPurchaseModalProps {
   initialData?: CardPurchase | null;
 }
 
-function calcInstallment(total: number, installments: number, annualRate: number): number {
-  if (!total || !installments) return 0;
-  if (annualRate <= 0) return total / installments;
-  const r = annualRate / 100 / 12;
-  return total * (r * Math.pow(1 + r, installments)) / (Math.pow(1 + r, installments) - 1);
-}
-
 export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false, initialData = null }: CardPurchaseModalProps) => {
-  const [preview, setPreview] = useState<number | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [lang, setLang] = useState<Language>(getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 
@@ -50,9 +44,9 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
     onSubmit: async (data) => {
       onSubmit({
         description: data.description,
-        total_amount: parseFloat(data.total_amount) || 0,
+        total_amount: data.total_amount || "0",
         installments: parseInt(data.installments) || 1,
-        interest_rate: parseFloat(data.interest_rate) || 0,
+        interest_rate: data.interest_rate || "0",
         purchase_date: data.purchase_date,
         category: data.category || null,
         current_installment: parseInt(data.current_installment) || 1,
@@ -62,11 +56,11 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
   // Live installment preview
   useEffect(() => {
-    const total = parseFloat(formData.total_amount) || 0;
-    const inst = parseInt(formData.installments) || 1;
-    const rate = parseFloat(formData.interest_rate) || 0;
-    if (total > 0 && inst > 0) {
-      setPreview(calcInstallment(total, inst, rate));
+    const total = formData.total_amount || "0";
+    const inst = Number.parseInt(formData.installments, 10) || 1;
+    const rate = formData.interest_rate || "0";
+    if (Number(total) > 0 && inst > 0) {
+      setPreview(calculateInstallment(total, inst, rate).toFixed(2));
     } else {
       setPreview(null);
     }
@@ -92,7 +86,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
   if (!isOpen) return null;
 
-  const fmtCurrency = (n: number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  const fmtCurrency = (n: string | number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n));
 
   return (
     <>
@@ -124,7 +118,13 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
             </div>
 
             <div>
-              <MyDatePicker label={t("purchaseForm.purchaseDate")} name="purchase_date" value={formData.purchase_date} onChange={handleChange} required />
+              <MyDatePicker 
+                label={t("purchaseForm.purchaseDate")} 
+                name="purchase_date" 
+                value={formData.purchase_date} 
+                onChange={(e) => handleChange({ target: { name: 'purchase_date', value: e.target.value } })} 
+                required 
+              />
             </div>
 
             <div>
@@ -180,7 +180,7 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
                   <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>
                     ${fmtCurrency(preview)}
                     <span className="text-sm font-normal ml-2" style={{ color: 'var(--text-secondary)' }}>
-                      × {formData.installments} = ${fmtCurrency(preview * parseInt(formData.installments || '1'))}
+                      × {formData.installments} = ${formatMoney(money(preview).times(Number(formData.installments)))}
                     </span>
                   </p>
                 </div>

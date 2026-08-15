@@ -181,7 +181,9 @@ export const TransactionModal = ({
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <>
@@ -217,7 +219,7 @@ export const TransactionModal = ({
                 label={t("transactionForm.date")}
                 name="date"
                 value={formData.date}
-                onChange={handleChange}
+                onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
                 required
                 min={dateRange?.min}
                 max={dateRange?.max}

@@ -132,6 +132,7 @@ export const CardSchema = z.object({
   current_balance: z.coerce.number(),
   expiry_date: z.string(),
   is_active: z.boolean(),
+  active_purchases_count: z.number().optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -174,10 +175,25 @@ export const CardPurchaseSchema = z.object({
   installment_amount: z.coerce.number(),
   purchase_date: z.string(),
   category: z.string().nullable(),
+  status: z.enum(['pending', 'partially_paid', 'overdue', 'paid']).default('pending'),
+  next_payment_date: z.string().nullable().optional(),
   card: z.object({ id: z.number(), uuid: z.string(), name: z.string(), last_four: z.string(), bank: z.string() }).optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
+
+export const CardPaymentSchema = z.object({
+  id: z.number(),
+  uuid: z.string(),
+  card_purchase_id: z.number(),
+  card_id: z.number(),
+  installment_number: z.number(),
+  amount: z.coerce.number(),
+  payment_date: z.string(),
+  notes: z.string().nullable(),
+});
+
+export type CardPayment = z.infer<typeof CardPaymentSchema>;
 
 export type CardPurchase = z.infer<typeof CardPurchaseSchema>;
 

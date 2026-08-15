@@ -34,8 +34,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
+
+  // Totals for active filters (income, expense, net, fixed)
   const [totals, setTotals] = useState({ income: 0, expense: 0, net: 0 });
   const [loadingTotals, setLoadingTotals] = useState(false);
+  const [fixedTotals, setFixedTotals] = useState({ income: 0, expense: 0 });
+
   const [activePurchases, setActivePurchases] = useState<CardPurchase[]>([]);
   const [lang, setLang] = useState<Language>(getCurrentLanguage());
   const [sortField, setSortField] = useState<string>('date');
@@ -205,6 +209,10 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             expense: result.data.expense || 0,
             net: result.data.net || 0,
           });
+          setFixedTotals({
+            income: result.data?.fixedIncome || 0,
+            expense: result.data?.fixedExpense || 0,
+          });
         } else {
           setTotals({ income: 0, expense: 0, net: 0 });
         }
@@ -252,9 +260,13 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
       if (result.response) {
         toast.success(editingTransaction ? t('transactions.updated') : t('transactions.created'));
         setIsModalOpen(false);
-        setEditingTransaction(null);
-        setRefreshTrigger(prev => prev + 1);
-        window.dispatchEvent(new CustomEvent('transactionCreated'));
+
+        setTimeout(() => {
+          setEditingTransaction(null);
+          setRefreshTrigger(prev => prev + 1);
+          window.dispatchEvent(new CustomEvent('transactionCreated'));
+        }, 300);
+
       } else {
         toast.error(result.message || t('transactions.errorCreate'));
       }
@@ -342,7 +354,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           );
         }
       },
-      { key: 'income', label: t('transactions.colIncome'), sortable: false,
+      {
+        key: 'income', label: t('transactions.colIncome'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => {
           const amount = row.amount;
           return row.type === 'income' ? (
@@ -352,7 +365,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           ) : null;
         },
       },
-      { key: 'expense', label: t('transactions.colExpense'), sortable: false,
+      {
+        key: 'expense', label: t('transactions.colExpense'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => {
           const amount = row.amount;
           return row.type === 'expense' ? (
@@ -362,7 +376,8 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           ) : null;
         },
       },
-      { key: 'actions', label: t('transactions.colActions'), sortable: false,
+      {
+        key: 'actions', label: t('transactions.colActions'), sortable: false,
         render: (_: any, row: Transaction): ReactNode => (
           <div className="flex gap-2">
             <button
@@ -431,14 +446,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           </div>
 
           <button
-            onClick={() => { setEditingTransaction(null); setIsModalOpen(true); }}
-            disabled={demoMode}
-            className={`group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto ${
-              demoMode
-                ? 'bg-gray-400 text-(--text-inverted) cursor-not-allowed opacity-50'
-                : 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg'
-            }`}
-            title={demoMode ? t('common.demoReadOnly') : t('transactions.addTransaction')}
+            onClick={() => {
+              setEditingTransaction(null);
+              setIsModalOpen(true);
+            }}
+            className={`group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
+            title={t('transactions.addTransaction')}
           >
             <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
             <span>{t('transactions.addTransaction')}</span>
@@ -546,17 +559,37 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           )}
         </div>
 
-        {/* Totales - Grid responsive */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+        {/* Totales y Totales fijos - Grid responsive */}
+        <div className={`grid grid-cols-2 ${fixedTotals.income || fixedTotals.expense ? "md:grid-cols-4" : "md:grid-cols-3"} gap-2 md:gap-4`}>
+          {/* Total fixed income */}
+          {fixedTotals.income || fixedTotals.expense ? (
+            <div>
+              {fixedTotals.income ? (
+                <div className="flex flex-col items-center md:items-start ml-5">
+                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalFixedIncome')}</span>
+                  <span className="text-(--semantic-success) font-black text-sm md:text-base">+ ${formatCurrency(fixedTotals.income)}</span>
+                </div>
+              ) : null}
+              {fixedTotals.expense ? (
+                <div className="flex flex-col items-center md:items-start mt-2 ml-5">
+                  <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalFixedExpense')}</span>
+                  <span className="text-(--semantic-error) font-black text-sm md:text-base">- ${formatCurrency(fixedTotals.expense)}</span>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {/* Total income */}
           <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
             <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalIncome')}</span>
             <span className="text-(--semantic-success) font-black text-sm md:text-base">+ ${formatCurrency(totals.income)}</span>
           </div>
+          {/* Total expense */}
           <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
             <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.totalExpense')}</span>
             <span className="text-(--semantic-error) font-black text-sm md:text-base">- ${formatCurrency(totals.expense)}</span>
           </div>
-          <div className="col-span-2 md:col-span-2 flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
+          {/* Net balance */}
+          <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
             <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.netBalance')}</span>
             <div className={`px-2 md:px-4 py-0.5 md:py-1 rounded-lg border-2 font-black text-sm md:text-base transition-all ${totals.net >= 0
               ? 'text-(--semantic-success) border-(--semantic-success) bg-[rgba(46,139,87,0.1)]'
@@ -631,10 +664,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 {t('transactions.noTransactionsHint')}
               </p>
               <button
-                onClick={() => { setEditingTransaction(null); setIsModalOpen(true); }}
-                disabled={demoMode}
-                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto ${demoMode ? 'bg-gray-400 text-(--text-inverted) cursor-not-allowed opacity-50' : 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg'}`}
-                title={demoMode ? t('common.demoReadOnly') : t('transactions.addTransaction')}
+                onClick={() => {
+                  setEditingTransaction(null);
+                  setIsModalOpen(true);
+                }}
+                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
+                title={t('transactions.addTransaction')}
               >
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
                 {t('transactions.addFirstTransaction')}

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Home, CreditCard, FileText, BarChart3, Menu } from 'lucide-react';
+import { Home, Landmark, FileText, BarChart3, Menu } from 'lucide-react';
 import { translate, getCurrentLanguage, type Language } from '../../i18n';
 
 const NAV_ITEMS = [
   { key: 'dashboard', icon: Home, path: '/' },
   { key: 'transactions', icon: FileText, path: '/transactions/table' },
-  { key: 'cards', icon: CreditCard, path: '/cards/table' },
+  { key: 'financing', icon: Landmark, path: '/financings' },
   { key: 'reports', icon: BarChart3, path: '/reports' },
 ] as const;
 

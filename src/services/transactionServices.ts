@@ -322,8 +322,25 @@ export const getTransactionsTotals = async (filters?: Filters) => {
         },
         { income: 0, expense: 0, net: 0 }
       );
+
+      const fixedTotals = filteredData.reduce(
+        (acc, curr) => {
+          const amount = curr.amount || 0;
+          if (curr.fixed) {
+            if (curr.type === 'income') {
+              acc.income += amount;
+            } else {
+              acc.expense += amount;
+            }
+          }
+          return acc;
+        },
+        { income: 0, expense: 0 }
+      );
       
       totals.net = totals.income - totals.expense;
+      totals.fixedIncome = fixedTotals.income;
+      totals.fixedExpense = fixedTotals.expense;
       
       return {
         response: true,
@@ -342,6 +359,7 @@ export const getTransactionsTotals = async (filters?: Filters) => {
   // Modo autenticado: llamar a API real
   try {
     const response: AxiosResponse = await getFetch('transactions/totals', filters);
+    console.log('resp', response)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

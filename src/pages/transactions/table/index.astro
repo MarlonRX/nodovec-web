@@ -2,19 +2,9 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { TableData } from "./_table.tsx";
 
-async function fetchData() {
-    return [
-        { id: "1", date: "2024-01-15", description: "Grocery shopping", category: "Food", amount: 45.5, type: "expense" as const },
-        { id: "2", date: "2024-01-16", description: "Monthly salary", category: "Income", amount: 2500.0, type: "income" as const },
-        { id: "3", date: "2024-01-17", description: "Utility payment", category: "Utilities", amount: 120.0, type: "expense" as const },
-        { id: "4", date: "2024-01-18", description: "Item sale", category: "Income", amount: 300.0, type: "income" as const },
-    ];
-}
-
-const data = await fetchData();
 const title = "Transactions";
 ---
 
 <BaseLayout>
-    <TableData client:load data={data}/>
+    <TableData client:visible />
 </BaseLayout>

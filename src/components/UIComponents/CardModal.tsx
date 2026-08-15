@@ -7,6 +7,7 @@ import { MyDatePicker } from "./MyDatePicker";
 import { MyCurrencyInput } from "./MyCurrencyInput";
 import { MyInput } from "./MyInput";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { money } from "@/utils/cardFinance";
 
 interface CardModalProps {
   isOpen: boolean;
@@ -36,7 +37,7 @@ export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initia
         name: data.name,
         last_four: data.last_four,
         bank: data.bank,
-        credit_limit: data.type === "credit" && data.credit_limit ? parseFloat(data.credit_limit) : null,
+        credit_limit: data.type === "credit" && data.credit_limit ? money(data.credit_limit).toFixed(2) : null,
         expiry_date: data.expiry_date,
         is_active: data.is_active === "true",
       } as any);
@@ -86,7 +87,13 @@ export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initia
               onChange={(e) => { const val = e.target.value.replace(/\D/g, '').slice(0, 4); handleChange({ ...e, target: { ...e.target, name: 'last_four', value: val } }); }}
               placeholder="1234" maxLength={4} required />
 
-            <MyDatePicker label={t('cards.labelExpiry')} name="expiry_date" value={formData.expiry_date} onChange={handleChange} required />
+            <MyDatePicker 
+              label={t('cards.labelExpiry')} 
+              name="expiry_date" 
+              value={formData.expiry_date} 
+              onChange={(e) => handleChange({ target: { name: 'expiry_date', value: e.target.value } })} 
+              required 
+            />
 
             {formData.type === "credit" && (
               <div className="md:col-span-2">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Decimal from "decimal.js";
+import { cn } from "@/lib/utils";
 
 interface MyCurrencyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label?: string;
@@ -11,7 +12,6 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
   ({ label, error, className, onChange, value, ...props }, ref) => {
     const [displayValue, setDisplayValue] = useState<string>("");
 
-    // Sincronizar displayValue cuando cambia el value prop
     useEffect(() => {
       if (value === undefined || value === null || value === "") {
         setDisplayValue("");
@@ -27,33 +27,26 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
 
     const formatCurrency = (val: string): string => {
       if (!val) return "";
-
       const parts = val.split(".");
       const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       const decimalPart = parts[1] || "";
-
       return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       let inputValue = e.target.value;
-
-      // Solo permitir números y punto decimal
       inputValue = inputValue.replace(/[^\d.]/g, "");
 
-      // Asegurar que solo haya un punto decimal
       const parts = inputValue.split(".");
       if (parts.length > 2) {
         inputValue = parts[0] + "." + parts.slice(1).join("");
       }
 
-      // Limitar a 2 decimales
       if (parts.length === 2) {
         parts[1] = parts[1].substring(0, 2);
         inputValue = parts.join(".");
       }
 
-      // Validar y convertir con Decimal para precisión
       let cleanValue = inputValue;
       if (inputValue && inputValue !== ".") {
         try {
@@ -67,21 +60,13 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
         setDisplayValue("");
       }
 
-      // Pasar el valor limpio al onChange
       const cleanEvent = {
         ...e,
-        target: {
-          ...e.target,
-          value: cleanValue,
-        },
+        target: { ...e.target, value: cleanValue },
       } as React.ChangeEvent<HTMLInputElement>;
 
-      if (onChange) {
-        onChange(cleanEvent);
-      }
+      if (onChange) onChange(cleanEvent);
     };
-
-    const displayVal = displayValue;
 
     return (
       <div className="space-y-1">
@@ -95,10 +80,15 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
           autoComplete="off"
           type="text"
           inputMode="decimal"
-          className={`w-full px-3 py-2 border border-(--border-primary) rounded-md bg-(--bg-surface) text-(--text-primary) placeholder-text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) transition-all ${
-            error ? "border-red-500 focus:ring-red-500" : ""
-          } ${className || ""}`}
-          value={displayVal}
+          className={cn(
+            "w-full px-3 py-2 rounded-lg border text-sm",
+            "bg-(--bg-surface) text-(--text-primary) placeholder:text-(--text-secondary)",
+            "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
+            "outline-none transition-all duration-200",
+            error && "border-red-500 focus:border-red-500 focus:ring-red-500/30",
+            className
+          )}
+          value={displayValue}
           onChange={handleChange}
           placeholder="0.00"
           {...props}
