@@ -94,14 +94,14 @@ export const STORAGE_CONFIG = {
 } as const;
 
 // Función helper para construir URLs completas de la API
-export function buildApiUrl(endpoint: string): string {
+function buildApiUrl(endpoint: string): string {
   const baseUrl = getBackendUrl().replace(/\/$/, ''); // Remove trailing slash
   const apiEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   return `${baseUrl}${API_CONFIG.API_ENDPOINT}${apiEndpoint}`;
 }
 
 // Función helper para obtener headers con autenticación
-export function getAuthHeaders(token?: string): Record<string, string> {
+function getAuthHeaders(token?: string): Record<string, string> {
   const headers: Record<string, string> = { ...API_CONFIG.DEFAULT_HEADERS } as Record<string, string>;
   
   if (token) {

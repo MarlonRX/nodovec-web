@@ -60,7 +60,7 @@ export function getPreference<K extends keyof UserPreferences>(
 /**
  * Limpiar todas las preferencias
  */
-export function clearPreferences(): void {
+function clearPreferences(): void {
   try {
     if (typeof window === 'undefined') return;
     

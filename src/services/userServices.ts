@@ -84,7 +84,7 @@ export const logoutUser = async () => {
 /**
  * Obtener perfil del usuario actual
  */
-export const getUserProfile = async () => {
+const getUserProfile = async () => {
   try {
     const response = await getFetch<{ user?: Record<string, unknown>; message?: string }>('auth/me');
     const payload = response.data;
@@ -153,7 +153,7 @@ export const refreshToken = async () => {
 /**
  * Obtener todos los usuarios (solo admin)
  */
-export const getAllUsers = async (params?: { page?: number; per_page?: number; search?: string }) => {
+const getAllUsers = async (params?: { page?: number; per_page?: number; search?: string }) => {
   try {
     return await getFetch('users', params);
   } catch (error) {
@@ -167,7 +167,7 @@ export const getAllUsers = async (params?: { page?: number; per_page?: number; s
 /**
  * Obtener usuario por UUID
  */
-export const getUserByUuid = async (uuid: string) => {
+const getUserByUuid = async (uuid: string) => {
   try {
     return await getFetch(`users/${uuid}`);
   } catch (error) {
@@ -181,7 +181,7 @@ export const getUserByUuid = async (uuid: string) => {
 /**
  * Crear nuevo usuario (solo admin)
  */
-export const createUser = async (userData: Omit<RegisterData, 'password_confirmation'> & { role_id: number }) => {
+const createUser = async (userData: Omit<RegisterData, 'password_confirmation'> & { role_id: number }) => {
   try {
     return await postFetch('users', userData);
   } catch (error) {
@@ -195,7 +195,7 @@ export const createUser = async (userData: Omit<RegisterData, 'password_confirma
 /**
  * Actualizar usuario
  */
-export const updateUser = async (uuid: string, userData: Partial<User>) => {
+const updateUser = async (uuid: string, userData: Partial<User>) => {
   try {
     return await putFetch(`users/${uuid}`, userData);
   } catch (error) {
@@ -236,7 +236,7 @@ export const uploadUserAvatar = async (uuid: string, file: File) => {
 /**
  * Cambiar estado del usuario (activar/desactivar)
  */
-export const toggleUserStatus = async (uuid: string) => {
+const toggleUserStatus = async (uuid: string) => {
   try {
     return await postFetch(`users/${uuid}/status`);
   } catch (error) {
@@ -252,7 +252,7 @@ export const toggleUserStatus = async (uuid: string) => {
 /**
  * Obtener todos los roles
  */
-export const getAllRoles = async () => {
+const getAllRoles = async () => {
   try {
     return await getFetch('roles/get-all');
   } catch (error) {
@@ -266,7 +266,7 @@ export const getAllRoles = async () => {
 /**
  * Obtener rol por UUID
  */
-export const getRoleByUuid = async (uuid: string) => {
+const getRoleByUuid = async (uuid: string) => {
   try {
     return await getFetch(`roles/${uuid}`);
   } catch (error) {
@@ -280,7 +280,7 @@ export const getRoleByUuid = async (uuid: string) => {
 /**
  * Crear nuevo rol
  */
-export const createRole = async (roleData: { name: string; description?: string }) => {
+const createRole = async (roleData: { name: string; description?: string }) => {
   try {
     return await postFetch('roles', roleData);
   } catch (error) {
@@ -294,7 +294,7 @@ export const createRole = async (roleData: { name: string; description?: string 
 /**
  * Actualizar rol
  */
-export const updateRole = async (uuid: string, roleData: { name?: string; description?: string }) => {
+const updateRole = async (uuid: string, roleData: { name?: string; description?: string }) => {
   try {
     return await putFetch(`roles/${uuid}`, roleData);
   } catch (error) {
@@ -308,7 +308,7 @@ export const updateRole = async (uuid: string, roleData: { name?: string; descri
 /**
  * Cambiar estado del rol
  */
-export const toggleRoleStatus = async (uuid: string) => {
+const toggleRoleStatus = async (uuid: string) => {
   try {
     return await postFetch(`roles/${uuid}/status`);
   } catch (error) {

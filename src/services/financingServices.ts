@@ -49,7 +49,7 @@ export async function getFinancings() {
   }
 }
 
-export async function updateFinancing(uuid: string, data: { current_installment: number }) {
+async function updateFinancing(uuid: string, data: { current_installment: number }) {
   try {
     const response: AxiosResponse = await putFetch(`financings/${uuid}`, data);
     return response.data;

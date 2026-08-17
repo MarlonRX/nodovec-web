@@ -48,7 +48,7 @@ export const FormattedProgressSchema = z.object({
   remaining: z.string(),
 });
 
-export const SavingsGoalSchema = z.object({
+const SavingsGoalSchema = z.object({
   uuid: z.string(),
   name: z.string(),
   target_amount: z.number(),
@@ -81,11 +81,11 @@ export const CreateSavingsGoalSchema = z.object({
   priority: z.number().int().min(0).max(10).optional().default(0),
 });
 
-export const UpdateSavingsGoalSchema = CreateSavingsGoalSchema.partial().extend({
+const UpdateSavingsGoalSchema = CreateSavingsGoalSchema.partial().extend({
   status: SavingsGoalStatusSchema.optional(),
 });
 
-export const ContributeToGoalSchema = z.object({
+const ContributeToGoalSchema = z.object({
   amount: z.number().positive(),
   note: z.string().max(500).nullable().optional(),
 });
@@ -101,7 +101,7 @@ export type CreateSavingsGoal = z.infer<typeof CreateSavingsGoalSchema>;
 export type UpdateSavingsGoal = z.infer<typeof UpdateSavingsGoalSchema>;
 export type ContributeToGoal = z.infer<typeof ContributeToGoalSchema>;
 
-export const SAVINGS_GOAL_ICONS: SavingsGoalIcon[] = [
+const SAVINGS_GOAL_ICONS: SavingsGoalIcon[] = [
   'Target',
   'PiggyBank',
   'Plane',

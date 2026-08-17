@@ -87,7 +87,7 @@ export const getGoals = async (params?: {
   }
 };
 
-export const getGoal = async (uuid: string): Promise<SingleGoalResponse> => {
+const getGoal = async (uuid: string): Promise<SingleGoalResponse> => {
   try {
     const response: AxiosResponse<SingleGoalResponse> = await getFetch(`goals/${uuid}`);
     return response.data;
@@ -234,7 +234,7 @@ export const deleteContribution = async (
   }
 };
 
-export const getGoalProgress = async (uuid: string): Promise<ProgressResponse> => {
+const getGoalProgress = async (uuid: string): Promise<ProgressResponse> => {
   try {
     const response: AxiosResponse<ProgressResponse> = await getFetch(`goals/${uuid}/progress`);
     return response.data;

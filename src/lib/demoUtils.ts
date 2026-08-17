@@ -16,7 +16,7 @@ export const isDemoMode = (): boolean => {
 /**
  * Gets the current mode type
  */
-export const getCurrentMode = (): "demo" | "authenticated1" => {
+const getCurrentMode = (): "demo" | "authenticated1" => {
   return isDemoMode() ? "demo" : "authenticated1";
 };
 
@@ -33,7 +33,7 @@ export const isAuthenticated = (): boolean => {
  * Gets auth token
  * IMPORTANTE: Usa authStore como source of truth unificado
  */
-export const getAuthToken = (): string | null => {
+const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;
   return authStore.getToken();
 };
@@ -42,7 +42,7 @@ export const getAuthToken = (): string | null => {
  * Sets auth token (use authStore.login instead)
  * IMPORTANTE: Usa authStore como source of truth unificado
  */
-export const setAuthToken = (token: string): void => {
+const setAuthToken = (token: string): void => {
   if (typeof window === "undefined") return;
   // Esta función está deprecada - usar authStore.login() en su lugar
   console.warn("setAuthToken is deprecated, use authStore.login() instead");
@@ -52,7 +52,7 @@ export const setAuthToken = (token: string): void => {
  * Clears auth token (use authStore.logout instead)
  * IMPORTANTE: Usa authStore como source of truth unificado
  */
-export const clearAuthToken = (): void => {
+const clearAuthToken = (): void => {
   if (typeof window === "undefined") return;
   authStore.logout();
 };
@@ -74,6 +74,6 @@ export const filterTransactionsByDate = (
 /**
  * Shows demo mode indicator (can be used in UI)
  */
-export const showDemoIndicator = (): boolean => {
+const showDemoIndicator = (): boolean => {
   return isDemoMode();
 };

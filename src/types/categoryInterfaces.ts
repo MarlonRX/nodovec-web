@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const CategoryTypeSchema = z.enum(['income', 'expense']);
 
-export const CategorySchema = z.object({
+const CategorySchema = z.object({
   id: z.number(),
   name: z.string(),
   type: CategoryTypeSchema,
@@ -14,7 +14,7 @@ export const CategorySchema = z.object({
 
 export type Category = z.infer<typeof CategorySchema>;
 
-export const CreateCategoryDataSchema = z.object({
+const CreateCategoryDataSchema = z.object({
   name: z.string(),
   type: CategoryTypeSchema,
   color: z.string().optional().default('#3B82F6'),

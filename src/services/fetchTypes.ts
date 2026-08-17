@@ -130,7 +130,7 @@ export const putFetch = async <T = unknown>(
 /**
  * PATCH - Actualizar datos parcialmente
  */
-export const patchFetch = async <T = unknown>(
+const patchFetch = async <T = unknown>(
   endpoint: string,
   data?: unknown
 ): Promise<AxiosResponse<T>> => {
@@ -226,7 +226,7 @@ export const isAuthenticated = (): boolean => {
  * Uses authStore as the source of truth.
  * @returns User object or null if not authenticated
  */
-export const getCurrentUser = (): any | null => {
+const getCurrentUser = (): any | null => {
   if (typeof window === 'undefined') return null;
   const user = authStore.getUser();
   return user || null;

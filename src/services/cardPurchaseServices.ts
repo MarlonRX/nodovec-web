@@ -62,7 +62,7 @@ export const getActivePurchasesSummary = async () => {
   }
 };
 
-export const getCardPayments = async (cardUuid: string, purchaseUuid: string) => {
+const getCardPayments = async (cardUuid: string, purchaseUuid: string) => {
   try {
     const response: AxiosResponse = await getFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`);
     return response.data;
@@ -72,7 +72,7 @@ export const getCardPayments = async (cardUuid: string, purchaseUuid: string) =>
   }
 };
 
-export const createCardPayment = async (cardUuid: string, purchaseUuid: string, data: { amount: string; payment_date: string; notes?: string | null }) => {
+const createCardPayment = async (cardUuid: string, purchaseUuid: string, data: { amount: string; payment_date: string; notes?: string | null }) => {
   try {
     const response: AxiosResponse = await postFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`, data);
     return response.data;

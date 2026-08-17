@@ -75,7 +75,7 @@ export const colorConfig = {
 } as const;
 
 // Exportar objeto plano para compatibilidad y facilidad de uso
-export const colors = {
+const colors = {
     primaryBg: colorConfig.bg.primary,
     surfaceBg: colorConfig.bg.surface,
     accent: colorConfig.accent.primary,
@@ -90,7 +90,7 @@ export const colors = {
 export const transactionColors = colorConfig.transaction;
 
 // Exportar variables CSS como string para inyectar en estilos
-export const cssVariables = `
+const cssVariables = `
   --bg-primary: ${colorConfig.bg.primary};
   --bg-surface: ${colorConfig.bg.surface};
   --bg-secondary: ${colorConfig.bg.secondary};

@@ -57,7 +57,7 @@ export function translate(key: string, lang?: Language): string {
     return fallback || key;
 }
 
-export function useTranslation() {
+function useTranslation() {
     return {
         t: translate,
         language: getCurrentLanguage(),

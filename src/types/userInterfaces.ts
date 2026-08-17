@@ -10,19 +10,19 @@ export const UserSchema = z.object({
   updated_at: z.string(),
 });
 
-export const LoginCredentialsSchema = z.object({
+const LoginCredentialsSchema = z.object({
   email: z.string(),
   password: z.string(),
 });
 
-export const RegisterDataSchema = z.object({
+const RegisterDataSchema = z.object({
   name: z.string(),
   email: z.string(),
   password: z.string(),
   password_confirmation: z.string(),
 });
 
-export const AuthResponseSchema = z.object({
+const AuthResponseSchema = z.object({
   user: UserSchema,
   token: z.string(),
   token_type: z.string().default("Bearer"),

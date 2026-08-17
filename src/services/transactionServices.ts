@@ -114,7 +114,7 @@ export const getTransactions = async (filters?: Filters) => {
 /**
  * Obtener transacción por ID
  */
-export const getTransactionById = async (uuid: string) => {
+const getTransactionById = async (uuid: string) => {
   try {
     const response: AxiosResponse = await getFetch(`transactions/${uuid}`);
     return response.data;
@@ -250,7 +250,7 @@ export const deleteTransaction = async (uuid: string) => {
 /**
  * Obtener transacciones por tipo (income/expense)
  */
-export const getTransactionsByType = async (type: 'income' | 'expense', params?: { page?: number; per_page?: number }) => {
+const getTransactionsByType = async (type: 'income' | 'expense', params?: { page?: number; per_page?: number }) => {
   try {
     const response: AxiosResponse = await getFetch(`transactions/type/${type}`, params);
     return response.data;
@@ -275,7 +275,7 @@ export const getTransactionsByType = async (type: 'income' | 'expense', params?:
 /**
  * Obtener transacciones por categoría
  */
-export const getTransactionsByCategory = async (categoryId: number, params?: { page?: number; per_page?: number }) => {
+const getTransactionsByCategory = async (categoryId: number, params?: { page?: number; per_page?: number }) => {
   try {
     const response: AxiosResponse = await getFetch(`transactions/category/${categoryId}`, params);
     return response.data;

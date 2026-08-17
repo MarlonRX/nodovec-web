@@ -22,7 +22,7 @@ export const WidgetConfigSchema = z.object({
 
 export type WidgetConfig = z.infer<typeof WidgetConfigSchema>;
 
-export const DashboardLayoutSchema = z.object({
+const DashboardLayoutSchema = z.object({
   version: z.number().default(1),
   widgets: z.array(WidgetConfigSchema),
   preset: z.string().optional(),

@@ -11,7 +11,7 @@ export const ColumnSchema = z.object({
 export type Column = z.infer<typeof ColumnSchema>;
 
 // Table configuration schema
-export const TableConfigSchema = z.object({
+const TableConfigSchema = z.object({
   columns: z.array(ColumnSchema),
   currentPage: z.number().int().positive(),
   totalPages: z.number().int().positive(),
@@ -48,7 +48,7 @@ export const TransactionSchema = z.object({
 export type Transaction = z.infer<typeof TransactionSchema>;
 
 // Generic Paginated Response Schema
-export const PaginatedResponseSchema = z.object({
+const PaginatedResponseSchema = z.object({
   response: z.boolean(),
   status: z.number(),
   message: z.string(),
@@ -63,7 +63,7 @@ export type PaginatedResponse<T> = {
 };
 
 // Pagination metadata schema
-export const PaginationMetaSchema = z.object({
+const PaginationMetaSchema = z.object({
   total: z.number().int().nonnegative(),
   page: z.number().int().positive(),
   per_page: z.number().int().positive(),
@@ -182,7 +182,7 @@ export const CardPurchaseSchema = z.object({
   updated_at: z.string(),
 });
 
-export const CardPaymentSchema = z.object({
+const CardPaymentSchema = z.object({
   id: z.number(),
   uuid: z.string(),
   card_purchase_id: z.number(),
