@@ -43,7 +43,7 @@ const CustomTooltip = (props: any) => {
                 <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <p
-                        key={index}
+                        key={`tooltip-item-${index}`}
                         style={{ margin: "4px 0", color: entry.color }}
                     >
                         {entry.name}: {formatCurrency(entry.value)}

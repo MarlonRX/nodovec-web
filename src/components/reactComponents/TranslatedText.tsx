@@ -16,12 +16,12 @@ export function TranslatedText({
 }: TranslatedTextProps) {
     const [text, setText] = useState<string>("");
 
-    const updateText = () => {
-        const currentLang = getCurrentLanguage();
-        setText(translate(translationKey, currentLang));
-    };
-
     useEffect(() => {
+        const updateText = () => {
+            const currentLang = getCurrentLanguage();
+            setText(translate(translationKey, currentLang));
+        };
+
         updateText();
 
         const handleLanguageChange = () => {

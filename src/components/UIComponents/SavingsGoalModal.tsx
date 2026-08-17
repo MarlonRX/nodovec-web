@@ -135,12 +135,14 @@ export const SavingsGoalModal = ({
 
   return (
     <>
-      <div
+      <button
+        type="button"
+        aria-label={t('common.close')}
         className="fixed inset-0 bg-black/60 z-40 transition-opacity backdrop-blur-sm"
         onClick={handleClose}
       />
 
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
@@ -150,6 +152,7 @@ export const SavingsGoalModal = ({
             </div>
             <button
               onClick={handleClose}
+              aria-label={t('common.close')}
               className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group"
             >
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
@@ -219,12 +222,13 @@ export const SavingsGoalModal = ({
 
             <div className="col-span-1 md:col-span-2">
               <label
+                id="icon-picker-label"
                 className="block text-sm font-medium mb-3"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {t('savingsGoals.iconLabel') || 'Icon'}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="icon-picker-label">
                 {GOAL_ICON_LIST.map((iconName) => {
                   const Icon = GOAL_ICONS[iconName];
                   const isSelected = formData.icon === iconName;
@@ -233,7 +237,7 @@ export const SavingsGoalModal = ({
                       key={iconName}
                       type="button"
                       onClick={() => handleIconSelect(iconName)}
-                      className="w-12 h-12 rounded-xl flex items-center justify-center transition-all"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors"
                       style={{
                         backgroundColor: isSelected ? `${formData.color}30` : 'var(--bg-secondary)',
                         border: `2px solid ${isSelected ? formData.color : 'transparent'}`,
@@ -254,12 +258,13 @@ export const SavingsGoalModal = ({
 
             <div className="col-span-1 md:col-span-2">
               <label
+                id="color-picker-label"
                 className="block text-sm font-medium mb-3"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {t('savingsGoals.colorLabel') || 'Color'}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-picker-label">
                 {SAVINGS_GOAL_COLORS.map((color) => {
                   const isSelected = formData.color === color;
                   return (
@@ -267,7 +272,8 @@ export const SavingsGoalModal = ({
                       key={color}
                       type="button"
                       onClick={() => handleColorSelect(color)}
-                      className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+                      aria-label={`${t('savingsGoals.selectColor')} ${color}`}
+                      className="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
                       style={{
                         backgroundColor: color,
                         transform: isSelected ? 'scale(1.15)' : 'scale(1)',
@@ -283,14 +289,14 @@ export const SavingsGoalModal = ({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-all font-bold uppercase tracking-wider text-sm md:text-base"
+                className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors font-bold uppercase tracking-wider text-sm md:text-base"
               >
                 {t('common.cancel') || 'Cancel'}
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 md:py-3 text-white rounded-lg hover:opacity-90 transition-all font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
+                className="flex-1 px-4 py-2 md:py-3 text-white rounded-lg hover:opacity-90 transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
                 style={{ backgroundColor: formData.color }}
               >
                 {isLoading

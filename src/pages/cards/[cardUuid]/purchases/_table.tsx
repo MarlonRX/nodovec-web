@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ReactNode } from "react";
 import { Plus, Pencil, Trash2, ChevronRight, CreditCard, TrendingUp, RotateCw } from "lucide-react";
 import { MyTable } from "@/components/UIComponents/MyTable";
@@ -13,6 +13,12 @@ import { toast } from "sonner";
 
 interface Props { cardUuid: string; }
 
+const numberFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function fmt(n: number) {
+  return numberFormatter.format(n);
+}
+
 export const CardDetailTable = ({ cardUuid }: Props) => {
   const [card, setCard] = useState<Card | null>(null);
   const [data, setData] = useState<CardPurchase[]>([]);
@@ -26,7 +32,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
-  const t = (key: string) => translate(key, lang);
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   useEffect(() => {
     const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
@@ -61,7 +67,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
           setData([]);
         }
       } catch (err: any) {
-        toast.error(err?.message || t("purchaseForm.loadingError"));
+        toast.error(err?.message || translate("purchaseForm.loadingError", getCurrentLanguage()));
         setData([]);
       } finally {
         setLoading(false);
@@ -120,8 +126,6 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
     }
   };
 
-  const fmt = (n: number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
-
   // Summary stats
   const totalMonthlyDue = data.filter(p => p.current_installment <= p.installments).reduce((sum, p) => sum + p.installment_amount, 0);
   const activePurchases = data.filter(p => p.current_installment <= p.installments).length;
@@ -155,7 +159,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
               <span style={{ color: 'var(--text-tertiary)' }}>{pct}%</span>
             </div>
             <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <div className="h-full rounded-full transition-all" style={{
+              <div className="h-full rounded-full transition-[width]" style={{
                 width: `${Math.min(pct, 100)}%`,
                 backgroundColor: done ? 'var(--semantic-success)' : 'var(--accent-primary)',
               }} />
@@ -219,7 +223,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
             {card && <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
           </div>
           <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             {t('purchaseForm.addPurchase')}
           </button>
@@ -256,7 +260,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
               <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">{t('purchaseForm.noPurchasesYet')}</h3>
               <p className="text-(--text-secondary) text-sm mb-6">{t('purchaseForm.addYourFirst')}</p>
               <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
                 {t('purchaseForm.addFirstPurchase')}
               </button>

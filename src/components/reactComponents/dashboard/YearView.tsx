@@ -142,7 +142,7 @@ const YearView: React.FC<YearViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
         {/* Financial Overview & Cash Flow */}
         <div
-          className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",
@@ -191,7 +191,7 @@ const YearView: React.FC<YearViewProps> = ({
 
         {/* Top Expense Categories */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",
@@ -215,7 +215,7 @@ const YearView: React.FC<YearViewProps> = ({
           <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
             {expenseCategories.map((cat, idx) => (
               <div
-                key={idx}
+                key={`expense-category-${idx}`}
                 className="flex items-center justify-between text-xs sm:text-sm"
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -246,7 +246,7 @@ const YearView: React.FC<YearViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
         {/* Account Balances */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",
@@ -289,7 +289,7 @@ const YearView: React.FC<YearViewProps> = ({
 
         {/* Recent Transactions */}
         <div
-          className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",
@@ -308,7 +308,7 @@ const YearView: React.FC<YearViewProps> = ({
       {/* Active Savings Goal */}
       {activeGoal && (
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",

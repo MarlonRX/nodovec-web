@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 
 interface UseFormHandlerOptions<T> {
   initialValues: T;
@@ -12,6 +12,8 @@ export const useFormHandler = <T extends Record<string, any>>({
   const [formData, setFormData] = useState<T>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const initialValuesRef = useRef(initialValues);
+  initialValuesRef.current = initialValues;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -39,7 +41,7 @@ export const useFormHandler = <T extends Record<string, any>>({
     try {
       await onSubmit(formData);
       // Reset form después de submit exitoso
-      setFormData(initialValues);
+      setFormData(initialValuesRef.current);
     } catch (error: any) {
       const errorMessage = error?.message || "Error submitting form";
       setErrors({ form: errorMessage });
@@ -48,10 +50,10 @@ export const useFormHandler = <T extends Record<string, any>>({
     }
   };
 
-  const resetForm = () => {
-    setFormData(initialValues);
+  const resetForm = useCallback(() => {
+    setFormData(initialValuesRef.current);
     setErrors({});
-  };
+  }, []);
 
   return {
     formData,

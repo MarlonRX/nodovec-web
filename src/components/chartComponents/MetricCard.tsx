@@ -10,7 +10,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
     chart,
 }) => {
     return (
-        <div className="glass-panel rounded-2xl p-6 transition-all duration-300 relative overflow-hidden">
+        <div className="glass-panel rounded-2xl p-6 transition-shadow duration-300 relative overflow-hidden">
             {/* Subtle light glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(var(--accent-primary-rgb),0.02),transparent_70%)] pointer-events-none" />
             <div className="relative z-10 flex flex-col h-full justify-between">

@@ -72,9 +72,12 @@ export const MyTable = <T extends { id: string | number }>({
   const SortableHeader = ({ label, sortKey, isSortable }: { label: string; sortKey: string; isSortable?: boolean }) => {
     const isActive = activeSortField === sortKey;
     return (
-      <div
+      <button
+        type="button"
+        tabIndex={isSortable ? 0 : undefined}
         onClick={() => isSortable && handleSort(sortKey)}
-        className={`flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-all duration-200 ${
+        onKeyDown={(e) => { if (isSortable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleSort(sortKey); } }}
+        className={`flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-colors transition-transform duration-200 ${
           isSortable
             ? 'cursor-pointer hover:text-(--accent-secondary) hover:-translate-y-0.5'
             : 'cursor-default'
@@ -83,7 +86,7 @@ export const MyTable = <T extends { id: string | number }>({
         {label}
         {isSortable && (
           <ArrowUpDown
-            className={`w-4 h-4 transition-all ${
+            className={`w-4 h-4 transition-opacity transition-transform ${
               isActive ? 'text-(--accent-primary) opacity-100 scale-110' : 'opacity-70'
             }`}
           />
@@ -93,7 +96,7 @@ export const MyTable = <T extends { id: string | number }>({
             {activeSortDirection === 'asc' ? '↑' : '↓'}
           </span>
         )}
-      </div>
+      </button>
     );
   };
 
@@ -147,7 +150,7 @@ export const MyTable = <T extends { id: string | number }>({
       <div className={`w-full overflow-hidden flex-1 flex flex-col ${
         variant === 'excel'
           ? 'rounded-none border-2 border-(--border-primary) shadow-none'
-          : 'rounded-lg md:rounded-xl bg-(--bg-surface) shadow-md border border-(--border-primary) hover:shadow-lg transition-all duration-300'
+          : 'rounded-lg md:rounded-xl bg-(--bg-surface) shadow-md border border-(--border-primary) hover:shadow-lg transition-shadow duration-300'
       }`}>
         <div className={variant === 'excel' ? "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar" : "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar"}>
           <table className={`w-full border-collapse min-w-full ${variant === 'excel' ? 'bg-(--bg-surface)' : 'bg-(--bg-surface)'}`}>
@@ -183,13 +186,14 @@ export const MyTable = <T extends { id: string | number }>({
                     className={`${
                       variant === 'excel'
                         ? 'border-b border-(--border-primary) hover:bg-(--border-light)'
-                        : `border-b border-(--border-primary) transition-all duration-200 cursor-pointer group ${
+                        : `border-b border-(--border-primary) transition-colors transition-transform duration-200 cursor-pointer group ${
                             index % 2 === 0
                               ? 'bg-(--bg-surface)'
                               : 'bg-[rgba(212,175,55,0.03)]'
                           } hover:bg-[rgba(var(--accent-primary-rgb),0.08)] hover:translate-x-1 hover:shadow-[inset_3px_0_0_0_var(--accent-primary)]`
                     }`}
                     onClick={() => onRowClick?.(row.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick?.(row.id); } }}
                   >
                     {columns.map(column => {
                       const value = (row as any)[column.key];
@@ -229,7 +233,8 @@ export const MyTable = <T extends { id: string | number }>({
           <button
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
-            className={`p-1.5 md:p-2 rounded-lg transition-all duration-300 ${
+            aria-label="Previous page"
+            className={`p-1.5 md:p-2 rounded-lg transition-colors transition-transform duration-300 ${
               currentPage === 1
                 ? 'bg-(--border-primary) text-(--text-tertiary) cursor-not-allowed opacity-50'
                 : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md'
@@ -247,7 +252,7 @@ export const MyTable = <T extends { id: string | number }>({
                 <button
                   key={page}
                   onClick={() => onPageChange(page as number)}
-                  className={`w-7 h-7 md:w-10 md:h-10 rounded-lg font-semibold text-xs md:text-sm transition-all duration-300 ${
+                  className={`w-7 h-7 md:w-10 md:h-10 rounded-lg font-semibold text-xs md:text-sm transition-colors transition-transform duration-300 ${
                     currentPage === page
                       ? 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) shadow-lg scale-105'
                       : 'bg-(--border-primary) text-(--text-secondary) hover:bg-(--border-secondary) hover:-translate-y-0.5'
@@ -263,7 +268,8 @@ export const MyTable = <T extends { id: string | number }>({
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            className={`p-1.5 md:p-2 rounded-lg transition-all duration-300 ${
+            aria-label="Next page"
+            className={`p-1.5 md:p-2 rounded-lg transition-colors transition-transform duration-300 ${
               currentPage === totalPages
                 ? 'bg-(--border-primary) text-(--text-tertiary) cursor-not-allowed opacity-50'
                 : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md'

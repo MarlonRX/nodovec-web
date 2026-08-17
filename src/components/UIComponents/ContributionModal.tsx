@@ -83,8 +83,8 @@ export const ContributionModal = ({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-300">
+      <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto duration-300">
         <div
           className="rounded-2xl shadow-2xl border p-6 md:p-8"
           style={{
@@ -104,6 +104,7 @@ export const ContributionModal = ({
             </div>
             <button
               onClick={handleClose}
+              aria-label={t('common.close')}
               className="p-2 rounded-full transition-colors hover:bg-[var(--bg-hover)]"
               style={{ color: 'var(--text-secondary)' }}
             >
@@ -162,7 +163,7 @@ export const ContributionModal = ({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 rounded-lg border-2 transition-all font-bold uppercase tracking-wider text-sm"
+                className="flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-bold uppercase tracking-wider text-sm"
                 style={{
                   borderColor: 'var(--text-secondary)',
                   color: 'var(--text-primary)',
@@ -173,7 +174,7 @@ export const ContributionModal = ({
               <button
                 type="submit"
                 disabled={isLoading || amountValue <= 0}
-                className="flex-1 px-4 py-3 rounded-lg font-bold uppercase tracking-wider text-sm shadow-lg disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-3 rounded-lg font-bold uppercase tracking-wider text-sm shadow-lg disabled:opacity-50 transition-opacity"
                 style={{
                   backgroundColor: goal.color,
                   color: '#FFFFFF',

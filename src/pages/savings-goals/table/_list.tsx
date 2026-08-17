@@ -241,6 +241,7 @@ const SavingsGoalsTable: React.FC = () => {
             <select
               value={filterStatus}
               onChange={handleFilterChange}
+              aria-label="Filter by status"
               className="bg-transparent text-sm outline-none"
               style={{ color: 'var(--text-primary)' }}
             >
@@ -252,7 +253,7 @@ const SavingsGoalsTable: React.FC = () => {
 
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-90"
             style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
           >
             <Plus size={18} />
@@ -290,7 +291,7 @@ const SavingsGoalsTable: React.FC = () => {
           {filterStatus !== 'completed' && (
             <button
               onClick={openCreateModal}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all hover:opacity-90"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-opacity hover:opacity-90"
               style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
             >
               <Plus size={18} />

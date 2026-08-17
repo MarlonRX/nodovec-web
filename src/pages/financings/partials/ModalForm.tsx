@@ -85,6 +85,7 @@ export const ModalForm = ({
                     </div>
                 </div>
                 <button type="button" onClick={onClose}
+                    aria-label={t('common.close')}
                     className="p-2 rounded-lg transition-colors hover:bg-(--bg-hover) group shrink-0">
                     <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
                 </button>
@@ -101,7 +102,7 @@ export const ModalForm = ({
                             <label className="sm:col-span-2">
                                 <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.name")}</span>
                                 <input required value={form.name} onChange={(e) => update("name", e.target.value)}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                     style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                             </label>
 
@@ -110,7 +111,7 @@ export const ModalForm = ({
                                 <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-2">{t("financing.type")}</span>
                                 <div className="grid grid-cols-2 gap-3">
                                     <button type="button" onClick={() => update("type", "loan")}
-                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all"
+                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors"
                                         style={{
                                             border: `2px solid ${form.type === "loan" ? 'var(--accent-primary)' : 'var(--border-primary)'}`,
                                             backgroundColor: form.type === "loan" ? 'rgba(var(--accent-primary-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -120,7 +121,7 @@ export const ModalForm = ({
                                         {t("financing.loan")}
                                     </button>
                                     <button type="button" onClick={() => update("type", "card_purchase")}
-                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all"
+                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors"
                                         style={{
                                             border: `2px solid ${form.type === "card_purchase" ? 'var(--accent-primary)' : 'var(--border-primary)'}`,
                                             backgroundColor: form.type === "card_purchase" ? 'rgba(var(--accent-primary-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -141,6 +142,7 @@ export const ModalForm = ({
                                     </div>
                                 </div>
                                 <button type="button" role="switch" aria-checked={form.generate_transactions}
+                                    aria-label={t("financing.autoTransactions")}
                                     onClick={() => update("generate_transactions", !form.generate_transactions)}
                                     className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2 shrink-0"
                                     style={{ backgroundColor: form.generate_transactions ? 'var(--accent-primary)' : 'var(--border-primary)' }}>
@@ -154,25 +156,25 @@ export const ModalForm = ({
                                 <label>
                                     <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.amount")}</span>
                                     <input required inputMode="decimal" value={form.principal_amount} onChange={(e) => update("principal_amount", e.target.value)}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                         style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                                 </label>
                                 <label>
                                     <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.rate")}<Tip text={t("financing.tipRate")} /></span>
                                     <input inputMode="decimal" min="0" step="0.01" value={form.annual_interest_rate} onChange={(e) => update("annual_interest_rate", e.target.value)}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                         style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                                 </label>
                                 <label>
                                     <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.installments")}<Tip text={t("financing.tipInstallments")} /></span>
                                     <input type="number" min="1" max="600" value={form.installments} onChange={(e) => update("installments", Number(e.target.value))}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                         style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                                 </label>
                                 <label>
                                     <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.currentInstallment")}<Tip text={t("financing.tipInstallments")} /></span>
                                     <input type="number" min="1" max={form.installments} value={form.current_installment ?? 1} onChange={(e) => update("current_installment", Number(e.target.value))}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                         style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                                 </label>
                             </div>
@@ -182,7 +184,7 @@ export const ModalForm = ({
                             <label>
                                 <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.method")}</span>
                                 <select value={form.calculation_method} onChange={(e) => update("calculation_method", e.target.value as FinancingInput["calculation_method"])}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                     style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
                                     <option value="french">{t("financing.french")}</option>
                                     <option value="simple">{t("financing.simple")}</option>
@@ -197,7 +199,7 @@ export const ModalForm = ({
                             <label>
                                 <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.frequency")}<Tip text={t("financing.tipFrequency")} /></span>
                                 <select value={form.payment_frequency} onChange={(e) => update("payment_frequency", e.target.value as FinancingInput["payment_frequency"])}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary)"
+                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
                                     style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
                                     <option value="monthly">{t("financing.monthly")}</option>
                                     <option value="biweekly">{t("financing.biweekly")}</option>
@@ -214,7 +216,7 @@ export const ModalForm = ({
                             <label className="sm:col-span-2">
                                 <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.observations")}</span>
                                 <textarea rows={2} value={form.observations || ""} onChange={(e) => update("observations", e.target.value)}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-all focus:ring-2 focus:ring-(--accent-primary) resize-none"
+                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary) resize-none"
                                     style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
                             </label>
                         </div>
@@ -299,7 +301,7 @@ export const ModalForm = ({
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <button onClick={onSubmit} disabled={saving}
-                                                className="flex-1 rounded-lg px-4 py-3 font-black transition-all disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                                className="flex-1 rounded-lg px-4 py-3 font-black transition-colors transition-transform disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                                                 style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}>
                                                 {saving ? t("financing.saving") : (editingFinancing ? t("financing.update") : t("financing.save"))}
                                             </button>

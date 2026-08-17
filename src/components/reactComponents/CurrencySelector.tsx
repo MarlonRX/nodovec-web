@@ -67,7 +67,7 @@ export function CurrencySelector({
           <div className="py-1">
             {(Object.keys(currencyLabels) as Currency[]).map((c) => (
               <button
-                key={c}
+                key={`currency-option-${c}`}
                 onClick={() => {
                   onChange(c);
                   setIsOpen(false);

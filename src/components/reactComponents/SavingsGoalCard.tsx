@@ -213,8 +213,9 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
 
   if (compact) {
     return (
-      <div
-        className="rounded-xl p-4 transition-all hover:shadow-md cursor-pointer"
+      <button
+        type="button"
+        className="rounded-xl p-4 transition-shadow hover:shadow-md cursor-pointer text-left w-full"
         style={{
           backgroundColor: 'var(--bg-surface)',
           border: `1.5px solid var(--border-primary)`,
@@ -249,13 +250,13 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
             />
           </div>
         </div>
-      </div>
+      </button>
     );
   }
 
   return (
     <div
-      className="rounded-xl p-6 transition-all hover:shadow-lg relative group"
+      className="rounded-xl p-6 transition-shadow hover:shadow-lg relative group"
       style={{
         backgroundColor: 'var(--bg-surface)',
         border: `1.5px solid var(--border-primary)`,
@@ -264,6 +265,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
       <div className="absolute top-4 right-4">
         <button
           onClick={handleMenuToggle}
+          aria-label={t('common.options')}
           className="p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--bg-hover)]"
           style={{ color: 'var(--text-secondary)' }}
         >
@@ -272,7 +274,9 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
 
         {showMenu && (
           <>
-            <div
+            <button
+              type="button"
+              aria-label="Close menu"
               className="fixed inset-0 z-40"
               onClick={handleMenuClose}
             />
@@ -385,7 +389,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
       {goal.status === 'active' && (
         <button
           onClick={handleCardClick}
-          className="w-full py-2.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] text-sm"
+          className="w-full py-2.5 rounded-xl font-semibold transition-opacity flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] text-sm"
           style={{ backgroundColor: goal.color, color: '#FFFFFF' }}
         >
           <Plus size={16} />
@@ -445,14 +449,14 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
                           type="button"
                           onClick={() => saveEditContribution(contribution.uuid)}
                           disabled={isSubmitting}
-                          className="px-3 py-1.5 rounded-lg bg-(--accent-primary) text-(--text-inverted) text-xs font-bold uppercase tracking-wider hover:bg-(--accent-hover) transition-all disabled:opacity-50"
+                          className="px-3 py-1.5 rounded-lg bg-(--accent-primary) text-(--text-inverted) text-xs font-bold uppercase tracking-wider hover:bg-(--accent-hover) transition-colors disabled:opacity-50"
                         >
                           {t('common.save') || 'Save'}
                         </button>
                         <button
                           type="button"
                           onClick={cancelEditContribution}
-                          className="px-3 py-1.5 rounded-lg border-2 border-(--text-secondary) text-(--text-primary) text-xs font-bold uppercase tracking-wider hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-all"
+                          className="px-3 py-1.5 rounded-lg border-2 border-(--text-secondary) text-(--text-primary) text-xs font-bold uppercase tracking-wider hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
                         >
                           {t('common.cancel') || 'Cancel'}
                         </button>
@@ -477,6 +481,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
                         <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
                           <button
                             onClick={() => startEditContribution(contribution)}
+                            aria-label={t('common.edit')}
                             className="p-1 rounded hover:bg-[var(--bg-hover)] transition-colors"
                             style={{ color: 'var(--text-secondary)' }}
                           >
@@ -484,6 +489,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
                           </button>
                           <button
                             onClick={() => handleDeleteContribution(contribution.uuid)}
+                            aria-label={t('common.delete')}
                             className="p-1 rounded hover:bg-[var(--bg-hover)] transition-colors"
                             style={{ color: 'var(--semantic-error)' }}
                           >

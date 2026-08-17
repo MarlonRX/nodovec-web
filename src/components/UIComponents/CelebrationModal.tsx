@@ -22,15 +22,15 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        fireConfetti({
-          particleCount: 150,
-          spread: 100,
-          duration: 4000,
-        });
-      }, 300);
-    }
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
+      fireConfetti({
+        particleCount: 150,
+        spread: 100,
+        duration: 4000,
+      });
+    }, 300);
+    return () => clearTimeout(timer);
   }, [isOpen, fireConfetti]);
 
   const formatCurrency = useCallback((amount: number) => {
@@ -46,8 +46,8 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 animate-in fade-in zoom-in duration-300">
+      <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 duration-300">
         <div
           className="rounded-3xl shadow-2xl border p-8 text-center relative overflow-hidden"
           style={{
@@ -105,7 +105,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
 
             <button
               onClick={onClose}
-              className="w-full px-6 py-4 rounded-xl font-bold uppercase tracking-wider text-sm shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
+              className="w-full px-6 py-4 rounded-xl font-bold uppercase tracking-wider text-sm shadow-lg transition-opacity transition-transform hover:opacity-90 active:scale-[0.98]"
               style={{
                 backgroundColor: goal.color,
                 color: '#FFFFFF',

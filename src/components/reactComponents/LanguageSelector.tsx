@@ -86,7 +86,7 @@ export function LanguageSelector({ fullWidth }: { fullWidth?: boolean } = {}) {
                         {Object.entries(languages).map(
                             ([langCode, langName]) => (
                                 <button
-                                    key={langCode}
+                                    key={`language-option-${langCode}`}
                                     onClick={() =>
                                         handleLanguageChange(
                                             langCode as Language,

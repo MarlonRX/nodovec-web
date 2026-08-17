@@ -332,19 +332,19 @@ export function UserComponent() {
                   </div>
                   <div className="grid grid-cols-1 gap-4 items-start">
                     <div className="w-full md:max-w-xs">
-                      <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.language')}</label>
-                      <LanguageSelector fullWidth />
+                      <label htmlFor="language-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.language')}</label>
+                      <LanguageSelector fullWidth id="language-selector" />
                     </div>
 
                     <div className="w-full md:max-w-xs">
-                      <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.currency')}</label>
-                      <CurrencySelector value={currency} onChange={(c) => setCurrency(c)} fullWidth />
+                      <label htmlFor="currency-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.currency')}</label>
+                      <CurrencySelector value={currency} onChange={(c) => setCurrency(c)} fullWidth id="currency-selector" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('themes.label')}</label>
-                    <div className="flex gap-3 flex-wrap" role="listbox" aria-label={t('themes.selector')}>
+                    <label htmlFor="theme-selector-user" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('themes.label')}</label>
+                    <div id="theme-selector-user" className="flex gap-3 flex-wrap" role="listbox" aria-label={t('themes.selector')}>
                       {THEMES.map((t) => {
                         const active = t === theme;
                         return (
@@ -379,7 +379,7 @@ export function UserComponent() {
                       <button
                         onClick={handleSavePreferences}
                         disabled={!hasUnsavedChanges || isSaving}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all mr-10 ${hasUnsavedChanges && !isSaving
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors mr-10 ${hasUnsavedChanges && !isSaving
                           ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer hover:-translate-y-0.5'
                           : 'bg-(--bg-secondary) text-(--text-tertiary) cursor-not-allowed opacity-50'
                           }`}

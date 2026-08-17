@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Plus, Pencil, Trash2, RotateCw, Calculator } from "lucide-react";
 import type { Card, CardPurchase } from "@/schemas/tableSchema";
 import { CardPurchasePaginatedResponseSchema } from "@/schemas/tableSchema";
@@ -19,8 +19,10 @@ interface Props {
   onBalanceChange?: () => void;
 }
 
+const numberFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 function fmt(n: string | number) {
-  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  return numberFormatter.format(n);
 }
 
 export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: Props) => {
@@ -74,20 +76,20 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
     setPreview(Number(total) > 0 ? calculateInstallment(total, inst, rate).toFixed(2) : null);
   }, [formData.total_amount, formData.installments, formData.interest_rate]);
 
-  const loadPurchases = async (page = currentPage) => {
+  const loadPurchases = useCallback(async (page = currentPage) => {
     setLoading(true);
     try {
       const result = await getCardPurchases(card.uuid, { page });
       const validated = CardPurchasePaginatedResponseSchema.parse(result);
       if (validated.response) { setPurchases(validated.data.data); setTotalPages(validated.data.last_page); }
-    } catch (err: any) { toast.error(err?.message || t('purchases.errorLoad')); }
+    } catch (err: any) { toast.error(err?.message || translate('purchases.errorLoad', getCurrentLanguage())); }
     finally { setLoading(false); }
-  };
+  }, [card.uuid, currentPage]);
 
   useEffect(() => {
     if (isOpen) loadPurchases(1);
     else { setShowForm(false); setEditingPurchase(null); resetForm(); }
-  }, [isOpen, card.uuid]);
+  }, [isOpen, card.uuid, loadPurchases, resetForm]);
 
   const handleEdit = (p: CardPurchase) => {
     setEditingPurchase(p);
@@ -122,15 +124,15 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
+      <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-(--border-primary) shrink-0">
             <div>
               <h2 className="text-xl font-black text-(--text-primary) uppercase tracking-tight">{card.name} •••• {card.last_four}</h2>
               <p className="text-xs text-(--text-tertiary) uppercase font-bold tracking-widest">{card.bank} · {t('cards.typeCredit')}</p>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
+            <button onClick={onClose} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
             </button>
           </div>
@@ -140,7 +142,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
               { label: t('purchases.totalDebt'), value: `$${formatMoney(totalDebt)}`, color: 'var(--text-primary)' },
               { label: t('purchases.available'), value: available != null ? `$${formatMoney(available)}` : '—', color: available != null && !available.isNegative() ? 'var(--semantic-success)' : 'var(--semantic-error)' }
             ].map(({ label, value, color }) => (
-              <div key={label} className="p-3 text-center">
+              <div key={`purchase-metric-${label}`} className="p-3 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-(--text-tertiary)">{label}</p>
                 <p className="font-black text-lg" style={{ color }}>{value}</p>
               </div>
@@ -150,7 +152,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
           <div className="flex-1 overflow-y-auto p-4 md:p-6">
             {!showForm && (
               <button onClick={() => { setEditingPurchase(null); resetForm(); setShowForm(true); }}
-                className="group flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider shadow bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:-translate-y-0.5 transition-all mb-4">
+                className="group flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider shadow bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:-translate-y-0.5 transition-colors transition-transform mb-4">
                 <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
                 {t('purchases.addPurchase')}
               </button>
@@ -189,11 +191,11 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
 
                   <div className="sm:col-span-2 flex gap-2 pt-1">
                     <button type="button" onClick={() => { setShowForm(false); setEditingPurchase(null); resetForm(); }}
-                      className="flex-1 px-3 py-2 border-2 border-(--text-secondary) text-(--text-primary) rounded-lg font-bold uppercase text-xs tracking-wider hover:border-(--text-primary) transition-all">
+                      className="flex-1 px-3 py-2 border-2 border-(--text-secondary) text-(--text-primary) rounded-lg font-bold uppercase text-xs tracking-wider hover:border-(--text-primary) transition-colors">
                       {t('purchases.cancel')}
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                      className="flex-1 px-3 py-2 bg-(--accent-primary) text-(--text-inverted) rounded-lg font-bold uppercase text-xs tracking-wider disabled:opacity-50 hover:-translate-y-0.5 transition-all">
+                      className="flex-1 px-3 py-2 bg-(--accent-primary) text-(--text-inverted) rounded-lg font-bold uppercase text-xs tracking-wider disabled:opacity-50 hover:-translate-y-0.5 transition-transform">
                       {isSubmitting ? t('purchases.saving') : (editingPurchase ? t('purchases.update') : t('purchases.create'))}
                     </button>
                   </div>
@@ -251,9 +253,11 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                 {totalPages > 1 && (
                   <div className="flex justify-center gap-2 pt-2">
                     <button disabled={currentPage === 1} onClick={() => { setCurrentPage(p => p - 1); loadPurchases(currentPage - 1); }}
+                      aria-label="Previous page"
                       className="px-3 py-1 text-xs rounded-lg border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">‹</button>
                     <span className="text-xs text-(--text-secondary) px-2 py-1">{currentPage}/{totalPages}</span>
                     <button disabled={currentPage === totalPages} onClick={() => { setCurrentPage(p => p + 1); loadPurchases(currentPage + 1); }}
+                      aria-label="Next page"
                       className="px-3 py-1 text-xs rounded-lg border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">›</button>
                   </div>
                 )}

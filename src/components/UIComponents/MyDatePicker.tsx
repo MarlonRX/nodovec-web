@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,8 @@ interface MyDatePickerProps {
 export const MyDatePicker = React.forwardRef<HTMLButtonElement, MyDatePickerProps>(
   ({ label, name = "", value, onChange, error, required, className, placeholder, min, max }, ref) => {
     const [open, setOpen] = React.useState(false);
+    const autoId = useId();
+    const buttonId = `datepicker-${autoId}`;
 
     const selectedDate = React.useMemo(() => {
       if (!value) return undefined;
@@ -68,7 +70,7 @@ export const MyDatePicker = React.forwardRef<HTMLButtonElement, MyDatePickerProp
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-sm font-medium text-(--text-primary)">
+          <label htmlFor={buttonId} className="block text-sm font-medium text-(--text-primary)">
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -77,10 +79,11 @@ export const MyDatePicker = React.forwardRef<HTMLButtonElement, MyDatePickerProp
           <PopoverTrigger asChild>
             <button
               ref={ref}
+              id={buttonId}
               type="button"
               data-empty={!value}
               className={cn(
-                "w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm outline-none transition-all",
+                "w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm outline-none transition-colors",
                 "border border-(--border-primary) bg-(--bg-secondary) text-(--text-primary)",
                 "hover:border-(--accent-primary)/50 focus:ring-2 focus:ring-(--accent-primary)/30 focus:border-(--accent-primary)",
                 "data-[empty=true]:text-(--text-tertiary)",

@@ -82,7 +82,7 @@ export const FinancingsPage = () => {
   const [totalInstallmentsPages, setTotalInstallmentsPages] = useState(1);
   const [loadingInstallments, setLoadingInstallments] = useState(false);
   
-  const t = (key: string) => translate(key, lang);
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   useEffect(() => {
     const onLanguage = (event: Event) => setLang((event as CustomEvent).detail as Language);
@@ -90,15 +90,15 @@ export const FinancingsPage = () => {
     fetchFinancings();
     getAllCards().then((r) => setCards(r?.data?.data || []));
     return () => window.removeEventListener("languageChanged", onLanguage);
-  }, []);
+  }, [fetchFinancings]);
 
-  const fetchFinancings = async () => {
+  const fetchFinancings = useCallback(async () => {
     setLoading(true);
     const result = await getFinancings();
     setLoading(false);
     if (result.response) setFinancings(result.data?.data || []);
-    else toast.error(result.message || t("financing.errorLoad"));
-  };
+    else toast.error(result.message || translate("financing.errorLoad", getCurrentLanguage()));
+  }, []);
 
   const update = <K extends keyof FinancingInput>(key: K, value: FinancingInput[K]) => setForm((c) => ({ ...c, [key]: value }));
   const hasAmount = useMemo(() => Boolean(form.principal_amount && Number(form.principal_amount) > 0), [form.principal_amount]);
@@ -121,11 +121,7 @@ export const FinancingsPage = () => {
       setSummary(result.data.summary); 
     }
   }, [
-    form.principal_amount,
-    form.annual_interest_rate,
-    form.installments,
-    form.calculation_method,
-    form.payment_frequency,
+    form,
     hasAmount,
     paymentDate,
     installmentsPage,
@@ -266,7 +262,7 @@ export const FinancingsPage = () => {
             <p className="text-(--text-tertiary) text-sm uppercase font-bold tracking-wider">{t("financing.subtitle")}</p>
           </div>
           <button onClick={openModal}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2.5 md:py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg">
+            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2.5 md:py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg">
             <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
             <span>{t("financing.newPlan")}</span>
           </button>
@@ -314,7 +310,7 @@ export const FinancingsPage = () => {
                 {t("financing.noPlansHint")}
               </p>
               <button onClick={openModal}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg">
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg">
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
                 {t("financing.createFirst")}
               </button>
@@ -329,7 +325,7 @@ export const FinancingsPage = () => {
               const isCard = f.type === "card_purchase";
               return (
                 <div key={f.uuid}
-                  className="rounded-xl p-4 md:p-5 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-default"
+                  className="rounded-xl p-4 md:p-5 transition-shadow transition-transform hover:shadow-lg hover:-translate-y-0.5 cursor-default"
                   style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-surface)' }}>
 
                   <div className="flex items-center gap-4">
@@ -402,7 +398,7 @@ export const FinancingsPage = () => {
 
                     {/* Edit Button */}
                     <button type="button" onClick={(e) => { e.stopPropagation(); openEditModal(f); }}
-                      className="shrink-0 p-2.5 rounded-xl transition-all hover:scale-105 group"
+                      className="shrink-0 p-2.5 rounded-xl transition-transform hover:scale-105 group"
                       aria-label={t("financing.editPlan")}
                       style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.08)', color: 'var(--accent-primary)' }}>
                       <Pencil className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />

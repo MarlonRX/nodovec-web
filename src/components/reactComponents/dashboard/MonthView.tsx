@@ -107,7 +107,7 @@ const MonthView: React.FC<MonthViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
         {/* Monthly Overview */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg"
+          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",
@@ -210,7 +210,7 @@ const MonthView: React.FC<MonthViewProps> = ({
             <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2">
               {expenseCategories.map((cat, idx) => (
                 <div
-                  key={idx}
+                  key={`expense-category-${idx}`}
                   className="flex items-center justify-between text-xs sm:text-sm"
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -239,7 +239,7 @@ const MonthView: React.FC<MonthViewProps> = ({
 
         {/* Recent Transactions */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-all hover:shadow-lg flex flex-col"
+          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg flex flex-col"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1.5px solid var(--border-primary)",

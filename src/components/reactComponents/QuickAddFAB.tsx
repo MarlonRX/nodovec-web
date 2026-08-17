@@ -74,7 +74,7 @@ export function QuickAddFAB() {
       <button
         onClick={openModal}
         title={`${t('transactions.quickAdd') || 'Quick Add'} (Ctrl/Cmd + N)`}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-(--accent-primary) text-(--text-inverted) shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-(--accent-primary) text-(--text-inverted) shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-110 active:scale-95 transition-transform duration-300 flex items-center justify-center group"
         aria-label={t('transactions.quickAdd') || 'Quick Add Transaction'}
       >
         <Plus className="w-7 h-7 transition-transform group-hover:rotate-90" />

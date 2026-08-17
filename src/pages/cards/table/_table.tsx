@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ReactNode } from "react";
 import { Plus, Pencil, Trash2, CreditCard, List } from "lucide-react";
 import { MyTable } from "@/components/UIComponents/MyTable";
@@ -10,6 +10,12 @@ import { CardPaginatedResponseSchema, type Card } from "@/schemas/tableSchema";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { formatMonthYear } from "@/utils/dateFormat";
 import { toast } from "sonner";
+
+const numberFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function fmt(n: number) {
+  return numberFormatter.format(n);
+}
 
 export const CardsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +30,7 @@ export const CardsTable = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [purchasesCard, setPurchasesCard] = useState<Card | null>(null);
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
-  const t = (key: string) => translate(key, lang);
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   useEffect(() => {
     const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
@@ -32,7 +38,7 @@ export const CardsTable = () => {
     return () => window.removeEventListener("languageChanged", onLang);
   }, []);
 
-  const fetchCards = async () => {
+  const fetchCards = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getCards({ page: currentPage });
@@ -41,18 +47,18 @@ export const CardsTable = () => {
         setData(validated.data.data);
         setTotalPages(validated.data.last_page);
       } else {
-        toast.error(validated.message || t('cards.errorLoad'));
+        toast.error(validated.message || translate('cards.errorLoad', getCurrentLanguage()));
         setData([]);
       }
     } catch (err: any) {
-      toast.error(err?.message || t('cards.errorLoad'));
+      toast.error(err?.message || translate('cards.errorLoad', getCurrentLanguage()));
       setData([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
 
-  useEffect(() => { fetchCards(); }, [currentPage, refreshTrigger]);
+  useEffect(() => { fetchCards(); }, [currentPage, refreshTrigger, fetchCards]);
 
   const handleSubmit = async (cardData: Partial<Card>) => {
     setIsSubmitting(true);
@@ -84,8 +90,6 @@ export const CardsTable = () => {
     } catch (err: any) { toast.error(err?.message || t('common.unexpectedError')); }
     finally { setCardToDelete(null); setIsDeleting(false); }
   };
-
-  const fmt = (n: number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
   const columns: Array<{ key: keyof Card | 'actions'; label: string; sortable: boolean; render?: (value: any, row: Card) => ReactNode }> = [
     {
@@ -174,7 +178,7 @@ export const CardsTable = () => {
             <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest">{t('cards.subtitle')}</p>
           </div>
           <button onClick={() => { setEditingCard(null); setIsModalOpen(true); }}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             {t('cards.addCard')}
           </button>
@@ -193,7 +197,7 @@ export const CardsTable = () => {
               <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">{t('cards.noCards')}</h3>
               <p className="text-(--text-secondary) text-sm mb-6">{t('cards.noCardsHint')}</p>
               <button onClick={() => { setEditingCard(null); setIsModalOpen(true); }}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
                 {t('cards.addFirstCard')}
               </button>

@@ -65,9 +65,10 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
   return (
     <div className={`flex items-center ${compact ? 'space-x-2' : 'space-x-3'}`}>
-      <label className={`text-xs ${compact ? 'hidden' : 'text-(--text-secondary)'}`}>{t('themes.label')}</label>
+      <label htmlFor="theme-selector" className={`text-xs ${compact ? 'hidden' : 'text-(--text-secondary)'}`}>{t('themes.label')}</label>
 
       <div
+        id="theme-selector"
         role="listbox"
         aria-label={t('themes.selector')}
         className={`${compact ? 'flex gap-2 items-center' : 'flex items-center gap-2 flex-wrap bg-(--bg-surface) border border-(--border-primary) rounded-md px-2 py-2 max-w-full'}`}

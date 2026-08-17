@@ -9,6 +9,12 @@ const NAV_ITEMS = [
   { key: 'preferences', icon: Settings, path: '/preferences' },
 ] as const;
 
+function handleLinkClick() {
+  if (typeof window !== 'undefined' && window.toggleMobileSidebar) {
+    window.toggleMobileSidebar(false);
+  }
+}
+
 export const MobileSidebar: React.FC = () => {
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
@@ -18,12 +24,6 @@ export const MobileSidebar: React.FC = () => {
     window.addEventListener('languageChanged', onLangChange);
     return () => window.removeEventListener('languageChanged', onLangChange);
   }, []);
-
-  const handleLinkClick = () => {
-    if (typeof window !== 'undefined' && window.toggleMobileSidebar) {
-      window.toggleMobileSidebar(false);
-    }
-  };
 
   return (
     <nav className="mt-5 px-4 flex-1 cursor-pointer">
@@ -36,7 +36,7 @@ export const MobileSidebar: React.FC = () => {
               key={item.key}
               href={item.path}
               onClick={handleLinkClick}
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all hover:opacity-80 cursor-pointer"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors hover:opacity-80 cursor-pointer"
               style={{ color: 'var(--text-secondary)' }}
             >
               <Icon

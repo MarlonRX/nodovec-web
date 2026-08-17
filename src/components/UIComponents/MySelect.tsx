@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,22 +10,26 @@ interface MySelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const MySelect = React.forwardRef<HTMLSelectElement, MySelectProps>(
-  ({ label, error, options, placeholder, className, ...props }, ref) => {
+  ({ label, error, options, placeholder, className, id, ...props }, ref) => {
+    const autoId = useId();
+    const selectId = id || autoId;
+
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-sm font-medium text-(--text-primary)">
+          <label htmlFor={selectId} className="block text-sm font-medium text-(--text-primary)">
             {label}
           </label>
         )}
         <div className="relative">
           <select
             ref={ref}
+            id={selectId}
             className={cn(
               "w-full appearance-none px-3 py-2 pr-8 rounded-lg border text-sm",
               "bg-(--bg-surface) text-(--text-primary)",
               "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
-              "outline-none transition-all duration-200 cursor-pointer",
+              "outline-none transition-colors duration-200 cursor-pointer",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500/30",
               className
             )}

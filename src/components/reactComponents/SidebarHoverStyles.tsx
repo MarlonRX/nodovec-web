@@ -6,12 +6,17 @@ import React, { useEffect } from 'react';
  */
 export const SidebarHoverStyles: React.FC = () => {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return () => {};
+
+    const cleanups: (() => void)[] = [];
 
     // Small delay to ensure all elements are properly rendered
     const timer = setTimeout(() => {
       const sidebarLinks = document.querySelectorAll('.sidebar-link');
-      if (!sidebarLinks || sidebarLinks.length === 0) return;
+      if (!sidebarLinks || sidebarLinks.length === 0) {
+        // No links found, nothing to clean up beyond the timer
+        return;
+      }
 
       const rootStyles = getComputedStyle(document.documentElement);
       const accentRgb = (rootStyles.getPropertyValue('--accent-primary-rgb') || '212, 175, 55').trim();
@@ -22,18 +27,27 @@ export const SidebarHoverStyles: React.FC = () => {
 
       sidebarLinks.forEach((link) => {
         const el = link as HTMLElement;
-        el.addEventListener('mouseenter', () => {
+        const onMouseEnter = () => {
           el.style.color = invertedText;
           el.style.backgroundColor = `rgba(${accentRgb}, ${sidebarHoverAlpha})`;
-        });
-        el.addEventListener('mouseleave', () => {
+        };
+        const onMouseLeave = () => {
           el.style.color = secondaryColor;
           el.style.backgroundColor = 'transparent';
+        };
+        el.addEventListener('mouseenter', onMouseEnter);
+        el.addEventListener('mouseleave', onMouseLeave);
+        cleanups.push(() => {
+          el.removeEventListener('mouseenter', onMouseEnter);
+          el.removeEventListener('mouseleave', onMouseLeave);
         });
       });
     }, 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      cleanups.forEach((fn) => fn());
+    };
   }, []);
 
   return null;

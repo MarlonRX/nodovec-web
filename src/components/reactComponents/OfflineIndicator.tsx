@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { WifiOff, Wifi } from 'lucide-react';
 import { translate, getCurrentLanguage, type Language } from '../../i18n';
 
@@ -7,6 +7,7 @@ export const OfflineIndicator: React.FC = () => {
   const [showReconnected, setShowReconnected] = useState(false);
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
+  const reconnectedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -16,7 +17,8 @@ export const OfflineIndicator: React.FC = () => {
     const handleOnline = () => {
       setIsOnline(true);
       setShowReconnected(true);
-      setTimeout(() => setShowReconnected(false), 3000);
+      if (reconnectedTimerRef.current) clearTimeout(reconnectedTimerRef.current);
+      reconnectedTimerRef.current = setTimeout(() => setShowReconnected(false), 3000);
     };
 
     const handleOffline = () => {
@@ -27,6 +29,7 @@ export const OfflineIndicator: React.FC = () => {
     window.addEventListener('offline', handleOffline);
 
     return () => {
+      if (reconnectedTimerRef.current) clearTimeout(reconnectedTimerRef.current);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };

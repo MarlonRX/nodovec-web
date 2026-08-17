@@ -15,6 +15,37 @@ import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { formatDate } from "@/utils/dateFormat";
 import { toast } from "sonner";
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+function formatCurrency(amount: number) {
+  return currencyFormatter.format(amount);
+}
+
+function getCategoryColor(category: string): { bg: string; text: string; border: string } {
+  const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+    // Income categories
+    salary: { bg: 'rgba(52, 168, 83, 0.12)', text: '#34A853', border: 'rgba(52, 168, 83, 0.25)' },
+    freelance: { bg: 'rgba(25, 118, 210, 0.12)', text: '#1976D2', border: 'rgba(25, 118, 210, 0.25)' },
+    investment: { bg: 'rgba(123, 31, 162, 0.12)', text: '#7B1FA2', border: 'rgba(123, 31, 162, 0.25)' },
+    bonus: { bg: 'rgba(251, 188, 4, 0.12)', text: '#FBC004', border: 'rgba(251, 188, 4, 0.25)' },
+    other_income: { bg: 'rgba(76, 175, 80, 0.12)', text: '#4CAF50', border: 'rgba(76, 175, 80, 0.25)' },
+    // Expense categories
+    food: { bg: 'rgba(229, 57, 53, 0.12)', text: '#E53935', border: 'rgba(229, 57, 53, 0.25)' },
+    transportation: { bg: 'rgba(245, 127, 23, 0.12)', text: '#F57F17', border: 'rgba(245, 127, 23, 0.25)' },
+    utilities: { bg: 'rgba(194, 24, 91, 0.12)', text: '#C2185B', border: 'rgba(194, 24, 91, 0.25)' },
+    entertainment: { bg: 'rgba(142, 36, 170, 0.12)', text: '#8E24AA', border: 'rgba(142, 36, 170, 0.25)' },
+    healthcare: { bg: 'rgba(211, 47, 47, 0.12)', text: '#D32F2F', border: 'rgba(211, 47, 47, 0.25)' },
+    shopping: { bg: 'rgba(63, 81, 181, 0.12)', text: '#3F51B5', border: 'rgba(63, 81, 181, 0.25)' },
+    rent: { bg: 'rgba(0, 121, 107, 0.12)', text: '#00796B', border: 'rgba(0, 121, 107, 0.25)' },
+    other_expense: { bg: 'rgba(158, 158, 158, 0.12)', text: '#9E9E9E', border: 'rgba(158, 158, 158, 0.25)' },
+  };
+  return colorMap[category] || { bg: 'rgba(158, 158, 158, 0.12)', text: '#9E9E9E', border: 'rgba(158, 158, 158, 0.25)' };
+}
+
 interface Props {
   onRowClick?: (id: string | number) => void;
   itemsPerPage?: number;
@@ -44,7 +75,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const [sortField, setSortField] = useState<string>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const t = (key: string) => translate(key, lang);
+  const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(String(currentDate.getFullYear()));
@@ -170,12 +201,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           setTotalPages(lastPage);
           setTotalCount(total);
         } else {
-          setError(validatedResult.message || t("transactionForm.failedToFetch"));
+          setError(validatedResult.message || translate("transactionForm.failedToFetch", getCurrentLanguage()));
           setData([]);
           setTotalCount(0);
         }
       } catch (err: any) {
-        const errorMessage = err?.message || t("transactions.errorLoad");
+        const errorMessage = err?.message || translate("transactions.errorLoad", getCurrentLanguage());
         setError(errorMessage);
         toast.error(errorMessage);
         setData([]);
@@ -301,35 +332,6 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
     setIsModalOpen(true);
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'decimal',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  };
-
-  const getCategoryColor = (category: string): { bg: string; text: string; border: string } => {
-    const colorMap: Record<string, { bg: string; text: string; border: string }> = {
-      // Income categories
-      salary: { bg: 'rgba(52, 168, 83, 0.12)', text: '#34A853', border: 'rgba(52, 168, 83, 0.25)' },
-      freelance: { bg: 'rgba(25, 118, 210, 0.12)', text: '#1976D2', border: 'rgba(25, 118, 210, 0.25)' },
-      investment: { bg: 'rgba(123, 31, 162, 0.12)', text: '#7B1FA2', border: 'rgba(123, 31, 162, 0.25)' },
-      bonus: { bg: 'rgba(251, 188, 4, 0.12)', text: '#FBC004', border: 'rgba(251, 188, 4, 0.25)' },
-      other_income: { bg: 'rgba(76, 175, 80, 0.12)', text: '#4CAF50', border: 'rgba(76, 175, 80, 0.25)' },
-      // Expense categories
-      food: { bg: 'rgba(229, 57, 53, 0.12)', text: '#E53935', border: 'rgba(229, 57, 53, 0.25)' },
-      transportation: { bg: 'rgba(245, 127, 23, 0.12)', text: '#F57F17', border: 'rgba(245, 127, 23, 0.25)' },
-      utilities: { bg: 'rgba(194, 24, 91, 0.12)', text: '#C2185B', border: 'rgba(194, 24, 91, 0.25)' },
-      entertainment: { bg: 'rgba(142, 36, 170, 0.12)', text: '#8E24AA', border: 'rgba(142, 36, 170, 0.25)' },
-      healthcare: { bg: 'rgba(211, 47, 47, 0.12)', text: '#D32F2F', border: 'rgba(211, 47, 47, 0.25)' },
-      shopping: { bg: 'rgba(63, 81, 181, 0.12)', text: '#3F51B5', border: 'rgba(63, 81, 181, 0.25)' },
-      rent: { bg: 'rgba(0, 121, 107, 0.12)', text: '#00796B', border: 'rgba(0, 121, 107, 0.25)' },
-      other_expense: { bg: 'rgba(158, 158, 158, 0.12)', text: '#9E9E9E', border: 'rgba(158, 158, 158, 0.25)' },
-    };
-    return colorMap[category] || { bg: 'rgba(158, 158, 158, 0.12)', text: '#9E9E9E', border: 'rgba(158, 158, 158, 0.25)' };
-  };
-
   const columns: Array<{
     key: keyof Transaction | 'income' | 'expense' | 'actions';
     label: string;
@@ -348,7 +350,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
               backgroundColor: colors.bg,
               color: colors.text,
               borderColor: colors.border,
-            }} className="inline-block px-3.5 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider transition-all border border-solid backdrop-blur-sm hover:shadow-md hover:scale-105">
+            }} className="inline-block px-3.5 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider transition-shadow transition-transform border border-solid backdrop-blur-sm hover:shadow-md hover:scale-105">
               {categoryName}
             </span>
           );
@@ -450,7 +452,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
               setEditingTransaction(null);
               setIsModalOpen(true);
             }}
-            className={`group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-all font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
+            className={`group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
             title={t('transactions.addTransaction')}
           >
             <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
@@ -469,11 +471,12 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('transactions.searchPlaceholder') || 'Search transactions...'}
-                className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-(--bg-secondary) border border-(--border-primary) text-(--text-primary) text-sm placeholder:text-(--text-tertiary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) focus:border-transparent transition-all"
+                className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-(--bg-secondary) border border-(--border-primary) text-(--text-primary) text-sm placeholder:text-(--text-tertiary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) focus:border-transparent transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-tertiary) hover:text-(--text-primary) transition-colors"
                 >
                   <X className="w-4 h-4" />
@@ -484,7 +487,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all text-sm font-semibold ${showFilters || hasActiveFilters
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors text-sm font-semibold ${showFilters || hasActiveFilters
                 ? 'bg-(--accent-primary) text-(--text-inverted) border-(--accent-primary)'
                 : 'bg-(--bg-secondary) text-(--text-primary) border-(--border-primary) hover:border-(--accent-primary)'
                 }`}
@@ -540,19 +543,19 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--accent-primary) text-(--text-inverted)">
                   <Search className="w-3 h-3" />
                   "{debouncedSearch}"
-                  <button onClick={() => setSearchQuery('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                  <button onClick={() => setSearchQuery('')} aria-label="Clear search" className="hover:opacity-70"><X className="w-3 h-3" /></button>
                 </span>
               )}
               {filterType && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--bg-secondary) text-(--text-primary) border border-(--border-primary)">
                   {filterType}
-                  <button onClick={() => setFilterType('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                  <button onClick={() => setFilterType('')} aria-label="Clear type filter" className="hover:opacity-70"><X className="w-3 h-3" /></button>
                 </span>
               )}
               {filterCategory && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-(--bg-secondary) text-(--text-primary) border border-(--border-primary)">
                   {filterCategory.replace(/_/g, ' ')}
-                  <button onClick={() => setFilterCategory('')} className="hover:opacity-70"><X className="w-3 h-3" /></button>
+                  <button onClick={() => setFilterCategory('')} aria-label="Clear category filter" className="hover:opacity-70"><X className="w-3 h-3" /></button>
                 </span>
               )}
             </div>
@@ -591,7 +594,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
           {/* Net balance */}
           <div className="flex flex-col items-center md:items-start p-2 md:p-3 rounded-lg bg-(--bg-secondary)">
             <span className="text-(--text-tertiary) text-[8px] md:text-[9px] uppercase font-bold tracking-widest mb-1">{t('transactions.netBalance')}</span>
-            <div className={`px-2 md:px-4 py-0.5 md:py-1 rounded-lg border-2 font-black text-sm md:text-base transition-all ${totals.net >= 0
+            <div className={`px-2 md:px-4 py-0.5 md:py-1 rounded-lg border-2 font-black text-sm md:text-base transition-colors ${totals.net >= 0
               ? 'text-(--semantic-success) border-(--semantic-success) bg-[rgba(46,139,87,0.1)]'
               : 'text-(--semantic-error) border-(--semantic-error) bg-[rgba(207,102,121,0.1)]'
               }`}>
@@ -668,7 +671,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
                   setEditingTransaction(null);
                   setIsModalOpen(true);
                 }}
-                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-all font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
+                className={`group flex items-center gap-2 px-6 py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 active:translate-y-0 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:shadow-lg`}
                 title={t('transactions.addTransaction')}
               >
                 <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />

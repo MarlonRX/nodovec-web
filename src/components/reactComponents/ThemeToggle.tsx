@@ -57,13 +57,13 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={isLight ? (t('themes.switchDark') || 'Switch to dark mode') : (t('themes.switchLight') || 'Switch to light mode')}
       title={isLight ? (t('themes.switchDark') || 'Switch to dark mode') : (t('themes.switchLight') || 'Switch to light mode')}
-      className="relative w-10 h-10 rounded-full flex items-center justify-center bg-(--bg-secondary) border border-(--border-primary) text-(--text-secondary) hover:text-(--accent-primary) hover:border-(--accent-primary) transition-all duration-300 overflow-hidden group"
+      className="relative w-10 h-10 rounded-full flex items-center justify-center bg-(--bg-secondary) border border-(--border-primary) text-(--text-secondary) hover:text-(--accent-primary) hover:border-(--accent-primary) transition-colors duration-300 overflow-hidden group"
     >
       <Sun
-        className={`absolute w-5 h-5 transition-all duration-500 ${isLight ? 'rotate-0 opacity-100 scale-100' : 'rotate-90 opacity-0 scale-50'}`}
+        className={`absolute w-5 h-5 transition-opacity transition-transform duration-500 ${isLight ? 'rotate-0 opacity-100 scale-100' : 'rotate-90 opacity-0 scale-50'}`}
       />
       <Moon
-        className={`absolute w-5 h-5 transition-all duration-500 ${isLight ? '-rotate-90 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}
+        className={`absolute w-5 h-5 transition-opacity transition-transform duration-500 ${isLight ? '-rotate-90 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}
       />
     </button>
   );

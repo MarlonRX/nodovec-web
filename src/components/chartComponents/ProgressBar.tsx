@@ -39,7 +39,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                 }} 
             >
                 <div
-                    className="rounded-full transition-all duration-300"
+                    className="rounded-full transition-[width] duration-300"
                     style={{
                         width: `${Math.min(percentage, 100)}%`,
                         height: `${height}px`,
