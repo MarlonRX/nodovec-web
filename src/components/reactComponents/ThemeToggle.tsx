@@ -10,7 +10,7 @@ import { translate, getCurrentLanguage, type Language } from '../../i18n';
 export function ThemeToggle() {
   const [theme, setLocalTheme] = useState<ThemeName>('dark');
   const [mounted, setMounted] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

@@ -20,7 +20,7 @@ const SavingsGoalsTable: React.FC = () => {
   const [goals, setGoals] = useState<SavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   const [isContributeModalOpen, setIsContributeModalOpen] = useState(false);

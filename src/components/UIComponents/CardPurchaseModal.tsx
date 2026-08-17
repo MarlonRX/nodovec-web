@@ -20,7 +20,7 @@ interface CardPurchaseModalProps {
 
 export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false, initialData = null }: CardPurchaseModalProps) => {
   const [preview, setPreview] = useState<string | null>(null);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   useEffect(() => {

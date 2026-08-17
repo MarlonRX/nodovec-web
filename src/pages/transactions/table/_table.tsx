@@ -41,7 +41,7 @@ export const TableData = ({ onRowClick, itemsPerPage = 10 }: Props) => {
   const [fixedTotals, setFixedTotals] = useState({ income: 0, expense: 0 });
 
   const [activePurchases, setActivePurchases] = useState<CardPurchase[]>([]);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const [sortField, setSortField] = useState<string>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const t = (key: string) => translate(key, lang);

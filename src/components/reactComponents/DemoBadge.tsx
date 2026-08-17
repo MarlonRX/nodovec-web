@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { translate, getCurrentLanguage, type Language } from "../../i18n";
 
 export function DemoBadge() {
-    const [lang, setLang] = useState<Language>(getCurrentLanguage());
+    const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
 
     useEffect(() => {
         const onLangChange = (e: Event) => setLang((e as CustomEvent).detail as Language);

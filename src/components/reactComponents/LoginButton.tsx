@@ -9,12 +9,12 @@ import { MyButton } from "../ui/my-button";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export function LoginButton() {
-    const [loginText, setLoginText] = useState(translate("navbar.login"));
-    const [logoutLabel, setLogoutLabel] = useState(translate("auth.logOut"));
+    const [loginText, setLoginText] = useState(() => translate("navbar.login"));
+    const [logoutLabel, setLogoutLabel] = useState(() => translate("auth.logOut"));
     const [authenticatedUser, setAuthenticatedUser] = useState<AuthUser | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const [lang, setLang] = useState<Language>(getCurrentLanguage());
+    const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
     const t = (key: string) => translate(key, lang);
 
     const buttonRef = useRef<HTMLButtonElement | null>(null);

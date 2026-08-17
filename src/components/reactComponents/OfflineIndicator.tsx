@@ -5,7 +5,7 @@ import { translate, getCurrentLanguage, type Language } from '../../i18n';
 export const OfflineIndicator: React.FC = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [showReconnected, setShowReconnected] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

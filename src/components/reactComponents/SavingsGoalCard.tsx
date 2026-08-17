@@ -47,7 +47,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
   const [editAmount, setEditAmount] = useState('');
   const [editNote, setEditNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
   const IconComponent = GOAL_ICONS[goal.icon];
 

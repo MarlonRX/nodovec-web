@@ -2,10 +2,21 @@ import { useEffect, useState } from "react";
 import { THEMES, getStoredTheme, setTheme, ThemeName } from "../../store/theme";
 import { translate, getCurrentLanguage, type Language } from "../../i18n";
 
+const SWATCHES: Record<ThemeName, string> = {
+  light: '#4f8cff',
+  dark: '#d4af37',
+  custom: '#ff6f61',
+  'obsidian': '#6cc3ff',
+  'midnight-teal': '#2dd4bf',
+  'ember': '#ff8a3d',
+  'violet-dusk': '#9b7bff',
+  'forest-night': '#6ee7b7',
+};
+
 export function ThemeSwitcher({ compact }: { compact?: boolean }) {
   const [theme, setLocalTheme] = useState<ThemeName>('dark');
   const [isInitialized, setIsInitialized] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   // Solo leer del localStorage, NO escribir
@@ -50,17 +61,6 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
     'ember': t('themes.ember'),
     'violet-dusk': t('themes.violet-dusk'),
     'forest-night': t('themes.forest-night'),
-  };
-
-  const SWATCHES: Record<ThemeName, string> = {
-    light: '#4f8cff',
-    dark: '#d4af37',
-    custom: '#ff6f61',
-    'obsidian': '#6cc3ff',
-    'midnight-teal': '#2dd4bf',
-    'ember': '#ff8a3d',
-    'violet-dusk': '#9b7bff',
-    'forest-night': '#6ee7b7',
   };
 
   return (

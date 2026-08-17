@@ -23,7 +23,7 @@ export const CardsTable = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [purchasesCard, setPurchasesCard] = useState<Card | null>(null);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

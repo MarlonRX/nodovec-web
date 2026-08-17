@@ -11,7 +11,7 @@ interface CelebrationModalProps {
 }
 
 const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, goal }) => {
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
   const { fireConfetti } = useConfetti();
 

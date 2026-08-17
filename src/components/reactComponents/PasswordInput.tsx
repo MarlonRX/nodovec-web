@@ -21,7 +21,7 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string, vars?: Record<string, string | number>) => {
     let text = translate(key, lang);
     if (vars) {

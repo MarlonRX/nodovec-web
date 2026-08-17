@@ -11,12 +11,23 @@ import { getCurrentLanguage, translate, type Language } from "../../i18n";
 
 type Currency = 'USD' | 'EUR' | 'COP';
 
+const SWATCHES: Record<ThemeName, string> = {
+  light: "#4f8cff",
+  dark: "#d4af37",
+  custom: "#ff6f61",
+  obsidian: "#6cc3ff",
+  "midnight-teal": "#2dd4bf",
+  ember: "#ff8a3d",
+  "violet-dusk": "#9b7bff",
+  "forest-night": "#6ee7b7",
+};
+
 export function UserComponent() {
   console.log('[UC] Render START');
   const [theme, setLocalTheme] = useState<ThemeName>("dark");
   const [currency, setCurrency] = useState<Currency>("USD");
   const [language, setLanguage] = useState<string>("es");
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
   console.log('[UC] States initialized');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -259,17 +270,6 @@ export function UserComponent() {
     ember: t('themes.ember'),
     "violet-dusk": t('themes.violet-dusk'),
     "forest-night": t('themes.forest-night'),
-  };
-
-  const SWATCHES: Record<ThemeName, string> = {
-    light: "#4f8cff",
-    dark: "#d4af37",
-    custom: "#ff6f61",
-    obsidian: "#6cc3ff",
-    "midnight-teal": "#2dd4bf",
-    ember: "#ff8a3d",
-    "violet-dusk": "#9b7bff",
-    "forest-night": "#6ee7b7",
   };
 
   return (

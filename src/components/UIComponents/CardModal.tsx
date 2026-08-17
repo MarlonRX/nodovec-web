@@ -17,8 +17,10 @@ interface CardModalProps {
   initialData?: Card | null;
 }
 
+const initialFormData = { type: "debit" as "credit" | "debit", name: "", last_four: "", bank: "", credit_limit: "", expiry_date: "", is_active: "true" };
+
 export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initialData = null }: CardModalProps) => {
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {
@@ -26,8 +28,6 @@ export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initia
     window.addEventListener("languageChanged", onLang);
     return () => window.removeEventListener("languageChanged", onLang);
   }, []);
-
-  const initialFormData = { type: "debit" as "credit" | "debit", name: "", last_four: "", bank: "", credit_limit: "", expiry_date: "", is_active: "true" };
 
   const { formData, handleChange, handleSubmit, resetForm, setFormData } = useFormHandler({
     initialValues: initialFormData,

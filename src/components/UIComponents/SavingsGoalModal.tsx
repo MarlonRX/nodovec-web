@@ -43,7 +43,7 @@ export const SavingsGoalModal = ({
   initialData = null,
 }: SavingsGoalModalProps) => {
   const [cards, setCards] = useState<Card[]>([]);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const [formData, setFormData] = useState(initialFormData);
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 

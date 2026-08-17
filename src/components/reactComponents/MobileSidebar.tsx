@@ -10,7 +10,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export const MobileSidebar: React.FC = () => {
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

@@ -24,7 +24,7 @@ function fmt(n: string | number) {
 }
 
 export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: Props) => {
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

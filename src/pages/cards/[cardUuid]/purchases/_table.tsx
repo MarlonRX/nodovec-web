@@ -25,7 +25,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
 
   useEffect(() => {

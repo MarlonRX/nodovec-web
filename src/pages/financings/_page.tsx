@@ -66,14 +66,14 @@ export const FinancingsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFinancing, setEditingFinancing] = useState<any>(null);
   const [form, setForm] = useState(initialForm);
-  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().slice(0, 10));
+  const [paymentDate, setPaymentDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [cards, setCards] = useState<{ uuid: string; name: string; last_four: string }[]>([]);
   const [schedule, setSchedule] = useState<ScheduleRow[]>([]);
   const [allInstallments, setAllInstallments] = useState<ScheduleRow[]>([]); // Store all installments for local pagination
   const [summary, setSummary] = useState<Summary | null>(null);
   const [saving, setSaving] = useState(false);
   const [calculating, setCalculating] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Pagination for installments table

@@ -27,7 +27,7 @@ export const ContributionModal = ({
   isLoading = false,
   goal,
 }: ContributionModalProps) => {
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const [formData, setFormData] = useState(initialFormData);
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 

@@ -39,7 +39,7 @@ export const TransactionModal = ({
 }: TransactionModalProps) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [lang, setLang] = useState<Language>(getCurrentLanguage());
+  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   // Calculate date range when defaultYear/defaultMonth are provided (from transactions table view)
