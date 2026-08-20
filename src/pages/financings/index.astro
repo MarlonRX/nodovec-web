@@ -1,10 +1,22 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { FinancingsPage } from "./_page";
+import { FinancingsPage } from "@/components/reactComponents/financings/FinancingsPage";
+import { getFinancings } from "@/services/financingServices";
+import type { Financing } from "@/types/financingInterfaces";
 
 export const prerender = false;
+
+const token = Astro.cookies.get("auth_token")?.value ?? null;
+
+let initialData: Financing[] | null = null;
+if (token) {
+  const result = await getFinancings(token);
+  if (result.response && result.data) {
+    initialData = result.data.data ?? [];
+  }
+}
 ---
 
 <BaseLayout>
-  <FinancingsPage client:load />
+  <FinancingsPage client:load initialData={initialData} />
 </BaseLayout>

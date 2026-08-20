@@ -1,63 +1,64 @@
 import { useState, useEffect, useCallback } from "react";
-import { ReactNode } from "react";
-import { Plus, Pencil, Trash2, ChevronRight, CreditCard, TrendingUp, RotateCw } from "lucide-react";
+import { Plus, ChevronRight, CreditCard } from "lucide-react";
 import { MyTable } from "@/components/UIComponents/MyTable";
 import { CardPurchaseModal } from "@/components/UIComponents/CardPurchaseModal";
 import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
 import { getCardPurchases, createCardPurchase, updateCardPurchase, deleteCardPurchase, advanceInstallment } from "@/services/cardPurchaseServices";
 import { getCards } from "@/services/cardServices";
 import { CardPurchasePaginatedResponseSchema, type CardPurchase, type Card } from "@/schemas/tableSchema";
-import { translate, getCurrentLanguage, type Language } from "@/i18n";
-import { formatDate } from "@/utils/dateFormat";
+import { useTranslation } from "@/hooks/useTranslation";
+import { formatNumber } from "@/lib/currencyFormatter";
 import { toast } from "sonner";
+import { useCardPurchasesColumns } from "./useCardPurchasesColumns";
+import { CardPurchasesEmptyState } from "./CardPurchasesEmptyState";
 
-interface Props { cardUuid: string; }
-
-const numberFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-function fmt(n: number) {
-  return numberFormatter.format(n);
+export interface CardPurchasesInitialData {
+  data: CardPurchase[];
+  totalPages: number;
 }
 
-export const CardDetailTable = ({ cardUuid }: Props) => {
+interface CardPurchasesPageProps {
+  cardUuid: string;
+  initialData?: CardPurchasesInitialData | null;
+}
+
+export const CardPurchasesPage = ({ cardUuid, initialData = null }: CardPurchasesPageProps) => {
+  const { t } = useTranslation();
   const [card, setCard] = useState<Card | null>(null);
-  const [data, setData] = useState<CardPurchase[]>([]);
+  const [data, setData] = useState<CardPurchase[]>(initialData?.data ?? []);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(initialData?.totalPages ?? 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPurchase, setEditingPurchase] = useState<CardPurchase | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
-  const t = useCallback((key: string) => translate(key, lang), [lang]);
-
-  useEffect(() => {
-    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
-    window.addEventListener("languageChanged", onLang);
-    return () => window.removeEventListener("languageChanged", onLang);
-  }, []);
 
   // Load card info
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
       const result = await getCards({ page: 1, page_size: 100 });
+      if (cancelled) return;
       if (result.response) {
         const found = result.data?.data?.find((c: Card) => c.uuid === cardUuid);
         setCard(found || null);
       }
     };
     load();
+    return () => { cancelled = true; };
   }, [cardUuid]);
 
   // Load purchases
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
       try {
         const result = await getCardPurchases(cardUuid, { page: currentPage });
+        if (cancelled) return;
         const validated = CardPurchasePaginatedResponseSchema.parse(result);
         if (validated.response) {
           setData(validated.data.data);
@@ -67,14 +68,16 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
           setData([]);
         }
       } catch (err: any) {
-        toast.error(err?.message || translate("purchaseForm.loadingError", getCurrentLanguage()));
+        if (cancelled) return;
+        toast.error(err?.message || t("purchaseForm.loadingError"));
         setData([]);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [cardUuid, currentPage, refreshTrigger]);
+    return () => { cancelled = true; };
+  }, [cardUuid, currentPage, refreshTrigger, t]);
 
   const handleSubmit = async (purchaseData: Partial<CardPurchase>) => {
     setIsSubmitting(true);
@@ -126,75 +129,18 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
     }
   };
 
-  // Summary stats
   const totalMonthlyDue = data.filter(p => p.current_installment <= p.installments).reduce((sum, p) => sum + p.installment_amount, 0);
   const activePurchases = data.filter(p => p.current_installment <= p.installments).length;
   const completedPurchases = data.filter(p => p.current_installment > p.installments).length;
 
-  const columns: Array<{ key: keyof CardPurchase | 'progress' | 'actions'; label: string; sortable: boolean; render?: (value: any, row: CardPurchase) => ReactNode }> = [
-    { key: 'description', label: t('purchaseForm.columnDescription'), sortable: true },
-    {
-      key: 'total_amount', label: t('purchaseForm.columnTotal'), sortable: false,
-      render: (v: number) => <span className="font-bold text-(--text-primary)">${fmt(v)}</span>,
-    },
-    {
-      key: 'installment_amount', label: t('purchaseForm.columnMonthly'), sortable: false,
-      render: (v: number) => <span className="font-bold" style={{ color: 'var(--accent-primary)' }}>${fmt(v)}</span>,
-    },
-    {
-      key: 'interest_rate', label: t('purchaseForm.columnRate'), sortable: false,
-      render: (v: number) => <span className="text-xs text-(--text-secondary)">{v}%</span>,
-    },
-    {
-      key: 'progress', label: t('purchaseForm.columnInstallments'), sortable: false,
-      render: (_: any, row: CardPurchase): ReactNode => {
-        const pct = Math.round((row.current_installment - 1) / row.installments * 100);
-        const done = row.current_installment > row.installments;
-        return (
-          <div className="flex flex-col gap-1 min-w-[120px]">
-            <div className="flex items-center justify-between text-xs">
-              <span style={{ color: done ? 'var(--semantic-success)' : 'var(--text-secondary)' }}>
-                {done ? t('purchaseForm.paidOff') : `${row.current_installment}/${row.installments}`}
-              </span>
-              <span style={{ color: 'var(--text-tertiary)' }}>{pct}%</span>
-            </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              <div className="h-full rounded-full transition-[width]" style={{
-                width: `${Math.min(pct, 100)}%`,
-                backgroundColor: done ? 'var(--semantic-success)' : 'var(--accent-primary)',
-              }} />
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      key: 'purchase_date', label: t('purchaseForm.columnDate'), sortable: true,
-      render: (v: string) => <span className="font-mono text-xs">{formatDate(v)}</span>,
-    },
-    {
-      key: 'actions', label: t('purchaseForm.columnActions'), sortable: false,
-      render: (_: any, row: CardPurchase): ReactNode => (
-        <div className="flex gap-1.5">
-          {row.current_installment <= row.installments && (
-            <button onClick={(e) => { e.stopPropagation(); handleAdvance(row); }}
-              title={t('purchaseForm.advanceInstallment')}
-              className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)]">
-              <RotateCw className="w-4 h-4" />
-            </button>
-          )}
-          <button onClick={(e) => { e.stopPropagation(); setEditingPurchase(row); setIsModalOpen(true); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)" title={t('purchaseForm.editTitle')}>
-            <Pencil className="w-4 h-4" />
-          </button>
-          <button onClick={(e) => { e.stopPropagation(); setPurchaseToDelete(row.uuid); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]" title={t('purchaseForm.deleteTitle')}>
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const openCreateModal = () => { setEditingPurchase(null); setIsModalOpen(true); };
+
+  const columns = useCardPurchasesColumns({
+    t,
+    onAdvance: handleAdvance,
+    onEdit: (purchase) => { setEditingPurchase(purchase); setIsModalOpen(true); },
+    onDelete: (purchase) => setPurchaseToDelete(purchase.uuid),
+  });
 
   return (
     <div className="table-page-container">
@@ -222,7 +168,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
             </h2>
             {card && <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
           </div>
-          <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
+          <button onClick={openCreateModal}
             className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             {t('purchaseForm.addPurchase')}
@@ -234,7 +180,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
               <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.monthlyDue')}</p>
-              <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>${fmt(totalMonthlyDue)}</p>
+              <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>${formatNumber(totalMonthlyDue)}</p>
             </div>
             <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
               <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.active')}</p>
@@ -252,20 +198,7 @@ export const CardDetailTable = ({ cardUuid }: Props) => {
         {data.length > 0 ? (
           <MyTable data={data} columns={columns} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} variant="excel" showPagination={true} />
         ) : (
-          <div className="text-center flex flex-col items-center justify-center gap-6 py-12 px-6">
-            <div className="w-20 h-20 bg-[rgba(212,175,55,0.1)] rounded-full flex items-center justify-center">
-              <TrendingUp className="w-10 h-10 text-(--accent-primary)" />
-            </div>
-            <div>
-              <h3 className="text-xl md:text-2xl font-black text-(--text-primary) uppercase tracking-tight mb-2">{t('purchaseForm.noPurchasesYet')}</h3>
-              <p className="text-(--text-secondary) text-sm mb-6">{t('purchaseForm.addYourFirst')}</p>
-              <button onClick={() => { setEditingPurchase(null); setIsModalOpen(true); }}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl transition-colors transition-transform font-bold text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
-                <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
-                {t('purchaseForm.addFirstPurchase')}
-              </button>
-            </div>
-          </div>
+          <CardPurchasesEmptyState onAdd={openCreateModal} t={t} />
         )}
       </div>
 

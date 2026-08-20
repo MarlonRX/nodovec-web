@@ -32,18 +32,22 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentPath = '/' }) => {
     let touchEndY = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.changedTouches[0].screenY;
+      if (e.changedTouches.length > 0) {
+        touchStartY = e.changedTouches[0].screenY;
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      touchEndY = e.changedTouches[0].screenY;
-      const diff = touchStartY - touchEndY;
+      if (e.changedTouches.length > 0) {
+        touchEndY = e.changedTouches[0].screenY;
+        const diff = touchStartY - touchEndY;
 
-      if (Math.abs(diff) > 50) {
-        if (diff > 0 && !isVisible) {
-          setIsVisible(true);
-        } else if (diff < 0 && isVisible) {
-          setIsVisible(false);
+        if (Math.abs(diff) > 50) {
+          if (diff > 0 && !isVisible) {
+            setIsVisible(true);
+          } else if (diff < 0 && isVisible) {
+            setIsVisible(false);
+          }
         }
       }
     };

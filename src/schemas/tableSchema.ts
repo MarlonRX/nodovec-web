@@ -15,8 +15,8 @@ const TableConfigSchema = z.object({
   columns: z.array(ColumnSchema),
   currentPage: z.number().int().positive(),
   totalPages: z.number().int().positive(),
-  data: z.array(z.object({ id: z.union([z.string(), z.number()]) }).passthrough(),
-  ),
+  data: z.array(z.looseObject({ id: z.union([z.string(), z.number()]) })),
+
 });
 
 export type TableConfig = z.infer<typeof TableConfigSchema>;

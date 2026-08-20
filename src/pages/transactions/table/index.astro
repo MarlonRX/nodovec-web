@@ -1,10 +1,36 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { TableData } from "./_table.tsx";
+import { TransactionsPage } from "@/components/reactComponents/transactions/TransactionsPage";
+import type { TransactionsInitialData } from "@/components/reactComponents/transactions/useTransactionsData";
+import { getTransactions } from "@/services/transactionServices";
+import { FiltersSchema } from "@/schemas/tableSchema";
 
-const title = "Transactions";
+export const prerender = false;
+
+const token = Astro.cookies.get("auth_token")?.value ?? null;
+
+let initialData: TransactionsInitialData | null = null;
+if (token) {
+  const now = new Date();
+  const filters = FiltersSchema.parse({
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    page: 1,
+    page_size: 10,
+    order_by: "date",
+    sort_direction: "desc",
+  });
+  const result = await getTransactions(filters, token);
+  if (result.response && result.data) {
+    initialData = {
+      data: result.data.data ?? [],
+      totalPages: result.data.last_page ?? 1,
+      totalCount: result.data.total ?? 0,
+    };
+  }
+}
 ---
 
 <BaseLayout>
-    <TableData client:visible />
+    <TransactionsPage client:load initialData={initialData} />
 </BaseLayout>

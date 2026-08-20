@@ -1,16 +1,6 @@
-import React from "react";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-} from "recharts";
+import React, { lazy, Suspense } from "react";
+
 import { StackedBarChartProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 import { formatCurrency } from "../../lib/currencyFormatter";
 
 const formatAxisValue = (value: number) => {
@@ -36,9 +26,9 @@ const CustomTooltip = (props: any) => {
                 }}
             >
                 <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
-                {payload.map((entry: any, index: number) => (
+                {payload.map((entry: any) => (
                     <p
-                        key={`tooltip-item-${index}`}
+                        key={entry.name}
                         style={{ margin: "4px 0", color: entry.color }}
                     >
                         {entry.name}: {formatCurrency(entry.value)}
@@ -50,51 +40,74 @@ const CustomTooltip = (props: any) => {
     return null;
 };
 
-const StackedBarChart: React.FC<StackedBarChartProps> = ({
-    data,
-    bars = [],
-    xAxisKey = "month",
-    stackId = "stack",
-    height = 320,
-    showLegend = true,
-    showGrid = true,
-    showTooltip = true,
-}) => {
-    return (
-        <ResponsiveContainer width="100%" height={height}>
-            <BarChart data={data}>
-                {showGrid && (
-                    <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--border-secondary)"
+// Lazy-load the whole chart as a single unit so recharts' primitives stay
+// direct children of each other (they rely on parent/child relationships).
+const StackedBarChartImpl = lazy(async () => {
+    const {
+        BarChart,
+        Bar,
+        XAxis,
+        YAxis,
+        CartesianGrid,
+        Tooltip,
+        Legend,
+        ResponsiveContainer,
+    } = await import("recharts");
+
+    const Chart: React.FC<StackedBarChartProps> = ({
+        data,
+        bars = [],
+        xAxisKey = "month",
+        stackId = "stack",
+        height = 320,
+        showLegend = true,
+        showGrid = true,
+        showTooltip = true,
+    }) => {
+        return (
+            <ResponsiveContainer width="100%" height={height}>
+                <BarChart data={data}>
+                    {showGrid && (
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--border-secondary)"
+                        />
+                    )}
+                    <XAxis
+                        dataKey={xAxisKey}
+                        stroke="var(--text-secondary)"
                     />
-                )}
-                <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--text-secondary)"
-                />
-                <YAxis 
-                    stroke="var(--text-secondary)"
-                    tickFormatter={formatAxisValue}
-                />
-                {showTooltip && (
-                    <Tooltip content={<CustomTooltip />} />
-                )}
-                {showLegend && (
-                    <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
-                )} 
-                {bars.map((bar, idx) => (
-                    <Bar
-                        key={`bar-${idx}`}
-                        dataKey={bar.dataKey}
-                        fill={bar.fill}
-                        stackId={stackId}
-                        name={bar.name || bar.dataKey}
+                    <YAxis
+                        stroke="var(--text-secondary)"
+                        tickFormatter={formatAxisValue}
                     />
-                ))}
-            </BarChart>
-        </ResponsiveContainer>
-    );
-};
+                    {showTooltip && (
+                        <Tooltip content={<CustomTooltip />} />
+                    )}
+                    {showLegend && (
+                        <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
+                    )}
+                    {bars.map((bar) => (
+                        <Bar
+                            key={bar.dataKey}
+                            dataKey={bar.dataKey}
+                            fill={bar.fill}
+                            stackId={stackId}
+                            name={bar.name || bar.dataKey}
+                        />
+                    ))}
+                </BarChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    return { default: Chart };
+});
+
+const StackedBarChart: React.FC<StackedBarChartProps> = (props) => (
+    <Suspense fallback={<div style={{ width: "100%", height: `${props.height ?? 320}px` }} />}>
+        <StackedBarChartImpl {...props} />
+    </Suspense>
+);
 
 export default StackedBarChart;

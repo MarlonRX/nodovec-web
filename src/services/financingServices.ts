@@ -1,5 +1,5 @@
-import axios, { type AxiosResponse } from "axios";
-import { getFetch, postFetch, putFetch } from "./fetchTypes";
+import { apiGet, apiPost, apiPut } from "./apiClient";
+import type { ApiResponse } from "./types";
 
 export type FinancingInput = {
   type: "loan" | "card_purchase";
@@ -19,66 +19,28 @@ export type FinancingInput = {
   generate_transactions?: boolean;
 };
 
-export async function previewFinancing(data: Pick<FinancingInput, "principal_amount" | "annual_interest_rate" | "calculation_method" | "payment_frequency" | "installments" | "first_payment_date">) {
-  try {
-    const response: AxiosResponse = await postFetch("financings/preview", data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to calculate financing" };
-    return { response: false, message: "Unexpected error" };
-  }
+export function previewFinancing(
+  data: Pick<FinancingInput, "principal_amount" | "annual_interest_rate" | "calculation_method" | "payment_frequency" | "installments" | "first_payment_date">,
+  token?: string | null,
+): Promise<ApiResponse<any>> {
+  return apiPost("financings/preview", data, { token });
 }
 
-export async function createFinancing(data: FinancingInput) {
-  try {
-    const response: AxiosResponse = await postFetch("financings", data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to create financing" };
-    return { response: false, message: "Unexpected error" };
-  }
+export function createFinancing(data: FinancingInput, token?: string | null): Promise<ApiResponse<any>> {
+  return apiPost("financings", data, { token });
 }
 
-export async function getFinancings() {
-  try {
-    const response: AxiosResponse = await getFetch("financings", { page_size: 100 });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to fetch financings" };
-    return { response: false, message: "Unexpected error" };
-  }
+export function getFinancings(token?: string | null): Promise<ApiResponse<any>> {
+  return apiGet("financings", { params: { page_size: 100 }, token });
 }
 
-async function updateFinancing(uuid: string, data: { current_installment: number }) {
-  try {
-    const response: AxiosResponse = await putFetch(`financings/${uuid}`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to update financing" };
-    return { response: false, message: "Unexpected error" };
-  }
+export function updateFinancingFull(uuid: string, data: FinancingInput, token?: string | null): Promise<ApiResponse<any>> {
+  return apiPut(`financings/${uuid}`, data, { token });
 }
 
-export async function updateFinancingFull(uuid: string, data: FinancingInput) {
-  try {
-    const response: AxiosResponse = await putFetch(`financings/${uuid}`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to update financing" };
-    return { response: false, message: "Unexpected error" };
-  }
-}
-
-export async function getFinancingDetails(uuid: string, page?: number, pageSize?: number) {
-  try {
-    const params: Record<string, any> = {};
-    if (page !== undefined) params.page = page;
-    if (pageSize !== undefined) params.page_size = pageSize;
-    
-    const response: AxiosResponse = await getFetch(`financings/${uuid}`, Object.keys(params).length > 0 ? params : undefined);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || "Failed to fetch financing details" };
-    return { response: false, message: "Unexpected error" };
-  }
+export function getFinancingDetails(uuid: string, page?: number, pageSize?: number, token?: string | null): Promise<ApiResponse<any>> {
+  const params: Record<string, unknown> = {};
+  if (page !== undefined) params.page = page;
+  if (pageSize !== undefined) params.page_size = pageSize;
+  return apiGet(`financings/${uuid}`, { params, token });
 }

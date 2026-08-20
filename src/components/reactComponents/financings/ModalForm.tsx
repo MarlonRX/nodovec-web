@@ -1,34 +1,26 @@
-import { Calculator, Landmark, CreditCard, X, Zap, Info } from "lucide-react";
+import { Calculator, Landmark, CreditCard, X, Zap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MyDatePicker } from "@/components/UIComponents/MyDatePicker";
+import { MyInput } from "@/components/UIComponents/MyInput";
+import { MySelect } from "@/components/UIComponents/MySelect";
+import { MyTextArea } from "@/components/UIComponents/MyTextArea";
+import { MyCurrencyInput } from "@/components/UIComponents/MyCurrencyInput";
+import { MySwitch } from "@/components/UIComponents/MySwitch";
 import { formatMoney } from "@/utils/cardFinance";
-import { translate, type Language } from "@/i18n";
+import type { Language } from "@/i18n";
 import type { FinancingInput } from "@/services/financingServices";
+import type { Financing } from "@/types/financingInterfaces";
 import dayjs from "dayjs";
+import { FinancingTip } from "./FinancingTip";
 
 type ScheduleRow = { installment_number: number; due_date: string; principal_amount: string; interest_amount: string; total_amount: string; remaining_principal: string };
 type Summary = { installment_amount: string; total_interest: string; total_amount: string };
-
-function Tip({ text }: { text: string }) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button type="button" aria-label="Info" className="inline-flex size-5 items-center justify-center rounded-full text-(--text-secondary) transition-colors hover:text-(--accent-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary)/50 ml-1 shrink-0">
-            <Info className="size-3.5" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-55 text-xs">{text}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 interface ModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => Promise<void>;
-  editingFinancing: any | null;
+  editingFinancing: Financing | null;
   form: FinancingInput;
   update: <K extends keyof FinancingInput>(key: K, value: FinancingInput[K]) => void;
   paymentDate: string;
@@ -40,17 +32,6 @@ interface ModalFormProps {
   lang: Language;
   t: (key: string) => string;
 }
-
-const categoryOptions = [
-  { value: 'food', label: 'Food' },
-  { value: 'transportation', label: 'Transportation' },
-  { value: 'utilities', label: 'Utilities' },
-  { value: 'entertainment', label: 'Entertainment' },
-  { value: 'healthcare', label: 'Healthcare' },
-  { value: 'shopping', label: 'Shopping' },
-  { value: 'rent', label: 'Rent' },
-  { value: 'other_expense', label: 'Other' },
-];
 
 export const ModalForm = ({
   isOpen,
@@ -65,7 +46,6 @@ export const ModalForm = ({
   summary,
   saving,
   loadingInstallments,
-  lang,
   t,
 }: ModalFormProps) => {
   if (!isOpen) return null;
@@ -99,12 +79,14 @@ export const ModalForm = ({
                     <form onSubmit={onSubmit} className="flex flex-col h-full overflow-hidden">
 
                         <div className="grid gap-3 sm:grid-cols-2 flex-1 overflow-y-auto pr-3">
-                            <label className="sm:col-span-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.name")}</span>
-                                <input required value={form.name} onChange={(e) => update("name", e.target.value)}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                    style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                            </label>
+                            <div className="sm:col-span-2">
+                                <MyInput
+                                    label={t("financing.name")}
+                                    value={form.name}
+                                    onChange={(e) => update("name", e.target.value)}
+                                    required
+                                />
+                            </div>
 
                             {/* Visual Type Selector */}
                             <div className="sm:col-span-2">
@@ -132,6 +114,7 @@ export const ModalForm = ({
                                     </button>
                                 </div>
                             </div>
+
                             {/* Auto Transactions Switch */}
                             <div className="sm:col-span-2 flex items-center justify-between p-3 rounded-lg" style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
                                 <div className="flex items-center gap-2.5 min-w-0">
@@ -141,84 +124,96 @@ export const ModalForm = ({
                                         <span className="text-[11px] text-(--text-tertiary) truncate m-1">{t("financing.autoTransactionsHint")}</span>
                                     </div>
                                 </div>
-                                <button type="button" role="switch" aria-checked={form.generate_transactions}
-                                    aria-label={t("financing.autoTransactions")}
-                                    onClick={() => update("generate_transactions", !form.generate_transactions)}
-                                    className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary) focus-visible:ring-offset-2 shrink-0"
-                                    style={{ backgroundColor: form.generate_transactions ? 'var(--accent-primary)' : 'var(--border-primary)' }}>
-                                    <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm"
-                                        style={{ transform: form.generate_transactions ? 'translateX(24px)' : 'translateX(4px)' }} />
-                                </button>
+                                <MySwitch
+                                    checked={Boolean(form.generate_transactions)}
+                                    onCheckedChange={(v) => update("generate_transactions", v)}
+                                    label={t("financing.autoTransactions")}
+                                />
                             </div>
 
                             {/* Amount, Rate, Installments in same row */}
                             <div className="sm:col-span-2 grid grid-cols-4 gap-3">
-                                <label>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.amount")}</span>
-                                    <input required inputMode="decimal" value={form.principal_amount} onChange={(e) => update("principal_amount", e.target.value)}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                        style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                                </label>
-                                <label>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.rate")}<Tip text={t("financing.tipRate")} /></span>
-                                    <input inputMode="decimal" min="0" step="0.01" value={form.annual_interest_rate} onChange={(e) => update("annual_interest_rate", e.target.value)}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                        style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                                </label>
-                                <label>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.installments")}<Tip text={t("financing.tipInstallments")} /></span>
-                                    <input type="number" min="1" max="600" value={form.installments} onChange={(e) => update("installments", Number(e.target.value))}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                        style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                                </label>
-                                <label>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.currentInstallment")}<Tip text={t("financing.tipInstallments")} /></span>
-                                    <input type="number" min="1" max={form.installments} value={form.current_installment ?? 1} onChange={(e) => update("current_installment", Number(e.target.value))}
-                                        className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                        style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                                </label>
+                                <MyCurrencyInput
+                                    label={t("financing.amount")}
+                                    value={form.principal_amount}
+                                    onChange={(e) => update("principal_amount", e.target.value)}
+                                    required
+                                />
+                                <MyInput
+                                    label={t("financing.rate")}
+                                    labelEnd={<FinancingTip text={t("financing.tipRate")} />}
+                                    inputMode="decimal"
+                                    min="0"
+                                    step="0.01"
+                                    value={form.annual_interest_rate}
+                                    onChange={(e) => update("annual_interest_rate", e.target.value)}
+                                />
+                                <MyInput
+                                    label={t("financing.installments")}
+                                    labelEnd={<FinancingTip text={t("financing.tipInstallments")} />}
+                                    type="number"
+                                    min="1"
+                                    max="600"
+                                    value={form.installments}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        update("installments", val ? Number(val) : 1);
+                                    }}
+                                />
+                                <MyInput
+                                    label={t("financing.currentInstallment")}
+                                    labelEnd={<FinancingTip text={t("financing.tipInstallments")} />}
+                                    type="number"
+                                    min="1"
+                                    max={form.installments}
+                                    value={form.current_installment ?? 1}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        update("current_installment", val ? Number(val) : 1);
+                                    }}
+                                />
                             </div>
 
-
-
-                            <label>
-                                <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.method")}</span>
-                                <select value={form.calculation_method} onChange={(e) => update("calculation_method", e.target.value as FinancingInput["calculation_method"])}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                    style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
-                                    <option value="french">{t("financing.french")}</option>
-                                    <option value="simple">{t("financing.simple")}</option>
-                                    <option value="fixed_principal">{t("financing.fixedPrincipal")}</option>
-                                </select>
-                                <p className="mt-1.5 text-[11px] leading-snug" style={{ color: 'var(--text-tertiary)' }}>
-                                    {form.calculation_method === "french" && t("financing.methodFrench")}
-                                    {form.calculation_method === "simple" && t("financing.methodSimple")}
-                                    {form.calculation_method === "fixed_principal" && t("financing.methodFixedPrincipal")}
-                                </p>
-                            </label>
-                            <label>
-                                <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) flex items-center mb-1.5">{t("financing.frequency")}<Tip text={t("financing.tipFrequency")} /></span>
-                                <select value={form.payment_frequency} onChange={(e) => update("payment_frequency", e.target.value as FinancingInput["payment_frequency"])}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary)"
-                                    style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
-                                    <option value="monthly">{t("financing.monthly")}</option>
-                                    <option value="biweekly">{t("financing.biweekly")}</option>
-                                    <option value="weekly">{t("financing.weekly")}</option>
-                                </select>
-                            </label>
-                            <MyDatePicker
-                                label={t("financing.firstPayment")}
-                                name="first_payment_date"
-                                value={paymentDate}
-                                onChange={(e) => setPaymentDate(e.target.value)}
-                                placeholder={t("financing.selectDate")}
+                            <MySelect
+                                label={t("financing.method")}
+                                value={form.calculation_method}
+                                onChange={(e) => update("calculation_method", e.target.value as FinancingInput["calculation_method"])}
+                                options={[
+                                    { value: "french", label: t("financing.french") },
+                                    { value: "simple", label: t("financing.simple") },
+                                    { value: "fixed_principal", label: t("financing.fixedPrincipal") },
+                                ]}
                             />
-                            <label className="sm:col-span-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-1.5">{t("financing.observations")}</span>
-                                <textarea rows={2} value={form.observations || ""} onChange={(e) => update("observations", e.target.value)}
-                                    className="w-full rounded-lg px-4 py-2.5 text-sm text-(--text-primary) outline-none transition-colors focus:ring-2 focus:ring-(--accent-primary) resize-none"
-                                    style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }} />
-                            </label>
+                            <MySelect
+                                label={t("financing.frequency")}
+                                labelEnd={<FinancingTip text={t("financing.tipFrequency")} />}
+                                value={form.payment_frequency}
+                                onChange={(e) => update("payment_frequency", e.target.value as FinancingInput["payment_frequency"])}
+                                options={[
+                                    { value: "monthly", label: t("financing.monthly") },
+                                    { value: "biweekly", label: t("financing.biweekly") },
+                                    { value: "weekly", label: t("financing.weekly") },
+                                ]}
+                            />
+
+                            <div className="sm:col-span-2">
+                                <MyDatePicker
+                                    label={t("financing.firstPayment")}
+                                    name="first_payment_date"
+                                    value={paymentDate}
+                                    onChange={(e) => setPaymentDate(e.target.value)}
+                                    placeholder={t("financing.selectDate")}
+                                />
+                            </div>
+
+                            <div className="sm:col-span-2">
+                                <MyTextArea
+                                    label={t("financing.observations")}
+                                    rows={2}
+                                    value={form.observations || ""}
+                                    onChange={(e) => update("observations", e.target.value)}
+                                />
+                            </div>
                         </div>
                     </form>
 
@@ -301,7 +296,7 @@ export const ModalForm = ({
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <button onClick={onSubmit} disabled={saving}
-                                                className="flex-1 rounded-lg px-4 py-3 font-black transition-colors transition-transform disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                                className="flex-1 rounded-lg px-4 py-3 font-black transition-transform disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                                                 style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}>
                                                 {saving ? t("financing.saving") : (editingFinancing ? t("financing.update") : t("financing.save"))}
                                             </button>

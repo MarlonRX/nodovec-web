@@ -1,10 +1,22 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import SavingsGoalsTable from "./_list";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { SavingsGoalsPage } from "@/components/reactComponents/savingsGoals/SavingsGoalsPage";
+import { getGoals } from "@/services/savingsGoalServices";
+import type { SavingsGoal } from "@/types";
 
 export const prerender = false;
+
+const token = Astro.cookies.get("auth_token")?.value ?? null;
+
+let initialData: SavingsGoal[] | null = null;
+if (token) {
+  const result = await getGoals({}, token);
+  if (result.response && result.data) {
+    initialData = result.data.data ?? [];
+  }
+}
 ---
 
 <BaseLayout>
-    <SavingsGoalsTable client:only="react" />
+    <SavingsGoalsPage client:load initialData={initialData} />
 </BaseLayout>

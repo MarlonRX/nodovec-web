@@ -37,12 +37,6 @@ export const ContributionModal = ({
     return () => window.removeEventListener('languageChanged', onLang);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      setFormData(initialFormData);
-    }
-  }, [isOpen]);
-
   const handleCurrencyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, amount: e.target.value }));
   }, []);
@@ -84,7 +78,7 @@ export const ContributionModal = ({
   return (
     <>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div
           className="rounded-2xl shadow-2xl border p-6 md:p-8"
           style={{

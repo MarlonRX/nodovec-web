@@ -1,27 +1,31 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Filter, Target } from 'lucide-react';
-import { toast } from 'sonner';
-import SavingsGoalCard from '../../../components/reactComponents/SavingsGoalCard';
-import { ContributionModal } from '../../../components/UIComponents/ContributionModal';
-import { SavingsGoalModal } from '../../../components/UIComponents/SavingsGoalModal';
-import { DeleteConfirmModal } from '../../../components/UIComponents/DeleteConfirmModal';
-import CelebrationModal from '../../../components/UIComponents/CelebrationModal';
+import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
+import SavingsGoalCard from "@/components/reactComponents/SavingsGoalCard";
+import { ContributionModal } from "@/components/UIComponents/ContributionModal";
+import { SavingsGoalModal } from "@/components/UIComponents/SavingsGoalModal";
+import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
+import CelebrationModal from "@/components/UIComponents/CelebrationModal";
 import {
   getGoals,
   updateGoal,
   deleteGoal,
   createGoal,
   contributeToGoal,
-} from '../../../services/savingsGoalServices';
-import type { SavingsGoal } from '../../../types';
-import { translate, getCurrentLanguage, type Language } from '../../../i18n';
+} from "@/services/savingsGoalServices";
+import type { SavingsGoal } from "@/types";
+import { useTranslation } from "@/hooks/useTranslation";
+import { SavingsGoalsHeader } from "./SavingsGoalsHeader";
+import { SavingsGoalsEmptyState } from "./SavingsGoalsEmptyState";
 
-const SavingsGoalsTable: React.FC = () => {
-  const [goals, setGoals] = useState<SavingsGoal[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface SavingsGoalsPageProps {
+  initialData?: SavingsGoal[] | null;
+}
+
+export const SavingsGoalsPage = ({ initialData = null }: SavingsGoalsPageProps) => {
+  const { t } = useTranslation();
+  const [goals, setGoals] = useState<SavingsGoal[]>(initialData ?? []);
+  const [isLoading, setIsLoading] = useState(initialData ? false : true);
   const [error, setError] = useState<string | null>(null);
-  const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
-  const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   const [isContributeModalOpen, setIsContributeModalOpen] = useState(false);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -32,12 +36,6 @@ const SavingsGoalsTable: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteConfirmGoal, setDeleteConfirmGoal] = useState<SavingsGoal | null>(null);
   const [isDeletingGoal, setIsDeletingGoal] = useState(false);
-
-  useEffect(() => {
-    const onLang = (e: Event) => setLang((e as CustomEvent).detail as Language);
-    window.addEventListener('languageChanged', onLang);
-    return () => window.removeEventListener('languageChanged', onLang);
-  }, []);
 
   const loadGoals = useCallback(async () => {
     try {
@@ -188,19 +186,6 @@ const SavingsGoalsTable: React.FC = () => {
     setFilterStatus(e.target.value as 'all' | 'active' | 'completed');
   }, []);
 
-  const getEmptyStateMessage = () => {
-    if (filterStatus === 'completed') {
-      return {
-        title: t('savingsGoals.noCompletedGoals') || 'No completed goals',
-        description: t('savingsGoals.noCompletedGoalsHint') || 'Complete a goal to see it here',
-      };
-    }
-    return {
-      title: t('savingsGoals.noGoals') || 'No savings goals',
-      description: t('savingsGoals.noGoalsHint') || 'Create your first savings goal to start',
-    };
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -215,52 +200,15 @@ const SavingsGoalsTable: React.FC = () => {
     );
   }
 
-  const emptyState = getEmptyStateMessage();
-
   return (
     <div className="p-4 md:p-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <h1
-            className="text-2xl md:text-3xl font-black tracking-tight"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {t('savingsGoals.title') || 'Savings Goals'}
-          </h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-            {goals.length} {goals.length !== 1 ? t('savingsGoals.goals') || 'goals' : t('savingsGoals.goal') || 'goal'}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div
-            className="flex items-center gap-2 px-3 py-2 rounded-lg"
-            style={{ backgroundColor: 'var(--bg-surface)', border: '1.5px solid var(--border-primary)' }}
-          >
-            <Filter size={16} style={{ color: 'var(--text-secondary)' }} />
-            <select
-              value={filterStatus}
-              onChange={handleFilterChange}
-              aria-label="Filter by status"
-              className="bg-transparent text-sm outline-none"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              <option value="all">{t('savingsGoals.filterAll') || 'All'}</option>
-              <option value="active">{t('savingsGoals.filterActive') || 'Active'}</option>
-              <option value="completed">{t('savingsGoals.filterCompleted') || 'Completed'}</option>
-            </select>
-          </div>
-
-          <button
-            onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-90"
-            style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
-          >
-            <Plus size={18} />
-            {t('savingsGoals.addGoal') || 'Add Goal'}
-          </button>
-        </div>
-      </div>
+      <SavingsGoalsHeader
+        goalCount={goals.length}
+        filterStatus={filterStatus}
+        onFilterChange={handleFilterChange}
+        onCreateGoal={openCreateModal}
+        t={t}
+      />
 
       {error && (
         <div
@@ -272,33 +220,7 @@ const SavingsGoalsTable: React.FC = () => {
       )}
 
       {goals.length === 0 ? (
-        <div
-          className="rounded-2xl p-12 text-center"
-          style={{ backgroundColor: 'var(--bg-surface)', border: '1.5px solid var(--border-primary)' }}
-        >
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: 'var(--bg-secondary)' }}
-          >
-            <Target size={32} style={{ color: 'var(--text-secondary)' }} />
-          </div>
-          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            {emptyState.title}
-          </h3>
-          <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
-            {emptyState.description}
-          </p>
-          {filterStatus !== 'completed' && (
-            <button
-              onClick={openCreateModal}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-opacity hover:opacity-90"
-              style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
-            >
-              <Plus size={18} />
-              {t('savingsGoals.addFirstGoal') || 'Add Your First Goal'}
-            </button>
-          )}
-        </div>
+        <SavingsGoalsEmptyState filterStatus={filterStatus} onCreateGoal={openCreateModal} t={t} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {goals.map((goal) => (
@@ -348,5 +270,3 @@ const SavingsGoalsTable: React.FC = () => {
     </div>
   );
 };
-
-export default SavingsGoalsTable;

@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useEffect, useId, useMemo } from "react";
 import Decimal from "decimal.js";
 import { cn } from "@/lib/utils";
 
 interface MyCurrencyInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label?: string;
   error?: string;
+  labelEnd?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -17,21 +18,19 @@ function formatCurrency(val: string): string {
 }
 
 export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInputProps>(
-  ({ label, error, className, onChange, value, id, ...props }, ref) => {
-    const [displayValue, setDisplayValue] = useState<string>("");
+  ({ label, error, labelEnd, className, onChange, value, id, ...props }, ref) => {
     const autoId = useId();
     const inputId = id || autoId;
 
-    useEffect(() => {
+    const displayValue = useMemo(() => {
       if (value === undefined || value === null || value === "") {
-        setDisplayValue("");
-      } else {
-        try {
-          const decimal = new Decimal(String(value));
-          setDisplayValue(formatCurrency(decimal.toString()));
-        } catch {
-          setDisplayValue("");
-        }
+        return "";
+      }
+      try {
+        const decimal = new Decimal(String(value));
+        return formatCurrency(decimal.toString());
+      } catch {
+        return "";
       }
     }, [value]);
 
@@ -54,12 +53,9 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
         try {
           const decimal = new Decimal(inputValue);
           cleanValue = decimal.toString();
-          setDisplayValue(formatCurrency(cleanValue));
         } catch {
-          setDisplayValue(formatCurrency(inputValue));
+          // Keep inputValue as is if parsing fails
         }
-      } else {
-        setDisplayValue("");
       }
 
       const cleanEvent = {
@@ -73,8 +69,9 @@ export const MyCurrencyInput = React.forwardRef<HTMLInputElement, MyCurrencyInpu
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-(--text-primary)">
+          <label htmlFor={inputId} className="flex items-center gap-1 text-sm font-medium text-(--text-primary)">
             {label}
+            {labelEnd}
           </label>
         )}
         <input

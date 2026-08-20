@@ -4,18 +4,20 @@ import { cn } from "@/lib/utils";
 interface MyTextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
+  labelEnd?: React.ReactNode;
 }
 
 export const MyTextArea = React.forwardRef<HTMLTextAreaElement, MyTextAreaProps>(
-  ({ label, error, className, id, ...props }, ref) => {
+  ({ label, error, labelEnd, className, id, ...props }, ref) => {
     const autoId = useId();
     const textareaId = id || autoId;
 
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={textareaId} className="block text-sm font-medium text-(--text-primary)">
+          <label htmlFor={textareaId} className="flex items-center gap-1 text-sm font-medium text-(--text-primary)">
             {label}
+            {labelEnd}
           </label>
         )}
         <textarea

@@ -9,7 +9,7 @@ export interface UserPreferences {
   theme?: string;
 }
 
-const PREFERENCES_KEY = 'cash_pilot_preferences';
+const PREFERENCES_KEY = 'cash_pilot_preferences:v1';
 
 /**
  * Guardar todas las preferencias del usuario

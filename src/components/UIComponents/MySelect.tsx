@@ -5,20 +5,22 @@ import { cn } from "@/lib/utils";
 interface MySelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
+  labelEnd?: React.ReactNode;
   options: Array<{ value: string | number; label: string }>;
   placeholder?: string;
 }
 
 export const MySelect = React.forwardRef<HTMLSelectElement, MySelectProps>(
-  ({ label, error, options, placeholder, className, id, ...props }, ref) => {
+  ({ label, error, labelEnd, options, placeholder, className, id, ...props }, ref) => {
     const autoId = useId();
     const selectId = id || autoId;
 
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={selectId} className="block text-sm font-medium text-(--text-primary)">
+          <label htmlFor={selectId} className="flex items-center gap-1 text-sm font-medium text-(--text-primary)">
             {label}
+            {labelEnd}
           </label>
         )}
         <div className="relative">

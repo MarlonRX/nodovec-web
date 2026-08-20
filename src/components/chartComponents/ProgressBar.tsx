@@ -1,6 +1,5 @@
 import React from "react";
 import { ProgressBarProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
     label,

@@ -23,18 +23,15 @@ const SWATCHES: Record<ThemeName, string> = {
 };
 
 export function UserComponent() {
-  console.log('[UC] Render START');
   const [theme, setLocalTheme] = useState<ThemeName>("dark");
   const [currency, setCurrency] = useState<Currency>("USD");
   const [language, setLanguage] = useState<string>("es");
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
-  console.log('[UC] States initialized');
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Referencias para rastrear las preferencias iniciales
   const initialPrefsRef = useRef<{ theme: ThemeName; currency: Currency; language: string }>({
     theme: "dark",
     currency: "USD",
@@ -42,13 +39,11 @@ export function UserComponent() {
   });
 
   useEffect(() => {
-    console.log('[UC] useEffect#1 (init) START');
     if (typeof window === 'undefined') return;
 
     try {
       // Leer tema directamente de localStorage
       const storedThemeValue = localStorage.getItem('cash_pilot_theme') as ThemeName | null;
-      console.log('[UC] Read theme:', storedThemeValue);
       const themeToSet: ThemeName = (storedThemeValue && THEMES.includes(storedThemeValue)) ? storedThemeValue : "dark";
 
       // Leer currency  
@@ -73,7 +68,6 @@ export function UserComponent() {
       };
 
       setIsInitialized(true);
-      console.log('[UC] useEffect#1 DONE');
     } catch (err) {
       console.error("[UC] Error initializing:", err);
       setIsInitialized(true);
@@ -204,11 +198,8 @@ export function UserComponent() {
     try {
       // 1. Guardar tema PRIMERO, directamente a localStorage
       const themeSaved = localStorage.setItem('cash_pilot_theme', theme);
-      console.log('[UserComponent] Theme saved to localStorage:', theme);
 
-      // 2. Aplicar tema al DOM inmediatamente
       document.documentElement.setAttribute('data-theme', theme);
-      console.log('[UserComponent] Theme applied to DOM:', theme);
 
       // 3. Disparar evento de cambio de tema (para sincronización global)
       window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
@@ -238,7 +229,6 @@ export function UserComponent() {
       // 8. Verificar que el tema se guardó (para debugging)
       setTimeout(() => {
         const verify = localStorage.getItem('cash_pilot_theme');
-        console.log('[UserComponent] Verification - Theme in localStorage:', verify);
         if (verify !== theme) {
           console.warn('[UserComponent] WARNING: Theme mismatch after save!', verify, 'vs', theme);
         }
@@ -289,107 +279,35 @@ export function UserComponent() {
               <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-8 items-start w-full">
                 {/* Left: Avatar / image area (30%) */}
                 <div className="flex flex-col items-center md:items-center justify-center gap-4 w-full">
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => fileRef.current?.click()}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click(); } }}
+                  <AvatarUploader
+                    avatar={avatar}
+                    isDragging={isDragging}
+                    fileRef={fileRef}
+                    onFileChange={onFileChange}
                     onDragOver={(ev) => { ev.preventDefault(); ev.stopPropagation(); setIsDragging(true); }}
                     onDragEnter={(ev) => { ev.preventDefault(); ev.stopPropagation(); setIsDragging(true); }}
                     onDragLeave={(ev) => { ev.preventDefault(); ev.stopPropagation(); setIsDragging(false); }}
                     onDrop={(ev) => { ev.preventDefault(); ev.stopPropagation(); setIsDragging(false); const file = ev.dataTransfer?.files?.[0]; if (file) void handleFile(file); }}
-                    className={`group relative w-36 h-36 rounded-full flex items-center justify-center overflow-hidden border-2 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-(--accent-primary) ${isDragging ? 'ring-2 ring-offset-1 ring-(--accent-primary) scale-105' : ''}`}
-                    style={{ background: avatar ? "transparent" : "var(--accent-primary)", borderColor: "rgba(var(--accent-primary-rgb),0.18)" }}
-                    aria-label={t('user.changePhotoAria')}
-                  >
-                    {avatar ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-xl font-bold text-(--text-inverted)">UP</span>
-                    )}
-
-                    {/* hover/focus overlay to indicate clickability / drag state */}
-                    <div className={`absolute inset-0 transition-opacity duration-150 flex items-center justify-center pointer-events-none ${isDragging ? 'opacity-100 bg-black/40 dark:bg-white/10' : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100 bg-black/30 dark:bg-white/10'}`}>
-                      <div className="flex flex-col items-center gap-1">
-                        <Camera size={28} className="text-(--text-inverted)" />
-                        <span className="text-xs text-(--text-inverted)">{isDragging ? t('user.dropToUpload') : t('user.changePhoto')}</span>
-                      </div>
-                    </div>
-
-                    {/* hidden input stays inside avatar for click-to-change */}
-                    <input ref={fileRef} onChange={onFileChange} accept="image/*" type="file" className="hidden" />
-                  </div>
-
+                    onClick={() => fileRef.current?.click()}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click(); } }}
+                    t={t}
+                  />
                   <div className="text-sm text-center md:text-left mt-2" style={{ color: 'var(--text-secondary)' }}>{t('user.changePhotoHint')}</div>
                 </div>
 
                 {/* Right: controls (Idioma, Moneda, Tema) (70%) */}
-                <div className="flex flex-col gap-6 w-full md:pl-6 md:ml-4 md:border-l md:border-(--border-primary)">
-                  {/* small-screen divider between avatar + controls */}
-                  <div className="w-full md:hidden">
-                    <hr className="border-(--border-primary) my-2" />
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 items-start">
-                    <div className="w-full md:max-w-xs">
-                      <label htmlFor="language-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.language')}</label>
-                      <LanguageSelector fullWidth id="language-selector" />
-                    </div>
-
-                    <div className="w-full md:max-w-xs">
-                      <label htmlFor="currency-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.currency')}</label>
-                      <CurrencySelector value={currency} onChange={(c) => setCurrency(c)} fullWidth id="currency-selector" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="theme-selector-user" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('themes.label')}</label>
-                    <div id="theme-selector-user" className="flex gap-3 flex-wrap" role="listbox" aria-label={t('themes.selector')}>
-                      {THEMES.map((t) => {
-                        const active = t === theme;
-                        return (
-                          <button
-                            key={t}
-                            onClick={() => setLocalTheme(t)}
-                            role="option"
-                            aria-selected={active}
-                            aria-pressed={active}
-                            className={`w-12 h-12 rounded-full border shrink-0 transition ${active ? 'ring-2 ring-offset-1 ring-(--accent-primary) bg-[rgba(var(--accent-primary-rgb),0.12)]' : 'hover:brightness-105'}`}
-                            style={{ backgroundColor: SWATCHES[t] }}
-                            title={LABELS[t]}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Save button with unsaved changes indicator */}
-                  <div className="mt-8 pt-6 border-t border-(--border-primary)">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        {hasUnsavedChanges && (
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-(--semantic-error) animate-pulse"></div>
-                            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                              {t('user.unsavedChanges')}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        onClick={handleSavePreferences}
-                        disabled={!hasUnsavedChanges || isSaving}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors mr-10 ${hasUnsavedChanges && !isSaving
-                          ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer hover:-translate-y-0.5'
-                          : 'bg-(--bg-secondary) text-(--text-tertiary) cursor-not-allowed opacity-50'
-                          }`}
-                      >
-                        <Save size={16} />
-                        <span>{isSaving ? t('user.saving') : t('user.savePreferences')}</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <PreferencesControls
+                  currency={currency}
+                  onCurrencyChange={setCurrency}
+                  theme={theme}
+                  onSelectTheme={setLocalTheme}
+                  labels={LABELS}
+                  swatches={SWATCHES}
+                  hasUnsavedChanges={hasUnsavedChanges}
+                  isSaving={isSaving}
+                  onSave={handleSavePreferences}
+                  t={t}
+                />
               </div>
             </div>
           </div>
@@ -399,3 +317,177 @@ export function UserComponent() {
   );
 }
 
+interface AvatarUploaderProps {
+  avatar: string | null;
+  isDragging: boolean;
+  fileRef: React.RefObject<HTMLInputElement | null>;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDragOver: (ev: React.DragEvent) => void;
+  onDragEnter: (ev: React.DragEvent) => void;
+  onDragLeave: (ev: React.DragEvent) => void;
+  onDrop: (ev: React.DragEvent) => void;
+  onClick: () => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  t: (key: string) => string;
+}
+
+function AvatarUploader({
+  avatar,
+  isDragging,
+  fileRef,
+  onFileChange,
+  onDragOver,
+  onDragEnter,
+  onDragLeave,
+  onDrop,
+  onClick,
+  onKeyDown,
+  t,
+}: AvatarUploaderProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      onDragOver={onDragOver}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      className={`group relative w-36 h-36 rounded-full flex items-center justify-center overflow-hidden border-2 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-(--accent-primary) ${isDragging ? 'ring-2 ring-offset-1 ring-(--accent-primary) scale-105' : ''}`}
+      style={{ background: avatar ? "transparent" : "var(--accent-primary)", borderColor: "rgba(var(--accent-primary-rgb),0.18)" }}
+      aria-label={t('user.changePhotoAria')}
+    >
+      {avatar ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+      ) : (
+        <span className="text-xl font-bold text-(--text-inverted)">UP</span>
+      )}
+
+      <div className={`absolute inset-0 transition-opacity duration-150 flex items-center justify-center pointer-events-none ${isDragging ? 'opacity-100 bg-black/40 dark:bg-white/10' : 'opacity-0 group-hover:opacity-100 group-focus:opacity-100 bg-black/30 dark:bg-white/10'}`}>
+        <div className="flex flex-col items-center gap-1">
+          <Camera size={28} className="text-(--text-inverted)" />
+          <span className="text-xs text-(--text-inverted)">{isDragging ? t('user.dropToUpload') : t('user.changePhoto')}</span>
+        </div>
+      </div>
+
+      <input ref={fileRef} onChange={onFileChange} accept="image/*" type="file" className="hidden" />
+    </div>
+  );
+}
+
+interface ThemeSwatchSelectorProps {
+  theme: ThemeName;
+  onSelectTheme: (theme: ThemeName) => void;
+  labels: Record<ThemeName, string>;
+  swatches: Record<ThemeName, string>;
+  t: (key: string) => string;
+}
+
+function ThemeSwatchSelector({ theme, onSelectTheme, labels, swatches, t }: ThemeSwatchSelectorProps) {
+  return (
+    <div>
+      <label htmlFor="theme-selector-user" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('themes.label')}</label>
+      <div id="theme-selector-user" className="flex gap-3 flex-wrap" role="listbox" aria-label={t('themes.selector')}>
+        {THEMES.map((th) => {
+          const active = th === theme;
+          return (
+            <button
+              key={th}
+              onClick={() => onSelectTheme(th)}
+              role="option"
+              aria-selected={active}
+              className={`w-12 h-12 rounded-full border shrink-0 transition ${active ? 'ring-2 ring-offset-1 ring-(--accent-primary) bg-[rgba(var(--accent-primary-rgb),0.12)]' : 'hover:brightness-105'}`}
+              style={{ backgroundColor: swatches[th] }}
+              title={labels[th]}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+interface SavePreferencesBarProps {
+  hasUnsavedChanges: boolean;
+  isSaving: boolean;
+  onSave: () => void;
+  t: (key: string) => string;
+}
+
+function SavePreferencesBar({ hasUnsavedChanges, isSaving, onSave, t }: SavePreferencesBarProps) {
+  return (
+    <div className="mt-8 pt-6 border-t border-(--border-primary)">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          {hasUnsavedChanges && (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-(--semantic-error) animate-pulse"></div>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {t('user.unsavedChanges')}
+              </span>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={onSave}
+          disabled={!hasUnsavedChanges || isSaving}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors mr-10 ${hasUnsavedChanges && !isSaving
+            ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer hover:-translate-y-0.5'
+            : 'bg-(--bg-secondary) text-(--text-tertiary) cursor-not-allowed opacity-50'
+            }`}
+        >
+          <Save size={16} />
+          <span>{isSaving ? t('user.saving') : t('user.savePreferences')}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface PreferencesControlsProps {
+  currency: Currency;
+  onCurrencyChange: (c: Currency) => void;
+  theme: ThemeName;
+  onSelectTheme: (t: ThemeName) => void;
+  labels: Record<ThemeName, string>;
+  swatches: Record<ThemeName, string>;
+  hasUnsavedChanges: boolean;
+  isSaving: boolean;
+  onSave: () => void;
+  t: (key: string) => string;
+}
+
+function PreferencesControls({
+  currency,
+  onCurrencyChange,
+  theme,
+  onSelectTheme,
+  labels,
+  swatches,
+  hasUnsavedChanges,
+  isSaving,
+  onSave,
+  t,
+}: PreferencesControlsProps) {
+  return (
+    <div className="flex flex-col gap-6 w-full md:pl-6 md:ml-4 md:border-l md:border-(--border-primary)">
+      <div className="w-full md:hidden">
+        <hr className="border-(--border-primary) my-2" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 items-start">
+        <div className="w-full md:max-w-xs">
+          <label htmlFor="language-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.language')}</label>
+          <LanguageSelector fullWidth id="language-selector" />
+        </div>
+        <div className="w-full md:max-w-xs">
+          <label htmlFor="currency-selector" className="text-sm block mb-2" style={{ color: 'var(--text-secondary)' }}>{t('user.currency')}</label>
+          <CurrencySelector value={currency} onChange={(c) => onCurrencyChange(c)} fullWidth id="currency-selector" />
+        </div>
+      </div>
+      <ThemeSwatchSelector theme={theme} onSelectTheme={onSelectTheme} labels={labels} swatches={swatches} t={t} />
+      <SavePreferencesBar hasUnsavedChanges={hasUnsavedChanges} isSaving={isSaving} onSave={onSave} t={t} />
+    </div>
+  );
+}

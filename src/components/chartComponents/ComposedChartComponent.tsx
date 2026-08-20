@@ -1,17 +1,6 @@
-import React from "react";
-import {
-    ComposedChart,
-    Bar,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-} from "recharts";
+import React, { lazy, Suspense } from "react";
+
 import { ComposedChartProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 import { formatCurrency } from "../../lib/currencyFormatter";
 
 const formatAxisValue = (value: number) => {
@@ -37,9 +26,9 @@ const CustomTooltip = (props: any) => {
                 }}
             >
                 <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
-                {payload.map((entry: any, index: number) => (
+                {payload.map((entry: any) => (
                     <p
-                        key={`tooltip-item-${index}`}
+                        key={entry.name}
                         style={{ margin: "4px 0", color: entry.color }}
                     >
                         {entry.name}: {formatCurrency(entry.value)}
@@ -51,60 +40,84 @@ const CustomTooltip = (props: any) => {
     return null;
 };
 
-const ComposedChartComponent: React.FC<ComposedChartProps> = ({
-    data,
-    bars = [],
-    lines = [],
-    xAxisKey = "month",
-    height = 320,
-    showLegend = true,
-    showGrid = true,
-    showTooltip = true,
-}) => {
-    return (
-        <ResponsiveContainer width="100%" height={height}>
-            <ComposedChart data={data}>
-                {showGrid && (
-                    <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--border-secondary)"
+// Lazy-load the whole chart as a single unit so recharts' primitives stay
+// direct children of each other (they rely on parent/child relationships).
+const ComposedChartImpl = lazy(async () => {
+    const {
+        ComposedChart,
+        Bar,
+        Line,
+        XAxis,
+        YAxis,
+        CartesianGrid,
+        Tooltip,
+        Legend,
+        ResponsiveContainer,
+    } = await import("recharts");
+
+    const Chart: React.FC<ComposedChartProps> = ({
+        data,
+        bars = [],
+        lines = [],
+        xAxisKey = "month",
+        height = 320,
+        showLegend = true,
+        showGrid = true,
+        showTooltip = true,
+    }) => {
+        return (
+            <ResponsiveContainer width="100%" height={height}>
+                <ComposedChart data={data}>
+                    {showGrid && (
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--border-secondary)"
+                        />
+                    )}
+                    <XAxis
+                        dataKey={xAxisKey}
+                        stroke="var(--text-secondary)"
                     />
-                )}
-                <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--text-secondary)"
-                />
-                <YAxis 
-                    stroke="var(--text-secondary)"
-                    tickFormatter={formatAxisValue}
-                />
-                {showTooltip && (
-                    <Tooltip content={<CustomTooltip />} />
-                )}
-                {showLegend && (
-                    <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
-                )}
-                {bars.map((bar, idx) => (
-                    <Bar
-                        key={`bar-${idx}`}
-                        dataKey={bar.dataKey}
-                        fill={bar.fill}
-                        name={bar.name || bar.dataKey}
+                    <YAxis
+                        stroke="var(--text-secondary)"
+                        tickFormatter={formatAxisValue}
                     />
-                ))}
-                {lines.map((line, idx) => (
-                    <Line
-                        key={`line-${idx}`}
-                        type="monotone"
-                        dataKey={line.dataKey}
-                        stroke={line.stroke}
-                        strokeWidth={line.strokeWidth || 2}
-                        name={line.name || line.dataKey}
-                    />
-                ))}
-            </ComposedChart>
-        </ResponsiveContainer>
-    );
-};
+                    {showTooltip && (
+                        <Tooltip content={<CustomTooltip />} />
+                    )}
+                    {showLegend && (
+                        <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
+                    )}
+                    {bars.map((bar) => (
+                        <Bar
+                            key={bar.dataKey}
+                            dataKey={bar.dataKey}
+                            fill={bar.fill}
+                            name={bar.name || bar.dataKey}
+                        />
+                    ))}
+                    {lines.map((line) => (
+                        <Line
+                            key={line.dataKey}
+                            type="monotone"
+                            dataKey={line.dataKey}
+                            stroke={line.stroke}
+                            strokeWidth={line.strokeWidth || 2}
+                            name={line.name || line.dataKey}
+                        />
+                    ))}
+                </ComposedChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    return { default: Chart };
+});
+
+const ComposedChartComponent: React.FC<ComposedChartProps> = (props) => (
+    <Suspense fallback={<div style={{ width: "100%", height: `${props.height ?? 320}px` }} />}>
+        <ComposedChartImpl {...props} />
+    </Suspense>
+);
 
 export default ComposedChartComponent;

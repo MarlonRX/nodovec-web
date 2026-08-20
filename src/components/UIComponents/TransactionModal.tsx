@@ -125,26 +125,22 @@ export const TransactionModal = ({
     },
   });
 
-  // Efecto para cargar datos iniciales si estamos editando
+  // Initialize form data when initialData changes (for edit mode)
   useEffect(() => {
-    if (isOpen) {
-      if (initialData) {
-        setFormData({
-          description: initialData.description || "",
-          amount: String(initialData.amount || ""),
-          type: initialData.type || "expense",
-          category: String(initialData.category || "food"),
-          date: initialData.date
-            ? new Date(initialData.date).toISOString().split("T")[0]
-            : new Date().toISOString().split("T")[0],
-          is_paid: (initialData as any).is_paid || "paid",
-          is_fixed: Boolean((initialData as any).is_fixed),
-        });
-      } else {
-        resetForm();
-      }
+    if (initialData && isOpen) {
+      setFormData({
+        description: initialData.description || "",
+        amount: String(initialData.amount || ""),
+        type: initialData.type || "expense",
+        category: String(initialData.category || "food"),
+        date: initialData.date
+          ? new Date(initialData.date).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        is_paid: (initialData as any).is_paid || "paid",
+        is_fixed: Boolean((initialData as any).is_fixed),
+      });
     }
-  }, [isOpen, initialData, setFormData, resetForm]);
+  }, [initialData, isOpen, setFormData]);
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleChange(e as any);
@@ -157,6 +153,7 @@ export const TransactionModal = ({
     });
   };
 
+  // Read user from localStorage on mount only
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
@@ -174,7 +171,7 @@ export const TransactionModal = ({
         setIsLoggedIn(false);
       }
     }
-  }, [isOpen]);
+  }, []);
 
   const handleClose = () => {
     resetForm();
@@ -194,7 +191,7 @@ export const TransactionModal = ({
         onClick={onClose}
       />
 
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
@@ -216,157 +213,208 @@ export const TransactionModal = ({
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-            <div className="col-span-1">
-              <MyDatePicker
-                label={t("transactionForm.date")}
-                name="date"
-                value={formData.date}
-                onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
-                required
-                min={dateRange?.min}
-                max={dateRange?.max}
-              />
-              {dateRange && (
-                <p className="text-xs text-(--text-tertiary) mt-1">
-                  {defaultMonth && defaultYear
-                    ? `${String(defaultMonth).padStart(2, "0")}-${defaultYear}`
-                    : ""}
-                </p>
-              )}
-            </div>
-
-            <div className="col-span-1">
-              <MySelect
-                label={t("transactionForm.type")}
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                options={[
-                  { value: "expense", label: t("transactionForm.typeExpense") },
-                  { value: "income", label: t("transactionForm.typeIncome") },
-                ]}
-                required
-              />
-            </div>
-
-            <div className="col-span-1">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <MySelect
-                    label={t("transactionForm.paymentStatus")}
-                    name="is_paid"
-                    value={formData.is_paid}
-                    onChange={handleChange}
-                    options={[
-                      { value: "paid", label: t("transactionForm.statusPaid") },
-                      { value: "unpaid", label: t("transactionForm.statusUnpaid") },
-                    ]}
-                    required
-                  />
-                </div>
-                <div>
-                  <MyCurrencyInput
-                    label={t("transactionForm.amount")}
-                    name="amount"
-                    value={formData.amount}
-                    onChange={handleAmountChange}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-span-1">
-              <MySelect
-                label={t("transactionForm.category")}
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                options={categoryOptions}
-                required
-              />
-            </div>
-
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center gap-3">
-                <label className="flex cursor-pointer items-center gap-2.5">
-                  <Checkbox
-                    checked={Boolean(formData.is_fixed)}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_fixed: checked === true })
-                    }
-                    aria-label={
-                      formData.type === "income"
-                        ? t("transactionForm.fixedIncome")
-                        : t("transactionForm.fixedExpense")
-                    }
-                  />
-                  <span className="text-sm font-medium text-(--text-primary)">
-                    {formData.type === "income"
-                      ? t("transactionForm.fixedIncome")
-                      : t("transactionForm.fixedExpense")}
-                  </span>
-                </label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        className="inline-flex size-5 items-center justify-center rounded-full text-(--text-secondary) transition-colors hover:text-(--accent-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary)/50"
-                        aria-label={
-                          formData.type === "income"
-                            ? t("transactionForm.fixedIncomeTooltip")
-                            : t("transactionForm.fixedExpenseTooltip")
-                        }
-                      >
-                        <Info className="size-3.5" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {formData.type === "income"
-                        ? t("transactionForm.fixedIncomeTooltip")
-                        : t("transactionForm.fixedExpenseTooltip")}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </div>
-
-            <div className="col-span-1 md:col-span-2">
-              <MyTextArea
-                label={t("transactionForm.description")}
-                name="description"
-                value={formData.description}
-                onChange={handleTextAreaChange}
-                placeholder={t("transactionForm.descriptionPlaceholder")}
-                rows={3}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 md:pt-6 col-span-1 md:col-span-2">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors font-bold uppercase tracking-wider text-sm md:text-base"
-              >
-                {t("transactionForm.cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1 px-4 py-2 md:py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
-              >
-                {isLoading
-                  ? (initialData ? t("transactionForm.updating") : t("transactionForm.creating"))
-                  : (initialData ? t("transactionForm.update") : t("transactionForm.create"))
-                }
-              </button>
-            </div>
-          </form>
+          <TransactionFormContent
+            formData={formData}
+            handleChange={handleChange}
+            handleTextAreaChange={handleTextAreaChange}
+            handleAmountChange={handleAmountChange}
+            setFormData={setFormData}
+            handleSubmit={handleSubmit}
+            handleClose={handleClose}
+            isLoading={isLoading}
+            initialData={initialData}
+            dateRange={dateRange}
+            defaultMonth={defaultMonth}
+            defaultYear={defaultYear}
+            categoryOptions={categoryOptions}
+            t={t}
+          />
         </div>
       </div>
     </>
   );
 };
+
+interface TransactionFormContentProps {
+  formData: any;
+  handleChange: (e: React.ChangeEvent<any>) => void;
+  handleTextAreaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  handleSubmit: (e: React.FormEvent) => void;
+  handleClose: () => void;
+  isLoading: boolean;
+  initialData: Transaction | null;
+  dateRange: { min: string; max: string; defaultDate: string } | null;
+  defaultMonth?: number;
+  defaultYear?: number;
+  categoryOptions: { value: string; label: string }[];
+  t: (key: string) => string;
+}
+
+const TransactionFormContent = ({
+  formData,
+  handleChange,
+  handleTextAreaChange,
+  handleAmountChange,
+  setFormData,
+  handleSubmit,
+  handleClose,
+  isLoading,
+  initialData,
+  dateRange,
+  defaultMonth,
+  defaultYear,
+  categoryOptions,
+  t,
+}: TransactionFormContentProps) => (
+  <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+    <div className="col-span-1">
+      <MyDatePicker
+        label={t("transactionForm.date")}
+        name="date"
+        value={formData.date}
+        onChange={(e) => setFormData((prev: any) => ({ ...prev, date: e.target.value }))}
+        required
+        min={dateRange?.min}
+        max={dateRange?.max}
+      />
+      {dateRange && (
+        <p className="text-xs text-(--text-tertiary) mt-1">
+          {defaultMonth && defaultYear
+            ? `${String(defaultMonth).padStart(2, "0")}-${defaultYear}`
+            : ""}
+        </p>
+      )}
+    </div>
+
+    <div className="col-span-1">
+      <MySelect
+        label={t("transactionForm.type")}
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
+        options={[
+          { value: "expense", label: t("transactionForm.typeExpense") },
+          { value: "income", label: t("transactionForm.typeIncome") },
+        ]}
+        required
+      />
+    </div>
+
+    <div className="col-span-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <MySelect
+            label={t("transactionForm.paymentStatus")}
+            name="is_paid"
+            value={formData.is_paid}
+            onChange={handleChange}
+            options={[
+              { value: "paid", label: t("transactionForm.statusPaid") },
+              { value: "unpaid", label: t("transactionForm.statusUnpaid") },
+            ]}
+            required
+          />
+        </div>
+        <div>
+          <MyCurrencyInput
+            label={t("transactionForm.amount")}
+            name="amount"
+            value={formData.amount}
+            onChange={handleAmountChange}
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <div className="col-span-1">
+      <MySelect
+        label={t("transactionForm.category")}
+        name="category"
+        value={formData.category}
+        onChange={handleChange}
+        options={categoryOptions}
+        required
+      />
+    </div>
+
+    <div className="col-span-1 md:col-span-2">
+      <div className="flex items-center gap-3">
+        <label className="flex cursor-pointer items-center gap-2.5">
+          <Checkbox
+            checked={Boolean(formData.is_fixed)}
+            onCheckedChange={(checked) =>
+              setFormData((prev: any) => ({ ...prev, is_fixed: checked === true }))
+            }
+            aria-label={
+              formData.type === "income"
+                ? t("transactionForm.fixedIncome")
+                : t("transactionForm.fixedExpense")
+            }
+          />
+          <span className="text-sm font-medium text-(--text-primary)">
+            {formData.type === "income"
+              ? t("transactionForm.fixedIncome")
+              : t("transactionForm.fixedExpense")}
+          </span>
+        </label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex size-5 items-center justify-center rounded-full text-(--text-secondary) transition-colors hover:text-(--accent-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--accent-primary)/50"
+                aria-label={
+                  formData.type === "income"
+                    ? t("transactionForm.fixedIncomeTooltip")
+                    : t("transactionForm.fixedExpenseTooltip")
+                }
+              >
+                <Info className="size-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {formData.type === "income"
+                ? t("transactionForm.fixedIncomeTooltip")
+                : t("transactionForm.fixedExpenseTooltip")}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </div>
+
+    <div className="col-span-1 md:col-span-2">
+      <MyTextArea
+        label={t("transactionForm.description")}
+        name="description"
+        value={formData.description}
+        onChange={handleTextAreaChange}
+        placeholder={t("transactionForm.descriptionPlaceholder")}
+        rows={3}
+        required
+      />
+    </div>
+
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 md:pt-6 col-span-1 md:col-span-2">
+      <button
+        type="button"
+        onClick={handleClose}
+        className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors font-bold uppercase tracking-wider text-sm md:text-base"
+      >
+        {t("transactionForm.cancel")}
+      </button>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="flex-1 px-4 py-2 md:py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
+      >
+        {isLoading
+          ? (initialData ? t("transactionForm.updating") : t("transactionForm.creating"))
+          : (initialData ? t("transactionForm.update") : t("transactionForm.create"))
+        }
+      </button>
+    </div>
+  </form>
+);

@@ -3,7 +3,7 @@
  * Se ejecuta al cargar cada página para asegurar persistencia
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const THEME_KEY = 'cash_pilot_theme';
 const VALID_THEMES = ['light', 'dark', 'custom', 'obsidian', 'midnight-teal', 'ember', 'violet-dusk', 'forest-night'];
@@ -38,7 +38,7 @@ function getStoredTheme() {
 }
 
 export function ThemeRestorer() {
-  const [initialized, setInitialized] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     // Restaurar tema del localStorage inmediatamente
@@ -49,7 +49,7 @@ export function ThemeRestorer() {
       window.dispatchEvent(new CustomEvent('themeChanged', { detail: storedTheme }));
     }
 
-    setInitialized(true);
+    initializedRef.current = true;
 
     // Escuchar cambios de localStorage desde otras pestañas/ventanas
     const handleStorageChange = (e: StorageEvent) => {

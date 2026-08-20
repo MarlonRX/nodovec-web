@@ -1,14 +1,6 @@
-import React from "react";
-import {
-    PieChart,
-    Pie,
-    Cell,
-    Legend,
-    Tooltip,
-    ResponsiveContainer,
-} from "recharts";
+import React, { lazy, Suspense } from "react";
+
 import { PieChartProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 
 interface DonutChartProps extends PieChartProps {
     colors: string[];
@@ -38,45 +30,66 @@ const CustomTooltip = (props: any) => {
     return null;
 };
 
-const DonutChart: React.FC<DonutChartProps> = ({
-    data,
-    colors,
-    innerRadius = 50,
-    outerRadius = 80,
-    paddingAngle = 2,
-    height = 300,
-    showLegend = true,
-    showTooltip = true,
-}) => {
-    return (
-        <ResponsiveContainer width="100%" height={height}>
-            <PieChart>
-                <Pie
-                    data={data}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={innerRadius}
-                    outerRadius={outerRadius}
-                    paddingAngle={paddingAngle}
-                    dataKey="value"
-                    label={false}
-                >
-                    {data.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={colors[index % colors.length]}
-                        />
-                    ))}
-                </Pie>
-                {showTooltip && (
-                    <Tooltip content={<CustomTooltip />} />
-                )}
-                {showLegend && (
-                    <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
-                )} 
-            </PieChart>
-        </ResponsiveContainer>
-    );
-};
+// Lazy-load the whole chart as a single unit so recharts' primitives stay
+// direct children of each other (Pie must see its Cell children directly).
+const DonutChartImpl = lazy(async () => {
+    const {
+        PieChart,
+        Pie,
+        Cell,
+        Legend,
+        Tooltip,
+        ResponsiveContainer,
+    } = await import("recharts");
+
+    const Chart: React.FC<DonutChartProps> = ({
+        data,
+        colors,
+        innerRadius = 50,
+        outerRadius = 80,
+        paddingAngle = 2,
+        height = 300,
+        showLegend = true,
+        showTooltip = true,
+    }) => {
+        return (
+            <ResponsiveContainer width="100%" height={height}>
+                <PieChart>
+                    <Pie
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={innerRadius}
+                        outerRadius={outerRadius}
+                        paddingAngle={paddingAngle}
+                        dataKey="value"
+                        label={false}
+                    >
+                        {data.map((entry, index) => (
+                            <Cell
+                                key={entry.name}
+                                fill={colors[index % colors.length]}
+                            />
+                        ))}
+                    </Pie>
+                    {showTooltip && (
+                        <Tooltip content={<CustomTooltip />} />
+                    )}
+                    {showLegend && (
+                        <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
+                    )}
+                </PieChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    return { default: Chart };
+});
+
+const DonutChart: React.FC<DonutChartProps> = (props) => (
+    <Suspense fallback={<div style={{ width: "100%", height: `${props.height ?? 300}px` }} />}>
+        <DonutChartImpl {...props} />
+    </Suspense>
+);
 
 export default DonutChart;

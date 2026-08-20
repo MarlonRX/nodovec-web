@@ -1,9 +1,7 @@
 import React from "react";
-import {
-  SimpleLineChart,
-  DonutChart,
-  MetricCard,
-} from "../../chartComponents";
+import SimpleLineChart from "../../chartComponents/SimpleLineChart";
+import DonutChart from "../../chartComponents/DonutChart";
+import MetricCard from "../../chartComponents/MetricCard";
 import { RecentTransactions } from "./RecentTransactions";
 import { formatCurrency, formatCurrencyWithSign } from "../../../lib/currencyFormatter";
 import { translateCategory } from "../../../lib/categoryTranslator";
@@ -210,7 +208,7 @@ const MonthView: React.FC<MonthViewProps> = ({
             <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2">
               {expenseCategories.map((cat, idx) => (
                 <div
-                  key={`expense-category-${idx}`}
+                  key={cat.name}
                   className="flex items-center justify-between text-xs sm:text-sm"
                 >
                   <div className="flex items-center gap-2 min-w-0">

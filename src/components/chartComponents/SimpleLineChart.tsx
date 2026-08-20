@@ -1,16 +1,6 @@
-import React from "react";
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-} from "recharts";
+import React, { lazy, Suspense } from "react";
+
 import { LineChartProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 import { formatCurrency } from "../../lib/currencyFormatter";
 
 interface SimpleLineChartProps extends LineChartProps {
@@ -41,9 +31,9 @@ const CustomTooltip = (props: any) => {
                 }}
             >
                 <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
-                {payload.map((entry: any, index: number) => (
+                {payload.map((entry: any) => (
                     <p
-                        key={`tooltip-item-${index}`}
+                        key={entry.name}
                         style={{ margin: "4px 0", color: entry.color }}
                     >
                         {entry.name}: {formatCurrency(entry.value)}
@@ -55,54 +45,77 @@ const CustomTooltip = (props: any) => {
     return null;
 };
 
-const SimpleLineChart: React.FC<SimpleLineChartProps> = ({
-    data,
-    dataKey,
-    stroke = 'var(--accent-primary)',
-    strokeWidth = 2,
-    dot = false,
-    curveType = "monotone",
-    height = 300,
-    showLegend = true,
-    showGrid = true,
-    showTooltip = true,
-    xAxisKey = "month",
-    yAxisDomain,
-}) => {
-    return (
-        <ResponsiveContainer width="100%" height={height}>
-            <LineChart data={data}>
-                {showGrid && (
-                    <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--border-secondary)"
+// Lazy-load the whole chart as a single unit so recharts' primitives stay
+// direct children of each other (they rely on parent/child relationships).
+const SimpleLineChartImpl = lazy(async () => {
+    const {
+        LineChart,
+        Line,
+        XAxis,
+        YAxis,
+        CartesianGrid,
+        Tooltip,
+        Legend,
+        ResponsiveContainer,
+    } = await import("recharts");
+
+    const Chart: React.FC<SimpleLineChartProps> = ({
+        data,
+        dataKey,
+        stroke = 'var(--accent-primary)',
+        strokeWidth = 2,
+        dot = false,
+        curveType = "monotone",
+        height = 300,
+        showLegend = true,
+        showGrid = true,
+        showTooltip = true,
+        xAxisKey = "month",
+        yAxisDomain,
+    }) => {
+        return (
+            <ResponsiveContainer width="100%" height={height}>
+                <LineChart data={data}>
+                    {showGrid && (
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--border-secondary)"
+                        />
+                    )}
+                    <XAxis
+                        dataKey={xAxisKey}
+                        stroke="var(--text-secondary)"
                     />
-                )}
-                <XAxis
-                    dataKey={xAxisKey}
-                    stroke="var(--text-secondary)"
-                />
-                <YAxis 
-                    stroke="var(--text-secondary)"
-                    domain={yAxisDomain}
-                    tickFormatter={formatAxisValue}
-                />
-                {showTooltip && (
-                    <Tooltip content={<CustomTooltip />} />
-                )}
-                {showLegend && (
-                    <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
-                )} 
-                <Line
-                    type={curveType}
-                    dataKey={dataKey}
-                    stroke={stroke}
-                    dot={dot}
-                    strokeWidth={strokeWidth}
-                />
-            </LineChart>
-        </ResponsiveContainer>
-    );
-};
+                    <YAxis
+                        stroke="var(--text-secondary)"
+                        domain={yAxisDomain}
+                        tickFormatter={formatAxisValue}
+                    />
+                    {showTooltip && (
+                        <Tooltip content={<CustomTooltip />} />
+                    )}
+                    {showLegend && (
+                        <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
+                    )}
+                    <Line
+                        type={curveType}
+                        dataKey={dataKey}
+                        stroke={stroke}
+                        dot={dot}
+                        strokeWidth={strokeWidth}
+                    />
+                </LineChart>
+            </ResponsiveContainer>
+        );
+    };
+
+    return { default: Chart };
+});
+
+const SimpleLineChart: React.FC<SimpleLineChartProps> = (props) => (
+    <Suspense fallback={<div style={{ width: "100%", height: `${props.height ?? 300}px` }} />}>
+        <SimpleLineChartImpl {...props} />
+    </Suspense>
+);
 
 export default SimpleLineChart;

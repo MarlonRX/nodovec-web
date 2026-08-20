@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 interface UseFormHandlerOptions<T> {
   initialValues: T;
@@ -13,7 +13,11 @@ export const useFormHandler = <T extends Record<string, any>>({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const initialValuesRef = useRef(initialValues);
-  initialValuesRef.current = initialValues;
+
+  // Update ref after render commits to avoid mutation during render
+  useEffect(() => {
+    initialValuesRef.current = initialValues;
+  }, [initialValues]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

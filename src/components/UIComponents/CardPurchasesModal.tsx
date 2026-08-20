@@ -22,7 +22,7 @@ interface Props {
 const numberFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function fmt(n: string | number) {
-  return numberFormatter.format(n);
+  return numberFormatter.format(typeof n === 'string' ? Number(n) : n);
 }
 
 export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: Props) => {
@@ -86,10 +86,20 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
     finally { setLoading(false); }
   }, [card.uuid, currentPage]);
 
+  // Load purchases when modal opens or card changes
   useEffect(() => {
-    if (isOpen) loadPurchases(1);
-    else { setShowForm(false); setEditingPurchase(null); resetForm(); }
-  }, [isOpen, card.uuid, loadPurchases, resetForm]);
+    if (isOpen) {
+      loadPurchases(1);
+    }
+  }, [isOpen, loadPurchases]);
+
+  // Reset form state when modal closes - called from onClose handler instead of effect
+  const handleClose = () => {
+    setShowForm(false);
+    setEditingPurchase(null);
+    resetForm();
+    onClose();
+  };
 
   const handleEdit = (p: CardPurchase) => {
     setEditingPurchase(p);
@@ -124,15 +134,15 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
 
   return (
     <>
-      <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col duration-300">
+      <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-(--border-primary) shrink-0">
             <div>
               <h2 className="text-xl font-black text-(--text-primary) uppercase tracking-tight">{card.name} •••• {card.last_four}</h2>
               <p className="text-xs text-(--text-tertiary) uppercase font-bold tracking-widest">{card.bank} · {t('cards.typeCredit')}</p>
             </div>
-            <button onClick={onClose} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
+            <button onClick={handleClose} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
             </button>
           </div>
@@ -172,7 +182,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                     label={t('purchases.labelPurchaseDate')} 
                     name="purchase_date" 
                     value={formData.purchase_date} 
-                    onChange={(e) => handleChange({ target: { name: 'purchase_date', value: e.target.value } })} 
+                    onChange={(e) => handleChange({ target: { name: 'purchase_date', value: e.target.value } } as unknown as React.ChangeEvent<HTMLInputElement | HTMLSelectElement>)} 
                     required 
                   />
                   <MyInput label={t('purchases.labelInstallments')} name="installments" type="number" min="1" max="120" value={formData.installments} onChange={handleChange} required />

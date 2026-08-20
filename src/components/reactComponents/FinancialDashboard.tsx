@@ -15,20 +15,15 @@ const MonthView = React.lazy(() => import("./dashboard/MonthView"));
 
 const FinancialDashboard = () => {
   const [viewMode, setViewMode] = useState<"month" | "year">("year");
-  const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth());
   const [selectedAccount, setSelectedAccount] = useState<string>("personal");
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isHydrated, setIsHydrated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
   const t = (key: string) => translate(key, lang);
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   useEffect(() => {
     const onLangChange = (e: Event) =>
@@ -58,11 +53,10 @@ const FinancialDashboard = () => {
     }
   }, []);
 
+  // Initial data load on mount
   useEffect(() => {
-    if (!isHydrated) return;
-    setSelectedMonth(new Date().getMonth());
     loadData();
-  }, [isHydrated, loadData]);
+  }, [loadData]);
 
   // Listen for transactionCreated event to refresh dashboard data
   useEffect(() => {
@@ -73,12 +67,8 @@ const FinancialDashboard = () => {
     return () => window.removeEventListener("transactionCreated", onTransactionCreated);
   }, [loadData]);
 
-  if (!isHydrated || isLoading) {
-    return (
-      <LoadingState
-        message={!isHydrated ? t("dashboard.initializing") : t("dashboard.loading")}
-      />
-    );
+  if (isLoading) {
+    return <LoadingState message={t("dashboard.loading")} />;
   }
 
   if (error || !dashboardData) {
@@ -173,9 +163,11 @@ const FinancialDashboard = () => {
   const metrics = getDisplayMetrics();
 
   const calculateYAxisDomain = (dataKey: string): [number, number] => {
-    const values = monthlyData
-      .map((item) => item[dataKey] || 0)
-      .filter((v) => typeof v === "number" && isFinite(v));
+    const values = monthlyData.reduce<number[]>((acc, item) => {
+      const v = item[dataKey] || 0;
+      if (typeof v === "number" && isFinite(v)) acc.push(v);
+      return acc;
+    }, []);
     const maxValue = values.length > 0 ? Math.max(...values) : 100;
     const normalizedMax =
       isFinite(maxValue) && maxValue > 0 ? maxValue : 100;
@@ -192,12 +184,12 @@ const FinancialDashboard = () => {
     const firstHalfAvg =
       firstHalf.length > 0
         ? firstHalf.reduce((sum, m) => sum + (m[dataKey] || 0), 0) /
-          firstHalf.length
+        firstHalf.length
         : 0;
     const secondHalfAvg =
       secondHalf.length > 0
         ? secondHalf.reduce((sum, m) => sum + (m[dataKey] || 0), 0) /
-          secondHalf.length
+        secondHalf.length
         : 0;
 
     if (firstHalfAvg === 0) {

@@ -47,7 +47,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
   return (
     <>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 transition-opacity duration-300">
         <div
           className="rounded-3xl shadow-2xl border p-8 text-center relative overflow-hidden"
           style={{

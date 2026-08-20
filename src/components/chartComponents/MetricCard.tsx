@@ -1,6 +1,5 @@
 import React from "react";
 import { MetricCardProps } from "./types";
-import { colorConfig } from "../../styles/colorConfig";
 
 const MetricCard: React.FC<MetricCardProps> = ({
     title,

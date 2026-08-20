@@ -1,83 +1,20 @@
-import { getFetch, postFetch, putFetch, deleteFetch } from './fetchTypes';
-import type { AxiosResponse } from 'axios';
-import axios from 'axios';
+import { apiGet, apiPost, apiPut, apiDelete } from './apiClient';
+import type { ApiResponse } from './types';
 
-export const getCardPurchases = async (cardUuid: string, params?: { page?: number }) => {
-  try {
-    const response: AxiosResponse = await getFetch(`cards/${cardUuid}/purchases`, params);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to fetch purchases', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const getCardPurchases = (cardUuid: string, params?: { page?: number }, token?: string | null): Promise<ApiResponse<any>> =>
+  apiGet(`cards/${cardUuid}/purchases`, { params, token });
 
-export const createCardPurchase = async (cardUuid: string, data: any) => {
-  try {
-    const response: AxiosResponse = await postFetch(`cards/${cardUuid}/purchases`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to create purchase', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const createCardPurchase = (cardUuid: string, data: unknown, token?: string | null): Promise<ApiResponse<any>> =>
+  apiPost(`cards/${cardUuid}/purchases`, data, { token });
 
-export const updateCardPurchase = async (cardUuid: string, uuid: string, data: any) => {
-  try {
-    const response: AxiosResponse = await putFetch(`cards/${cardUuid}/purchases/${uuid}`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to update purchase', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const updateCardPurchase = (cardUuid: string, uuid: string, data: unknown, token?: string | null): Promise<ApiResponse<any>> =>
+  apiPut(`cards/${cardUuid}/purchases/${uuid}`, data, { token });
 
-export const deleteCardPurchase = async (cardUuid: string, uuid: string) => {
-  try {
-    const response: AxiosResponse = await deleteFetch(`cards/${cardUuid}/purchases/${uuid}`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to delete purchase', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const deleteCardPurchase = (cardUuid: string, uuid: string, token?: string | null): Promise<ApiResponse<any>> =>
+  apiDelete(`cards/${cardUuid}/purchases/${uuid}`, { token });
 
-export const advanceInstallment = async (cardUuid: string, uuid: string) => {
-  try {
-    const response: AxiosResponse = await postFetch(`cards/${cardUuid}/purchases/${uuid}/advance`, {});
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to advance installment', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const advanceInstallment = (cardUuid: string, uuid: string, token?: string | null): Promise<ApiResponse<any>> =>
+  apiPost(`cards/${cardUuid}/purchases/${uuid}/advance`, {}, { token });
 
-export const getActivePurchasesSummary = async () => {
-  try {
-    const response: AxiosResponse = await getFetch('cards/purchases/active-summary');
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to fetch summary', data: [] };
-    return { response: false, message: 'Unexpected error', data: [] };
-  }
-};
-
-const getCardPayments = async (cardUuid: string, purchaseUuid: string) => {
-  try {
-    const response: AxiosResponse = await getFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to fetch payments', data: [] };
-    return { response: false, message: 'Unexpected error', data: [] };
-  }
-};
-
-const createCardPayment = async (cardUuid: string, purchaseUuid: string, data: { amount: string; payment_date: string; notes?: string | null }) => {
-  try {
-    const response: AxiosResponse = await postFetch(`cards/${cardUuid}/purchases/${purchaseUuid}/payments`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) return { response: false, message: error.response?.data?.message || 'Failed to register payment', data: null };
-    return { response: false, message: 'Unexpected error', data: null };
-  }
-};
+export const getActivePurchasesSummary = (token?: string | null): Promise<ApiResponse<any>> =>
+  apiGet('cards/purchases/active-summary', { token });

@@ -1,6 +1,5 @@
-import { getFetch, postFetch, putFetch, deleteFetch } from './fetchTypes';
-import type { AxiosResponse } from 'axios';
-import axios from 'axios';
+import { apiGet, apiPost, apiPut, apiDelete } from './apiClient';
+import type { ApiResponse } from './types';
 import type {
   SavingsGoal,
   CreateSavingsGoal,
@@ -20,11 +19,7 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export interface SingleGoalResponse {
-  response: boolean;
-  message: string;
-  data: SavingsGoal;
-}
+export type SingleGoalResponse = ApiResponse<SavingsGoal>;
 
 export interface ContributeResponse {
   response: boolean;
@@ -63,193 +58,35 @@ export interface ProgressResponse {
   };
 }
 
-export const getGoals = async (params?: {
-  page?: number;
-  page_size?: number;
-  status?: 'active' | 'completed' | 'all';
-}): Promise<PaginatedResponse<SavingsGoal>> => {
-  try {
-    const response: AxiosResponse<PaginatedResponse<SavingsGoal>> = await getFetch('goals', params);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to fetch savings goals',
-        data: { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
-    };
-  }
-};
+export const getGoals = (
+  params?: { page?: number; page_size?: number; status?: 'active' | 'completed' | 'all' },
+  token?: string | null,
+): Promise<PaginatedResponse<SavingsGoal>> =>
+  apiGet<PaginatedResponse<SavingsGoal>['data']>('goals', { params, token }) as Promise<PaginatedResponse<SavingsGoal>>;
 
-const getGoal = async (uuid: string): Promise<SingleGoalResponse> => {
-  try {
-    const response: AxiosResponse<SingleGoalResponse> = await getFetch(`goals/${uuid}`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to fetch savings goal',
-        data: null as unknown as SavingsGoal,
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as SavingsGoal,
-    };
-  }
-};
+export const createGoal = (data: CreateSavingsGoal, token?: string | null): Promise<SingleGoalResponse> =>
+  apiPost<SavingsGoal>('goals', data, { token });
 
-export const createGoal = async (data: CreateSavingsGoal): Promise<SingleGoalResponse> => {
-  try {
-    const response: AxiosResponse<SingleGoalResponse> = await postFetch('goals', data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to create savings goal',
-        data: null as unknown as SavingsGoal,
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as SavingsGoal,
-    };
-  }
-};
+export const updateGoal = (uuid: string, data: UpdateSavingsGoal, token?: string | null): Promise<SingleGoalResponse> =>
+  apiPut<SavingsGoal>(`goals/${uuid}`, data, { token });
 
-export const updateGoal = async (uuid: string, data: UpdateSavingsGoal): Promise<SingleGoalResponse> => {
-  try {
-    const response: AxiosResponse<SingleGoalResponse> = await putFetch(`goals/${uuid}`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to update savings goal',
-        data: null as unknown as SavingsGoal,
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as SavingsGoal,
-    };
-  }
-};
+export const deleteGoal = (uuid: string, token?: string | null): Promise<ApiResponse<null>> =>
+  apiDelete(`goals/${uuid}`, { token });
 
-export const deleteGoal = async (uuid: string) => {
-  try {
-    const response: AxiosResponse = await deleteFetch(`goals/${uuid}`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to delete savings goal',
-      };
-    }
-    return { response: false, message: 'An unexpected error occurred' };
-  }
-};
+export const contributeToGoal = (uuid: string, data: ContributeToGoal, token?: string | null): Promise<ContributeResponse> =>
+  apiPost<ContributeResponse['data']>(`goals/${uuid}/contribute`, data, { token }) as Promise<ContributeResponse>;
 
-export const contributeToGoal = async (uuid: string, data: ContributeToGoal): Promise<ContributeResponse> => {
-  try {
-    const response: AxiosResponse<ContributeResponse> = await postFetch(`goals/${uuid}/contribute`, data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to add contribution',
-        data: null as unknown as ContributeResponse['data'],
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as ContributeResponse['data'],
-    };
-  }
-};
-
-export const updateContribution = async (
+export const updateContribution = (
   goalUuid: string,
   contributionUuid: string,
-  data: { amount: number; note?: string | null }
-): Promise<SingleGoalResponse> => {
-  try {
-    const response: AxiosResponse<SingleGoalResponse> = await putFetch(
-      `goals/${goalUuid}/contributions/${contributionUuid}`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to update contribution',
-        data: null as unknown as SavingsGoal,
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as SavingsGoal,
-    };
-  }
-};
+  data: { amount: number; note?: string | null },
+  token?: string | null,
+): Promise<SingleGoalResponse> =>
+  apiPut<SavingsGoal>(`goals/${goalUuid}/contributions/${contributionUuid}`, data, { token });
 
-export const deleteContribution = async (
+export const deleteContribution = (
   goalUuid: string,
-  contributionUuid: string
-): Promise<SingleGoalResponse> => {
-  try {
-    const response: AxiosResponse<SingleGoalResponse> = await deleteFetch(
-      `goals/${goalUuid}/contributions/${contributionUuid}`
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to delete contribution',
-        data: null as unknown as SavingsGoal,
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as SavingsGoal,
-    };
-  }
-};
-
-const getGoalProgress = async (uuid: string): Promise<ProgressResponse> => {
-  try {
-    const response: AxiosResponse<ProgressResponse> = await getFetch(`goals/${uuid}/progress`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        response: false,
-        message: error.response?.data?.message || 'Failed to fetch progress',
-        data: null as unknown as ProgressResponse['data'],
-      };
-    }
-    return {
-      response: false,
-      message: 'An unexpected error occurred',
-      data: null as unknown as ProgressResponse['data'],
-    };
-  }
-};
+  contributionUuid: string,
+  token?: string | null,
+): Promise<SingleGoalResponse> =>
+  apiDelete<SavingsGoal>(`goals/${goalUuid}/contributions/${contributionUuid}`, { token });

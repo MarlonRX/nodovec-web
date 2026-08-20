@@ -1,12 +1,26 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { CardDetailTable } from "./_table";
+import { CardPurchasesPage, type CardPurchasesInitialData } from "@/components/reactComponents/cardPurchases/CardPurchasesPage";
+import { getCardPurchases } from "@/services/cardPurchaseServices";
 
 export const prerender = false;
 
 const { cardUuid } = Astro.params;
+
+const token = Astro.cookies.get("auth_token")?.value ?? null;
+
+let initialData: CardPurchasesInitialData | null = null;
+if (token && cardUuid) {
+  const result = await getCardPurchases(cardUuid, { page: 1 }, token);
+  if (result.response && result.data) {
+    initialData = {
+      data: result.data.data ?? [],
+      totalPages: result.data.last_page ?? 1,
+    };
+  }
+}
 ---
 
 <BaseLayout>
-    <CardDetailTable client:load cardUuid={cardUuid!} />
+    <CardPurchasesPage client:load cardUuid={cardUuid!} initialData={initialData} />
 </BaseLayout>

@@ -12,7 +12,6 @@ import {
   GOAL_ICON_LABELS,
 } from '@/types/savingsGoalInterfaces';
 import { GOAL_ICONS, GOAL_ICON_LIST } from '@/components/reactComponents/goalIcons';
-import type { Card } from '@/types/dashboardInterfaces';
 import { getAllCards } from '@/services/cardServices';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
 
@@ -42,9 +41,7 @@ export const SavingsGoalModal = ({
   isLoading = false,
   initialData = null,
 }: SavingsGoalModalProps) => {
-  const [cards, setCards] = useState<Card[]>([]);
   const [lang, setLang] = useState<Language>(() => getCurrentLanguage());
-  const [formData, setFormData] = useState(initialFormData);
   const t = useCallback((key: string) => translate(key, lang), [lang]);
 
   useEffect(() => {
@@ -53,40 +50,31 @@ export const SavingsGoalModal = ({
     return () => window.removeEventListener('languageChanged', onLang);
   }, []);
 
-  useEffect(() => {
-    const loadCards = async () => {
-      try {
-        const response = await getAllCards();
-        if (response.response) {
-          setCards(response.data.data || []);
-        }
-      } catch (err) {
-        console.error('Failed to load cards:', err);
-      }
-    };
-    if (isOpen) {
-      loadCards();
-    }
-  }, [isOpen]);
+  // Derive form data from initialData during render instead of using effect
+  const derivedFormData = useMemo(() => {
+    if (!isOpen) return initialFormData;
 
-  useEffect(() => {
-    if (isOpen) {
-      if (initialData) {
-        setFormData({
-          name: initialData.name || '',
-          target_amount: String(initialData.target_amount || ''),
-          currency: initialData.currency || 'USD',
-          deadline: initialData.deadline || '',
-          linked_card_id: initialData.linked_card?.uuid || '',
-          icon: initialData.icon || 'Target',
-          color: initialData.color || '#3B82F6',
-          priority: String(initialData.priority || 0),
-        });
-      } else {
-        setFormData(initialFormData);
-      }
+    if (initialData) {
+      return {
+        name: initialData.name || '',
+        target_amount: String(initialData.target_amount || ''),
+        currency: initialData.currency || 'USD',
+        deadline: initialData.deadline || '',
+        linked_card_id: initialData.linked_card?.uuid || '',
+        icon: initialData.icon || 'Target',
+        color: initialData.color || '#3B82F6',
+        priority: String(initialData.priority || 0),
+      };
     }
+    return initialFormData;
   }, [isOpen, initialData]);
+
+  const [formData, setFormData] = useState(derivedFormData);
+
+  // Sync formData when derivedFormData changes (only on open/initialData change)
+  useEffect(() => {
+    setFormData(derivedFormData);
+  }, [derivedFormData]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -142,7 +130,7 @@ export const SavingsGoalModal = ({
         onClick={handleClose}
       />
 
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
@@ -186,23 +174,7 @@ export const SavingsGoalModal = ({
                 label={t('savingsGoals.deadlineOptional') || 'Deadline (optional)'}
                 name="deadline"
                 value={formData.deadline}
-                onChange={(e) => handleChange({ target: { name: 'deadline', value: e.target.value } })}
-              />
-            </div>
-
-            <div className="col-span-1">
-              <MySelect
-                label={t('savingsGoals.linkedCard') || 'Linked Card (optional)'}
-                name="linked_card_id"
-                value={formData.linked_card_id}
-                onChange={handleChange}
-                options={[
-                  { value: '', label: t('savingsGoals.noLinkedCard') || 'Not linked' },
-                  ...cards.map((card) => ({
-                    value: card.uuid,
-                    label: `${card.name} (${card.last_four})`,
-                  })),
-                ]}
+                onChange={(e) => handleChange({ target: { name: 'deadline', value: e.target.value } } as unknown as React.ChangeEvent<HTMLInputElement | HTMLSelectElement>)}
               />
             </div>
 
@@ -223,12 +195,13 @@ export const SavingsGoalModal = ({
             <div className="col-span-1 md:col-span-2">
               <label
                 id="icon-picker-label"
+                htmlFor="icon-picker-group"
                 className="block text-sm font-medium mb-3"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {t('savingsGoals.iconLabel') || 'Icon'}
               </label>
-              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="icon-picker-label">
+              <div id="icon-picker-group" className="flex flex-wrap gap-2" role="group" aria-labelledby="icon-picker-label">
                 {GOAL_ICON_LIST.map((iconName) => {
                   const Icon = GOAL_ICONS[iconName];
                   const isSelected = formData.icon === iconName;
@@ -242,12 +215,12 @@ export const SavingsGoalModal = ({
                         backgroundColor: isSelected ? `${formData.color}30` : 'var(--bg-secondary)',
                         border: `2px solid ${isSelected ? formData.color : 'transparent'}`,
                       }}
-                      title={GOAL_ICON_LABELS[iconName]}
+                      title={GOAL_ICON_LABELS[iconName as keyof typeof GOAL_ICON_LABELS]}
                     >
                       {Icon && (
                         <Icon
                           size={24}
-                          style={{ color: isSelected ? formData.color : 'var(--text-secondary)' }}
+                          className={isSelected ? '' : 'text-(--text-secondary)'}
                         />
                       )}
                     </button>
@@ -259,12 +232,13 @@ export const SavingsGoalModal = ({
             <div className="col-span-1 md:col-span-2">
               <label
                 id="color-picker-label"
+                htmlFor="color-picker-group"
                 className="block text-sm font-medium mb-3"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {t('savingsGoals.colorLabel') || 'Color'}
               </label>
-              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-picker-label">
+              <div id="color-picker-group" className="flex flex-wrap gap-2" role="group" aria-labelledby="color-picker-label">
                 {SAVINGS_GOAL_COLORS.map((color) => {
                   const isSelected = formData.color === color;
                   return (
@@ -296,7 +270,7 @@ export const SavingsGoalModal = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 md:py-3 text-white rounded-lg hover:opacity-90 transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
+                className="flex-1 px-4 py-2 md:py-3 text-white rounded-lg hover:opacity-90 transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
                 style={{ backgroundColor: formData.color }}
               >
                 {isLoading

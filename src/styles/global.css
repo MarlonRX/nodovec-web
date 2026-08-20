@@ -99,6 +99,16 @@
     --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
+/* Sidebar link hover styles */
+.sidebar-link {
+    transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+    color: var(--text-inverted);
+    background-color: rgba(var(--accent-primary-rgb), var(--sidebar-hover-alpha));
+}
+
 body {
     font-family: var(--font-sans);
     margin: 0;

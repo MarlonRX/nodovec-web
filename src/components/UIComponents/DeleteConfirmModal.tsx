@@ -42,7 +42,7 @@ export const DeleteConfirmModal = ({
         onClick={onClose}
       />
 
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg duration-300">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-black text-(--text-primary) tracking-tight uppercase">

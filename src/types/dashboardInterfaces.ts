@@ -38,7 +38,7 @@ export const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: 'recent-transactions', type: 'recent-transactions', visible: true, order: 4 },
 ];
 
-export const DASHBOARD_PRESETS: Record<string, WidgetConfig[]> = {
+const DASHBOARD_PRESETS: Record<string, WidgetConfig[]> = {
   default: DEFAULT_WIDGETS,
   minimal: [
     { id: 'metric-cards', type: 'metric-cards', visible: true, order: 0 },

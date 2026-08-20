@@ -75,7 +75,7 @@ export const CreateSavingsGoalSchema = z.object({
   target_amount: z.number().positive(),
   currency: z.string().length(3).optional().default('USD'),
   deadline: z.string().nullable().optional(),
-  linked_card_id: z.string().uuid().nullable().optional(),
+  linked_card_id: z.uuid().nullable().optional(),
   icon: SavingsGoalIconSchema.optional().default('Target'),
   color: SavingsGoalColorSchema.optional().default('#3B82F6'),
   priority: z.number().int().min(0).max(10).optional().default(0),

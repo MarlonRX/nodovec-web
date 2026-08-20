@@ -2,7 +2,6 @@
 // import { TranslatedText } from "./reactComponents/TranslatedText";
 import { SidebarToggle } from "./reactComponents/SidebarToggle";
 import { SidebarIcons } from "./reactComponents/SidebarIcons";
-import { SidebarHoverStyles } from "./reactComponents/SidebarHoverStyles";
 import { colorConfig } from "../styles/colorConfig";
 import { TranslatedText } from "./reactComponents/TranslatedText";
 import { translate, getCurrentLanguage } from "../i18n";
@@ -19,7 +18,6 @@ const t = (key: string) => translate(key, lang);
 
 {isAuthenticated && (
 <>
-<SidebarHoverStyles client:only="react" />
 <aside
     id="sidebar"
     style={`background: var(--bg-primary); border-color: var(--border-primary);`}
