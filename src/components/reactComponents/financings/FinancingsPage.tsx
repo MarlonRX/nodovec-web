@@ -5,6 +5,7 @@ import {
   getFinancings,
   previewFinancing,
   updateFinancingFull,
+  deleteFinancing,
   getFinancingDetails,
   type FinancingInput,
 } from "@/services/financingServices";
@@ -15,6 +16,7 @@ import { ModalForm } from "./ModalForm";
 import { FinancingHeader } from "./FinancingHeader";
 import { FinancingLoadingOverlay, FinancingEmptyState } from "./FinancingStates";
 import { FinancingListItem } from "./FinancingListItem";
+import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
 
 type ScheduleRow = { installment_number: number; due_date: string; principal_amount: string; interest_amount: string; total_amount: string; remaining_principal: string };
 type Summary = { installment_amount: string; total_interest: string; total_amount: string };
@@ -100,6 +102,8 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
   const [modalState, dispatch] = useReducer(modalReducer, initialModalState);
   const cardsRef = useRef<{ uuid: string; name: string; last_four: string }[]>([]);
   const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<Financing | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const calculatingRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -232,6 +236,25 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
     dispatch({ type: 'CLOSE_MODAL' });
   };
 
+  const handleDelete = useCallback(async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      const result = await deleteFinancing(deleteConfirm.uuid);
+      if (result.response) {
+        toast.success(t("financing.deleted"));
+        setDeleteConfirm(null);
+        fetchFinancings();
+      } else {
+        toast.error(result.message || t("financing.errorDelete"));
+      }
+    } catch {
+      toast.error(t("financing.errorDelete"));
+    } finally {
+      setDeleting(false);
+    }
+  }, [deleteConfirm, fetchFinancings, t]);
+
   // Load installments for editing mode with pagination
   useEffect(() => {
     if (!modalState.isOpen || !modalState.editingFinancing) return;
@@ -290,6 +313,7 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
                 key={f.uuid}
                 financing={f}
                 onEdit={openEditModal}
+                onDelete={() => setDeleteConfirm(f)}
                 t={t}
               />
             ))}
@@ -312,6 +336,15 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
         loadingInstallments={false}
         lang={lang}
         t={t}
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={handleDelete}
+        title={t("financing.confirmDeleteTitle")}
+        description={t("financing.confirmDeleteDescription").replace("${name}", deleteConfirm?.name || "")}
+        isLoading={deleting}
       />
 
     </div>

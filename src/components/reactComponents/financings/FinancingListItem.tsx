@@ -1,4 +1,4 @@
-import { Calculator, CreditCard, Landmark, Pencil, Zap, Calendar } from "lucide-react";
+import { CreditCard, Landmark, Pencil, Trash2, Zap, Calendar } from "lucide-react";
 import type { Financing } from "@/types/financingInterfaces";
 import { formatMoney } from "@/utils/cardFinance";
 import { formatRate, getNextPaymentDate } from "./financingConstants";
@@ -6,10 +6,11 @@ import { formatRate, getNextPaymentDate } from "./financingConstants";
 interface FinancingListItemProps {
   financing: Financing;
   onEdit: (f: Financing) => void;
+  onDelete: (f: Financing) => void;
   t: (key: string) => string;
 }
 
-export function FinancingListItem({ financing: f, onEdit, t }: FinancingListItemProps) {
+export function FinancingListItem({ financing: f, onEdit, onDelete, t }: FinancingListItemProps) {
   const nextPayment = getNextPaymentDate(f.first_payment_date, f.payment_frequency, f.current_installment);
   const isCard = f.type === "card_purchase";
   return (
@@ -81,12 +82,20 @@ export function FinancingListItem({ financing: f, onEdit, t }: FinancingListItem
           )}
         </div>
 
-        <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(f); }}
-          className="shrink-0 p-2.5 rounded-xl transition-transform hover:scale-105 group"
-          aria-label={t("financing.editPlan")}
-          style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.08)', color: 'var(--accent-primary)' }}>
-          <Pencil className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-        </button>
+        <div className="flex items-center gap-1 shrink-0">
+          <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(f); }}
+            className="p-2.5 rounded-xl transition-transform hover:scale-105 group"
+            aria-label={t("financing.editPlan")}
+            style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.08)', color: 'var(--accent-primary)' }}>
+            <Pencil className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+          </button>
+          <button type="button" onClick={(e) => { e.stopPropagation(); onDelete(f); }}
+            className="p-2.5 rounded-xl transition-transform hover:scale-105"
+            aria-label={t("financing.delete")}
+            style={{ backgroundColor: 'rgba(229, 72, 77, 0.08)', color: 'var(--semantic-error)' }}>
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-primary)' }}>

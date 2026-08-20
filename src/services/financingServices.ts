@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from "./apiClient";
+import { apiGet, apiPost, apiPut, apiDelete } from "./apiClient";
 import type { ApiResponse } from "./types";
 
 export type FinancingInput = {
@@ -36,6 +36,10 @@ export function getFinancings(token?: string | null): Promise<ApiResponse<any>> 
 
 export function updateFinancingFull(uuid: string, data: FinancingInput, token?: string | null): Promise<ApiResponse<any>> {
   return apiPut(`financings/${uuid}`, data, { token });
+}
+
+export function deleteFinancing(uuid: string, token?: string | null): Promise<ApiResponse<any>> {
+  return apiDelete(`financings/${uuid}`, { token });
 }
 
 export function getFinancingDetails(uuid: string, page?: number, pageSize?: number, token?: string | null): Promise<ApiResponse<any>> {
