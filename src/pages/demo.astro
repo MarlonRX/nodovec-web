@@ -1,14 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DashBoard from "../components/DashBoard.astro";
-import DemoBadge from "../components/reactComponents/DemoBadge";
+import DemoBanner from "../components/reactComponents/DemoBanner";
 
 export const prerender = false;
 ---
 
 <BaseLayout>
   <div class="w-full">
-    <DemoBadge client:only="react" />
+    <DemoBanner client:only="react" />
     <DashBoard />
   </div>
 </BaseLayout>

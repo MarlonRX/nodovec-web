@@ -104,7 +104,8 @@
     },
     "demo": {
         "badge": "Modo Demo",
-        "cta": "Crear cuenta"
+        "cta": "Crear cuenta",
+        "bannerText": "Estás explorando datos de ejemplo en modo de solo lectura."
     },
     "themes": {
         "light": "Claro",

@@ -195,7 +195,8 @@
     },
     "demo": {
         "badge": "Demo Mode",
-        "cta": "Create account"
+        "cta": "Create account",
+        "bannerText": "You're exploring sample data in read-only mode."
     },
     "themes": {
         "light": "Light",
