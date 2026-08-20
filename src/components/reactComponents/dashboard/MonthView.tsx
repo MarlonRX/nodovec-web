@@ -105,10 +105,10 @@ const MonthView: React.FC<MonthViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
         {/* Monthly Overview */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+          className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
           style={{
             backgroundColor: "var(--bg-surface)",
-            border: "1.5px solid var(--border-primary)",
+            border: "1px solid var(--border-primary)",
           }}
         >
           <div className="mb-4 sm:mb-6">
@@ -237,10 +237,10 @@ const MonthView: React.FC<MonthViewProps> = ({
 
         {/* Recent Transactions */}
         <div
-          className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg flex flex-col"
+          className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg flex flex-col"
           style={{
             backgroundColor: "var(--bg-surface)",
-            border: "1.5px solid var(--border-primary)",
+            border: "1px solid var(--border-primary)",
           }}
         >
           <h2

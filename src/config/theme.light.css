@@ -1,20 +1,20 @@
-/* Light theme — overrides used CSS variables */
+/* Light theme — Atelier warm paper */
 html[data-theme="light"] {
-  --bg-primary: #ffffff;
-  --bg-surface: #f8fafc;
-  --bg-secondary: #f1f5f9;
+  --bg-primary: #f6f4ef;
+  --bg-surface: #ffffff;
+  --bg-secondary: #ece8df;
 
-  --text-primary: #0f1724;
-  --text-secondary: #475569;
+  --text-primary: #201d18;
+  --text-secondary: #6e675c;
   --text-inverted: #ffffff;
 
-  --accent-primary: #4f8cff;
-  --accent-primary-rgb: 79, 140, 255;
-  --accent-secondary: #e2e8f0;
-  --accent-hover: #3b73d6;
-  --sidebar-hover-alpha: 0.12;
+  --accent-primary: #d8431e;
+  --accent-primary-rgb: 216, 67, 30;
+  --accent-secondary: #e8e2d6;
+  --accent-hover: #b93718;
+  --sidebar-hover-alpha: 0.08;
 
-  --border-primary: #e6edf3;
-  --border-secondary: #cbd5e1;
-  --bg-surface-rgb: 248, 250, 252;
+  --border-primary: #e7e1d6;
+  --border-secondary: #d6cfc1;
+  --bg-surface-rgb: 255, 255, 255;
 }

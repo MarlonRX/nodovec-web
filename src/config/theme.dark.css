@@ -1,19 +1,20 @@
-/* Dark theme — overrides used CSS variables */
+/* Dark theme — Atelier warm charcoal */
 html[data-theme="dark"] {
-  --bg-primary: #070a13;
-  --bg-surface: #0e121f;
-  --bg-secondary: #0a0d17;
+  --bg-primary: #121211;
+  --bg-surface: #1a1a18;
+  --bg-secondary: #22221f;
 
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-inverted: #070a13;
+  --text-primary: #f2efe9;
+  --text-secondary: #a39d92;
+  --text-inverted: #ffffff;
 
-  --accent-primary: #dfb15b;
-  --accent-primary-rgb: 223, 177, 91;
-  --accent-secondary: #475569;
-  --accent-hover: #c99e4b;
+  --accent-primary: #ff6b45;
+  --accent-primary-rgb: 255, 107, 69;
+  --accent-secondary: #3a3a36;
+  --accent-hover: #ff8968;
+  --sidebar-hover-alpha: 0.08;
 
-  --border-primary: rgba(255, 255, 255, 0.05);
-  --border-secondary: rgba(255, 255, 255, 0.1);
-  --bg-surface-rgb: 14, 18, 31;
+  --border-primary: rgba(255, 255, 255, 0.07);
+  --border-secondary: rgba(255, 255, 255, 0.11);
+  --bg-surface-rgb: 26, 26, 24;
 }

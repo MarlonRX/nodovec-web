@@ -103,7 +103,8 @@
         "avatarUploadErrorLocal": "Error al subir el avatar — se usará preview local"
     },
     "demo": {
-        "badge": "Modo Demo - Solo Lectura"
+        "badge": "Modo Demo",
+        "cta": "Crear cuenta"
     },
     "themes": {
         "light": "Claro",
@@ -202,6 +203,7 @@
         "colCategory": "Categoría",
         "colIncome": "Ingreso",
         "colExpense": "Gasto",
+        "colAmount": "Monto",
         "colActions": "Acciones",
         "syncing": "Sincronizando...",
         "cardPaymentsTitle": "Pagos de Tarjeta de Crédito Este Mes",

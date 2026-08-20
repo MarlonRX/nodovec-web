@@ -11,11 +11,29 @@ export function DemoBadge() {
     }, []);
 
     return (
-        <div className="fixed top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/40 rounded-lg backdrop-blur-sm">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-semibold text-yellow-600 dark:text-yellow-400 uppercase tracking-wide">
-                {translate("demo.badge", lang)}
-            </span>
+        <div
+            className="fixed top-20 left-4 z-50 flex items-center gap-3 pl-3 pr-1.5 py-1.5 rounded-full border shadow-sm backdrop-blur-sm"
+            style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-primary)" }}
+        >
+            <div className="flex items-center gap-2">
+                <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: "var(--accent-primary)" }}
+                />
+                <span
+                    className="text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--text-secondary)" }}
+                >
+                    {translate("demo.badge", lang)}
+                </span>
+            </div>
+            <a
+                href="/register"
+                className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-colors hover:opacity-90"
+                style={{ backgroundColor: "var(--accent-primary)", color: "var(--text-inverted)" }}
+            >
+                {translate("demo.cta", lang)}
+            </a>
         </div>
     );
 }

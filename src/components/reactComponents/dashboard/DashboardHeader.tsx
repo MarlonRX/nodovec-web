@@ -29,14 +29,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     className="border-b shrink-0"
     style={{
       borderColor: "var(--border-primary)",
-      background: `linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-primary) 100%)`,
+      background: "var(--bg-surface)",
     }}
   >
-    <div className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+    <div className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="min-w-0">
           <h1
-            className="text-2xl sm:text-3xl lg:text-4xl font-black mb-1"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-1"
             style={{ color: "var(--text-primary)" }}
           >
             {t("dashboard.title")}

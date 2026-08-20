@@ -194,7 +194,8 @@
         "avatarUploadErrorLocal": "Error uploading avatar — using local preview"
     },
     "demo": {
-        "badge": "Demo Mode - Read Only"
+        "badge": "Demo Mode",
+        "cta": "Create account"
     },
     "themes": {
         "light": "Light",
@@ -293,6 +294,7 @@
         "colCategory": "Category",
         "colIncome": "Income",
         "colExpense": "Expense",
+        "colAmount": "Amount",
         "colActions": "Actions",
         "syncing": "Syncing...",
         "cardPaymentsTitle": "Credit Card Payments Due This Month",

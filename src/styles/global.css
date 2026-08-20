@@ -16,46 +16,46 @@
 */
 :root {
     /* Fondos */
-    --bg-primary: #121212;
-    --bg-surface: #1e1e24;
-    --bg-secondary: #1a1a1f;
+    --bg-primary: #121211;
+    --bg-surface: #1a1a18;
+    --bg-secondary: #22221f;
 
     /* Acentos */
-    --accent-primary: #d4af37;
-    --accent-primary-rgb: 212, 175, 55;
-    --accent-secondary: #a0a0a0;
-    --accent-secondary-rgb: 160, 160, 160;
-    --accent-hover: #c9a632;
+    --accent-primary: #ff6b45;
+    --accent-primary-rgb: 255, 107, 69;
+    --accent-secondary: #3a3a36;
+    --accent-secondary-rgb: 58, 58, 54;
+    --accent-hover: #ff8968;
 
     /* RGB helpers (utilizadas por scripts y colores con alpha) */
-    --text-primary-rgb: 225, 225, 225;
-    --bg-surface-rgb: 30, 30, 36;
-    --semantic-success-rgb: 46, 139, 87;
-    --semantic-error-rgb: 207, 102, 121;
+    --text-primary-rgb: 242, 239, 233;
+    --bg-surface-rgb: 26, 26, 24;
+    --semantic-success-rgb: 52, 160, 106;
+    --semantic-error-rgb: 229, 72, 77;
     --sidebar-hover-alpha: 0.08;
 
     /* Texto */
-    --text-primary: #e1e1e1;
-    --text-secondary: #a0a0a0;
-    --text-tertiary: #808080;
-    --text-inverted: #121212;
+    --text-primary: #f2efe9;
+    --text-secondary: #a39d92;
+    --text-tertiary: #7a746a;
+    --text-inverted: #ffffff;
 
     /* Bordes */
-    --border-primary: #2a2a30;
-    --border-secondary: #333339;
-    --border-light: #1f1f24;
+    --border-primary: #2a2a26;
+    --border-secondary: #353530;
+    --border-light: #22221f;
 
     /* Datos Semánticos */
-    --semantic-success: #2e8b57;
-    --semantic-error: #cf6679;
-    --semantic-warning: #ffb74d;
-    --semantic-info: #d4af37;
+    --semantic-success: #34a06a;
+    --semantic-error: #e5484d;
+    --semantic-warning: #f0a02c;
+    --semantic-info: #ff6b45;
 
     /* Sombras */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.38);
+    --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.46);
     --accent: oklch(0.968 0.007 247.896);
     --accent-dark: #000d8a;
     --black: 15, 18, 25;
@@ -276,9 +276,9 @@ hr {
 }
 
 @theme inline {
-    --font-sans: "Outfit", "Inter", sans-serif;
-    --font-mono: "Space Grotesk", monospace;
-    --font-display: "Plus Jakarta Sans", sans-serif;
+    --font-sans: "Instrument Sans", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --font-display: "Sora", sans-serif;
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
@@ -381,51 +381,51 @@ hr {
 
 /* Toast Styles with Semantic Colors */
 :is(.toaster-toast-success) {
-    background: linear-gradient(135deg, rgba(46, 139, 87, 0.95) 0%, rgba(34, 102, 68, 0.95) 100%) !important;
-    color: #e1e1e1 !important;
-    border: 2px solid #2e8b57 !important;
-    box-shadow: 0 8px 32px rgba(46, 139, 87, 0.3) !important;
+    background: linear-gradient(135deg, rgba(52, 160, 106, 0.95) 0%, rgba(38, 122, 82, 0.95) 100%) !important;
+    color: #ffffff !important;
+    border: 2px solid #34a06a !important;
+    box-shadow: 0 8px 32px rgba(52, 160, 106, 0.3) !important;
 }
 
 :is(.toaster-toast-success) svg {
-    color: #4ade80 !important;
-    stroke: #4ade80 !important;
+    color: #5ee6a0 !important;
+    stroke: #5ee6a0 !important;
 }
 
 :is(.toaster-toast-error) {
-    background: linear-gradient(135deg, rgba(207, 102, 121, 0.95) 0%, rgba(180, 70, 80, 0.95) 100%) !important;
-    color: #e1e1e1 !important;
-    border: 2px solid #cf6679 !important;
-    box-shadow: 0 8px 32px rgba(207, 102, 121, 0.3) !important;
+    background: linear-gradient(135deg, rgba(229, 72, 77, 0.95) 0%, rgba(185, 50, 55, 0.95) 100%) !important;
+    color: #ffffff !important;
+    border: 2px solid #e5484d !important;
+    box-shadow: 0 8px 32px rgba(229, 72, 77, 0.3) !important;
 }
 
 :is(.toaster-toast-error) svg {
-    color: #ff6b6b !important;
-    stroke: #ff6b6b !important;
+    color: #ff8b8b !important;
+    stroke: #ff8b8b !important;
 }
 
 :is(.toaster-toast-warning) {
-    background: linear-gradient(135deg, rgba(255, 183, 77, 0.95) 0%, rgba(255, 152, 0, 0.95) 100%) !important;
-    color: #121212 !important;
-    border: 2px solid #ffb74d !important;
-    box-shadow: 0 8px 32px rgba(255, 183, 77, 0.3) !important;
+    background: linear-gradient(135deg, rgba(240, 160, 44, 0.95) 0%, rgba(210, 130, 20, 0.95) 100%) !important;
+    color: #1c1b18 !important;
+    border: 2px solid #f0a02c !important;
+    box-shadow: 0 8px 32px rgba(240, 160, 44, 0.3) !important;
 }
 
 :is(.toaster-toast-warning) svg {
-    color: #ffd700 !important;
-    stroke: #ffd700 !important;
+    color: #ffd180 !important;
+    stroke: #ffd180 !important;
 }
 
 :is(.toaster-toast-info) {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(184, 134, 11, 0.95) 100%) !important;
-    color: #121212 !important;
-    border: 2px solid #d4af37 !important;
-    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3) !important;
+    background: linear-gradient(135deg, rgba(255, 107, 69, 0.95) 0%, rgba(224, 78, 40, 0.95) 100%) !important;
+    color: #ffffff !important;
+    border: 2px solid #ff6b45 !important;
+    box-shadow: 0 8px 32px rgba(255, 107, 69, 0.3) !important;
 }
 
 :is(.toaster-toast-info) svg {
-    color: #ffd700 !important;
-    stroke: #ffd700 !important;
+    color: #ffb099 !important;
+    stroke: #ffb099 !important;
 }
 
 /* ============================================
@@ -640,14 +640,10 @@ li, ul, ol,
 .font-financial,
 .financial-amount,
 .metric-card-value,
-.transaction-amount,
-[class*="text-2xl"],
-[class*="text-3xl"],
-[class*="text-4xl"],
-[class*="text-5xl"] {
-    font-family: "Space Grotesk", sans-serif;
+.transaction-amount {
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
 }
 
 /* Glassmorphism & Bento shadows styling helpers */
@@ -662,4 +658,22 @@ li, ul, ol,
 .glass-panel:hover {
     border-color: rgba(var(--accent-primary-rgb), 0.2) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Entrance animations
+   ============================================ */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fade-up 0.45s ease-out both;
 }

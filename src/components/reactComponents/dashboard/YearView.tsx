@@ -162,8 +162,8 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
 }) => (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
     <div
-      className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1.5px solid var(--border-primary)" }}
+      className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <div className="mb-4 sm:mb-6 lg:mb-8">
         <h2 className="text-lg sm:text-xl font-bold" style={{ color: "var(--text-primary)" }}>
@@ -188,8 +188,8 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
     </div>
 
     <div
-      className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1.5px solid var(--border-primary)" }}
+      className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
         {t("dashboard.expenseCategories")}
@@ -227,8 +227,8 @@ const BottomSection: React.FC<BottomSectionProps> = ({
 }) => (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
     <div
-      className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1.5px solid var(--border-primary)" }}
+      className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
         {t("dashboard.accountBalances")}
@@ -247,8 +247,8 @@ const BottomSection: React.FC<BottomSectionProps> = ({
     </div>
 
     <div
-      className="lg:col-span-2 rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1.5px solid var(--border-primary)" }}
+      className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
         {t("dashboard.recentTransactions")}
@@ -265,8 +265,8 @@ interface ActiveSavingsGoalPanelProps {
 
 const ActiveSavingsGoalPanel: React.FC<ActiveSavingsGoalPanelProps> = ({ goal, t }) => (
   <div
-    className="rounded-xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-    style={{ backgroundColor: "var(--bg-surface)", border: "1.5px solid var(--border-primary)" }}
+    className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+    style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
   >
     <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
       {t("dashboard.savingsTarget")}

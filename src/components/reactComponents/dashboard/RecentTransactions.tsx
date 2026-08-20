@@ -20,34 +20,34 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
       <thead
         className="sticky top-0 z-10"
         style={{
-          backgroundColor: "rgba(var(--accent-primary-rgb), 0.06)",
+          backgroundColor: "var(--bg-secondary)",
           borderBottom: "1px solid var(--border-primary)",
         }}
       >
         <tr>
           <th
-            className={`text-left font-bold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
-            Date
+            {t('transactions.colDate')}
           </th>
           <th
-            className={`text-left font-bold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
-            Category
+            {t('transactions.colCategory')}
           </th>
           <th
-            className={`text-left font-bold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
-            Description
+            {t('transactions.colDescription')}
           </th>
           <th
-            className={`text-right font-bold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-right font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
-            Amount
+            {t('transactions.colAmount')}
           </th>
         </tr>
       </thead>
