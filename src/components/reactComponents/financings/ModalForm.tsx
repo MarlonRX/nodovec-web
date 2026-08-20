@@ -52,9 +52,16 @@ export const ModalForm = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex flex-col bg-(--bg-surface) h-screen overflow-hidden">
+      <button
+        type="button"
+        aria-label={t('common.close')}
+        className="fixed inset-0 bg-black/60 z-40 transition-opacity backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-7xl mx-4 md:mx-0 h-[85vh] max-h-[90vh] flex flex-col bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) overflow-hidden">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 md:px-10 py-5 border-b border-(--border-primary) shrink-0">
+            <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-(--border-primary) shrink-0">
                 <div className="flex items-center gap-4 min-w-0">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.15)' }}>
                         <Calculator size={24} style={{ color: 'var(--accent-primary)' }} />
@@ -72,8 +79,8 @@ export const ModalForm = ({
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 p-6 md:p-10 overflow-hidden">
-                <div className="grid gap-6 lg:grid-cols-[1fr_minmax(320px,420px)] h-full">
+            <div className="flex-1 p-4 md:p-6 overflow-hidden min-h-0">
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] h-full">
 
                     {/* Form Column */}
                     <form onSubmit={onSubmit} className="flex flex-col h-full overflow-hidden">
@@ -84,7 +91,18 @@ export const ModalForm = ({
                                     label={t("financing.name")}
                                     value={form.name}
                                     onChange={(e) => update("name", e.target.value)}
+                                    placeholder="e.g., Car loan"
                                     required
+                                />
+                            </div>
+
+                            <div className="sm:col-span-2">
+                                <MyTextArea
+                                    label={t("financing.observations")}
+                                    rows={2}
+                                    value={form.observations || ""}
+                                    onChange={(e) => update("observations", e.target.value)}
+                                    placeholder="e.g., Monthly payment due on the 20th"
                                 />
                             </div>
 
@@ -120,8 +138,8 @@ export const ModalForm = ({
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     <Zap className="w-5 h-5 shrink-0" style={{ color: form.generate_transactions ? 'var(--accent-primary)' : 'var(--text-tertiary)' }} />
                                     <div className="min-w-0">
-                                        <span className="text-sm font-bold text-(--text-primary) truncate">{t("financing.autoTransactions")}</span>
-                                        <span className="text-[11px] text-(--text-tertiary) truncate m-1">{t("financing.autoTransactionsHint")}</span>
+                                        <span className="text-sm font-bold text-(--text-primary)">{t("financing.autoTransactions")}</span>
+                                        <span className="text-[11px] text-(--text-tertiary) ml-1.5">{t("financing.autoTransactionsHint")}</span>
                                     </div>
                                 </div>
                                 <MySwitch
@@ -132,7 +150,7 @@ export const ModalForm = ({
                             </div>
 
                             {/* Amount, Rate, Installments in same row */}
-                            <div className="sm:col-span-2 grid grid-cols-4 gap-3">
+                            <div className="sm:col-span-2 grid grid-cols-2 gap-3">
                                 <MyCurrencyInput
                                     label={t("financing.amount")}
                                     value={form.principal_amount}
@@ -205,15 +223,6 @@ export const ModalForm = ({
                                     placeholder={t("financing.selectDate")}
                                 />
                             </div>
-
-                            <div className="sm:col-span-2">
-                                <MyTextArea
-                                    label={t("financing.observations")}
-                                    rows={2}
-                                    value={form.observations || ""}
-                                    onChange={(e) => update("observations", e.target.value)}
-                                />
-                            </div>
                         </div>
                     </form>
 
@@ -250,22 +259,15 @@ export const ModalForm = ({
                                 </div>
                             ) : schedule.length > 0 ? (
                                 <>
-                                    <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
+                                    <table className="w-full text-sm">
                                         <caption className="sr-only">{t("financing.schedule")}</caption>
-                                        <colgroup>
-                                            <col className="w-9" />
-                                            <col className="w-auto" />
-                                            <col className="w-18" />
-                                            <col className="w-18" />
-                                            <col className="w-20" />
-                                        </colgroup>
                                         <thead className="sticky top-0 text-[10px] uppercase tracking-wider text-(--text-tertiary)" style={{ backgroundColor: 'var(--bg-surface)' }}>
                                             <tr>
-                                                <th className="px-3 py-2.5 font-bold text-left">#</th>
-                                                <th className="px-3 py-2.5 font-bold text-left">{t("financing.dueDate")}</th>
-                                                <th className="px-3 py-2.5 font-bold text-right">{t("financing.capital")}</th>
-                                                <th className="px-3 py-2.5 font-bold text-right">{t("financing.interest")}</th>
-                                                <th className="px-3 py-2.5 font-bold text-right">{t("financing.total")}</th>
+                                                <th className="px-3 py-2.5 font-bold text-left whitespace-nowrap">#</th>
+                                                <th className="px-3 py-2.5 font-bold text-left whitespace-nowrap">{t("financing.dueDate")}</th>
+                                                <th className="px-3 py-2.5 font-bold text-right whitespace-nowrap">{t("financing.capital")}</th>
+                                                <th className="px-3 py-2.5 font-bold text-right whitespace-nowrap">{t("financing.interest")}</th>
+                                                <th className="px-3 py-2.5 font-bold text-right whitespace-nowrap">{t("financing.total")}</th>
                                             </tr>
                                         </thead>
                                         <tbody>

@@ -156,10 +156,12 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
   ]);
 
   useEffect(() => {
+    if (modalState.editingFinancing) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => { doCalculate(); }, 600);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [
+    modalState.editingFinancing,
     modalState.form.principal_amount,
     modalState.form.annual_interest_rate,
     modalState.form.installments,
@@ -192,44 +194,58 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
   };
 
   const openEditModal = async (f: Financing) => {
+    dispatch({ type: 'OPEN_MODAL' });
     dispatch({ type: 'SET_EDITING', financing: f });
-    const firstPaymentDate = f.first_payment_date || new Date().toISOString().slice(0, 10);
-    dispatch({ type: 'UPDATE_FORM', field: 'type', value: f.type });
-    dispatch({ type: 'UPDATE_FORM', field: 'name', value: f.name });
-    dispatch({ type: 'UPDATE_FORM', field: 'description', value: f.description || "" });
-    dispatch({ type: 'UPDATE_FORM', field: 'principal_amount', value: String(f.principal_amount) });
-    dispatch({ type: 'UPDATE_FORM', field: 'annual_interest_rate', value: String(f.annual_interest_rate) });
-    dispatch({ type: 'UPDATE_FORM', field: 'calculation_method', value: f.calculation_method });
-    dispatch({ type: 'UPDATE_FORM', field: 'payment_frequency', value: f.payment_frequency });
-    dispatch({ type: 'UPDATE_FORM', field: 'installments', value: f.installments });
-    dispatch({ type: 'UPDATE_FORM', field: 'first_payment_date', value: firstPaymentDate });
-    dispatch({ type: 'UPDATE_FORM', field: 'currency', value: f.currency });
-    dispatch({ type: 'UPDATE_FORM', field: 'category', value: f.category || "" });
-    dispatch({ type: 'UPDATE_FORM', field: 'observations', value: f.observations || "" });
-    dispatch({ type: 'UPDATE_FORM', field: 'card_uuid', value: f.card?.uuid || "" });
-    dispatch({ type: 'UPDATE_FORM', field: 'current_installment', value: f.current_installment ?? 1 });
-    dispatch({ type: 'UPDATE_FORM', field: 'generate_transactions', value: f.generate_transactions ?? false });
-    dispatch({ type: 'SET_PAYMENT_DATE', date: firstPaymentDate });
-    dispatch({ type: 'SET_SCHEDULE', schedule: [] });
-    dispatch({ type: 'SET_SUMMARY', summary: null });
-    dispatch({ type: 'SET_INSTALLMENTS_PAGE', page: 1 });
 
-    const result = await getFinancingDetails(f.uuid, 1, installmentsPageSize);
+    const result = await getFinancingDetails(f.uuid);
 
-    if (result.response && result.data) {
-      const data = result.data.data || result.data;
-      dispatch({ type: 'SET_SCHEDULE', schedule: data.installments?.data || data.installments || [] });
-      dispatch({ type: 'SET_TOTAL_PAGES', pages: data.installments?.last_page || 1 });
-      dispatch({
-        type: 'SET_SUMMARY', summary: {
-          installment_amount: data.installments?.data?.[0]?.total_amount || "0",
-          total_interest: "0",
-          total_amount: "0",
-        }
-      });
+    if (!result.response || !result.data) {
+      toast.error(result.message || t("financing.errorLoad"));
+      dispatch({ type: 'CLOSE_MODAL' });
+      return;
     }
 
-    dispatch({ type: 'OPEN_MODAL' });
+    const data = result.data.data || result.data;
+    const firstPaymentDate = data.first_payment_date
+      ? String(data.first_payment_date).slice(0, 10)
+      : new Date().toISOString().slice(0, 10);
+
+    dispatch({ type: 'UPDATE_FORM', field: 'type', value: data.type === 'card_purchase' ? 'card_purchase' : 'loan' });
+    dispatch({ type: 'UPDATE_FORM', field: 'name', value: data.name ?? "" });
+    dispatch({ type: 'UPDATE_FORM', field: 'description', value: data.description ?? "" });
+    dispatch({ type: 'UPDATE_FORM', field: 'principal_amount', value: String(data.principal_amount ?? "") });
+    dispatch({ type: 'UPDATE_FORM', field: 'annual_interest_rate', value: String(data.annual_interest_rate ?? "0") });
+    dispatch({ type: 'UPDATE_FORM', field: 'calculation_method', value: data.calculation_method ?? "french" });
+    dispatch({ type: 'UPDATE_FORM', field: 'payment_frequency', value: data.payment_frequency ?? "monthly" });
+    dispatch({ type: 'UPDATE_FORM', field: 'installments', value: Number(data.installments ?? 1) });
+    dispatch({ type: 'UPDATE_FORM', field: 'currency', value: data.currency ?? "USD" });
+    dispatch({ type: 'UPDATE_FORM', field: 'category', value: data.category ?? "" });
+    dispatch({ type: 'UPDATE_FORM', field: 'observations', value: data.observations ?? "" });
+    dispatch({ type: 'UPDATE_FORM', field: 'card_uuid', value: data.card?.uuid ?? "" });
+    dispatch({ type: 'UPDATE_FORM', field: 'current_installment', value: Number(data.current_installment ?? 1) });
+    dispatch({ type: 'UPDATE_FORM', field: 'generate_transactions', value: Boolean(data.generate_transactions) });
+
+    dispatch({ type: 'SET_PAYMENT_DATE', date: firstPaymentDate });
+
+    const installments: ScheduleRow[] = data.installment_rows?.data || data.installment_rows || [];
+    dispatch({ type: 'SET_SCHEDULE', schedule: installments });
+    dispatch({ type: 'SET_INSTALLMENTS_PAGE', page: 1 });
+    dispatch({ type: 'SET_TOTAL_PAGES', pages: 1 });
+
+    if (installments.length > 0) {
+      const totalInterest = installments.reduce((sum, row) => sum + Number(row.interest_amount || 0), 0);
+      const totalAmount = installments.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      dispatch({
+        type: 'SET_SUMMARY',
+        summary: {
+          installment_amount: installments[0].total_amount,
+          total_interest: totalInterest.toFixed(2),
+          total_amount: totalAmount.toFixed(2),
+        },
+      });
+    } else {
+      dispatch({ type: 'SET_SUMMARY', summary: null });
+    }
   };
 
   const closeModal = () => {
@@ -254,26 +270,6 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
       setDeleting(false);
     }
   }, [deleteConfirm, fetchFinancings, t]);
-
-  // Load installments for editing mode with pagination
-  useEffect(() => {
-    if (!modalState.isOpen || !modalState.editingFinancing) return;
-
-    let cancelled = false;
-    const loadInstallments = async () => {
-      const result = await getFinancingDetails(modalState.editingFinancing!.uuid, modalState.installmentsPage, installmentsPageSize);
-
-      if (cancelled) return;
-      if (result.response && result.data) {
-        const data = result.data.data || result.data;
-        dispatch({ type: 'SET_SCHEDULE', schedule: data.installments?.data || data.installments || [] });
-        dispatch({ type: 'SET_TOTAL_PAGES', pages: data.installments?.last_page || 1 });
-      }
-    };
-
-    loadInstallments();
-    return () => { cancelled = true; };
-  }, [modalState.isOpen, modalState.editingFinancing, modalState.installmentsPage]);
 
   // Handle pagination for new financing (local pagination)
   useEffect(() => {
