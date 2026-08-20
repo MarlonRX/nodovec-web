@@ -4,6 +4,7 @@ import { ComposedChartProps } from "./types";
 import { formatCurrency } from "../../lib/currencyFormatter";
 
 const formatAxisValue = (value: number) => {
+    if (value < 0) return "$0";
     if (value >= 1000000) {
         return `$${(value / 1000000).toFixed(1)}M`;
     } else if (value >= 1000) {
@@ -60,6 +61,7 @@ const ComposedChartImpl = lazy(async () => {
         bars = [],
         lines = [],
         xAxisKey = "month",
+        yAxisDomain,
         height = 320,
         showLegend = true,
         showGrid = true,
@@ -80,6 +82,8 @@ const ComposedChartImpl = lazy(async () => {
                     />
                     <YAxis
                         stroke="var(--text-secondary)"
+                        domain={yAxisDomain}
+                        allowDataOverflow={!!yAxisDomain}
                         tickFormatter={formatAxisValue}
                     />
                     {showTooltip && (

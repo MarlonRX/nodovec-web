@@ -53,6 +53,7 @@ export interface ComposedChartProps extends ChartConfig {
         name?: string;
     }>;
     xAxisKey: string;
+    yAxisDomain?: [number | 'auto', number | 'auto'];
 }
 
 export interface PieChartProps extends ChartConfig {

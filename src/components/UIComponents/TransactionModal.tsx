@@ -20,7 +20,7 @@ import { translate, getCurrentLanguage, type Language } from "@/i18n";
 interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (transaction: Partial<Transaction>) => void;
+  onSubmit: (transaction: Partial<Transaction>) => void | Promise<void>;
   isLoading?: boolean;
   initialData?: Transaction | null;
   /** When provided, the default date is the 1st of that month and date picker is restricted to that month's range */
@@ -121,7 +121,7 @@ export const TransactionModal = ({
         transactionPayload.user_id = userId;
       }
 
-      onSubmit(transactionPayload);
+      await onSubmit(transactionPayload);
     },
   });
 
@@ -147,10 +147,10 @@ export const TransactionModal = ({
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       amount: e.target.value,
-    });
+    }));
   };
 
   // Read user from localStorage on mount only

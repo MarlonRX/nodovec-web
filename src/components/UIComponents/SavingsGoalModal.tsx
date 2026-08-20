@@ -12,7 +12,6 @@ import {
   GOAL_ICON_LABELS,
 } from '@/types/savingsGoalInterfaces';
 import { GOAL_ICONS, GOAL_ICON_LIST } from '@/components/reactComponents/goalIcons';
-import { getAllCards } from '@/services/cardServices';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
 
 interface SavingsGoalModalProps {

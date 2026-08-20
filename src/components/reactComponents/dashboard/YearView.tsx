@@ -159,60 +159,69 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
   monthlyData,
   expenseCategories,
   t,
-}) => (
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
-    <div
-      className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-    >
-      <div className="mb-4 sm:mb-6 lg:mb-8">
-        <h2 className="text-lg sm:text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-          {t("dashboard.financialOverview")}
-        </h2>
-        <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-          {t("dashboard.yearToDateAnalysis")}
-        </p>
-      </div>
-      <ComposedChartComponent
-        data={monthlyData}
-        xAxisKey="month"
-        bars={[
-          { dataKey: "income", fill: "var(--semantic-success)", name: t("dashboard.income") },
-          { dataKey: "expenses", fill: "var(--semantic-error)", name: t("dashboard.expenses") },
-        ]}
-        lines={[
-          { dataKey: "cashFlow", stroke: "var(--accent-primary)", strokeWidth: 2, name: t("dashboard.cashFlow") },
-        ]}
-        height={280}
-      />
-    </div>
+}) => {
+  const maxDataValue = monthlyData.reduce((max, m) => {
+    const v = Math.max(m.income || 0, m.expenses || 0);
+    return v > max ? v : max;
+  }, 0);
+  const chartYDomain: [number, number] = [0, maxDataValue > 0 ? maxDataValue * 1.1 : 100];
 
-    <div
-      className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-    >
-      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
-        {t("dashboard.expenseCategories")}
-      </h2>
-      <DonutChart data={expenseCategories} colors={COLORS} innerRadius={40} outerRadius={70} paddingAngle={2} height={180} showLegend={false} />
-      <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
-        {expenseCategories.map((cat, idx) => (
-          <div key={cat.name} className="flex items-center justify-between text-xs sm:text-sm">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[idx] }} />
-              <span className="truncate" style={{ color: "var(--text-secondary)" }}>
-                {translateCategory(cat.name, t)}
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
+      <div
+        className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+        style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
+      >
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <h2 className="text-lg sm:text-xl font-bold" style={{ color: "var(--text-primary)" }}>
+            {t("dashboard.financialOverview")}
+          </h2>
+          <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+            {t("dashboard.yearToDateAnalysis")}
+          </p>
+        </div>
+        <ComposedChartComponent
+          data={monthlyData}
+          xAxisKey="month"
+          yAxisDomain={chartYDomain} $-1435
+          bars={[
+            { dataKey: "income", fill: "var(--semantic-success)", name: t("dashboard.income") },
+            { dataKey: "expenses", fill: "var(--semantic-error)", name: t("dashboard.expenses") },
+          ]}
+          lines={[
+            { dataKey: "cashFlow", stroke: "var(--accent-primary)", strokeWidth: 2, name: t("dashboard.cashFlow") },
+          ]}
+          height={280}
+        />
+      </div>
+
+      <div
+        className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+        style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
+      >
+        <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
+          {t("dashboard.expenseCategories")}
+        </h2>
+        <DonutChart data={expenseCategories} colors={COLORS} innerRadius={40} outerRadius={70} paddingAngle={2} height={180} showLegend={false} />
+        <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+          {expenseCategories.map((cat, idx) => (
+            <div key={cat.name} className="flex items-center justify-between text-xs sm:text-sm">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[idx] }} />
+                <span className="truncate" style={{ color: "var(--text-secondary)" }}>
+                  {translateCategory(cat.name, t)}
+                </span>
+              </div>
+              <span className="font-semibold flex-shrink-0 ml-2" style={{ color: "var(--text-primary)" }}>
+                {cat.value}%
               </span>
             </div>
-            <span className="font-semibold flex-shrink-0 ml-2" style={{ color: "var(--text-primary)" }}>
-              {cat.value}%
-            </span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 interface BottomSectionProps {
   accountBalancesData: AccountBalance[];
