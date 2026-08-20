@@ -1,39 +1,47 @@
 {
   "monthlyData": [
-    { "month": "Jan", "income": 1500, "expenses": 1000, "cashFlow": 500 },
-    { "month": "Feb", "income": 1800, "expenses": 1100, "cashFlow": 700 },
-    { "month": "Mar", "income": 1600, "expenses": 950, "cashFlow": 650 },
-    { "month": "Apr", "income": 2000, "expenses": 1200, "cashFlow": 800 },
-    { "month": "May", "income": 1900, "expenses": 1000, "cashFlow": 900 },
-    { "month": "Jun", "income": 1700, "expenses": 1100, "cashFlow": 600 },
-    { "month": "Jul", "income": 1800, "expenses": 1050, "cashFlow": 750 },
-    { "month": "Aug", "income": 2100, "expenses": 1300, "cashFlow": 800 },
-    { "month": "Sep", "income": 2200, "expenses": 1400, "cashFlow": 800 },
-    { "month": "Oct", "income": 2000, "expenses": 1200, "cashFlow": 800 },
-    { "month": "Nov", "income": 2300, "expenses": 1100, "cashFlow": 1200 },
-    { "month": "Dec", "income": 2100, "expenses": 1000, "cashFlow": 1100 }
+    { "month": "Jan", "income": 3200, "expenses": 2100, "cashFlow": 1100 },
+    { "month": "Feb", "income": 2800, "expenses": 2050, "cashFlow": 750 },
+    { "month": "Mar", "income": 4100, "expenses": 2350, "cashFlow": 1750 },
+    { "month": "Apr", "income": 3500, "expenses": 2250, "cashFlow": 1250 },
+    { "month": "May", "income": 3900, "expenses": 2400, "cashFlow": 1500 },
+    { "month": "Jun", "income": 4400, "expenses": 2550, "cashFlow": 1850 },
+    { "month": "Jul", "income": 3800, "expenses": 2450, "cashFlow": 1350 },
+    { "month": "Aug", "income": 4700, "expenses": 2650, "cashFlow": 2050 },
+    { "month": "Sep", "income": 4200, "expenses": 2600, "cashFlow": 1600 },
+    { "month": "Oct", "income": 5100, "expenses": 2750, "cashFlow": 2350 },
+    { "month": "Nov", "income": 4600, "expenses": 2700, "cashFlow": 1900 },
+    { "month": "Dec", "income": 5400, "expenses": 2900, "cashFlow": 2500 }
   ],
   "accountBalancesData": [
     { "month": "Jan", "tax": 500, "expense": 400, "other": 300, "savings": 1000 },
-    { "month": "Feb", "tax": 600, "expense": 450, "other": 350, "savings": 1200 },
-    { "month": "Mar", "tax": 700, "expense": 500, "other": 400, "savings": 1400 },
-    { "month": "Apr", "tax": 800, "expense": 550, "other": 450, "savings": 1600 },
-    { "month": "May", "tax": 900, "expense": 600, "other": 500, "savings": 1800 }
+    { "month": "Feb", "tax": 520, "expense": 410, "other": 310, "savings": 1250 },
+    { "month": "Mar", "tax": 600, "expense": 460, "other": 340, "savings": 1500 },
+    { "month": "Apr", "tax": 580, "expense": 450, "other": 330, "savings": 1750 },
+    { "month": "May", "tax": 620, "expense": 480, "other": 350, "savings": 2000 },
+    { "month": "Jun", "tax": 680, "expense": 500, "other": 360, "savings": 2300 },
+    { "month": "Jul", "tax": 650, "expense": 490, "other": 355, "savings": 2600 },
+    { "month": "Aug", "tax": 720, "expense": 520, "other": 370, "savings": 2900 },
+    { "month": "Sep", "tax": 700, "expense": 510, "other": 365, "savings": 3200 },
+    { "month": "Oct", "tax": 760, "expense": 540, "other": 380, "savings": 3600 },
+    { "month": "Nov", "tax": 740, "expense": 530, "other": 375, "savings": 3950 },
+    { "month": "Dec", "tax": 800, "expense": 560, "other": 390, "savings": 4300 }
   ],
   "expenseCategories": [
-    { "name": "Tax", "value": 35 },
-    { "name": "Expense", "value": 25 },
-    { "name": "Post", "value": 20 },
-    { "name": "Food", "value": 15 },
-    { "name": "Others", "value": 5 }
+    { "name": "rent", "value": 32 },
+    { "name": "food", "value": 24 },
+    { "name": "entertainment", "value": 16 },
+    { "name": "transport", "value": 15 },
+    { "name": "utilities", "value": 13 }
   ],
   "recentTransactions": [
-    { "id": 1, "date": "23/03/2025", "category": "Bases Card", "description": "Monthly base card payment", "amount": "-$100.00", "icon": "trophy", "type": "expense", "rawAmount": 100 },
-    { "id": 2, "date": "23/05/2025", "category": "Accounthibs", "description": "Account maintenance fee", "amount": "-$50.00", "icon": "folder", "type": "expense", "rawAmount": 50 },
-    { "id": 3, "date": "23/05/2025", "category": "Payssnt & Service", "description": "Freelance project payment", "amount": "+$100.00", "icon": "bank", "type": "income", "rawAmount": 100 },
-    { "id": 4, "date": "22/05/2025", "category": "Recert Transaction", "description": "Grocery shopping at supermarket", "amount": "-$50.00", "icon": "bell", "type": "expense", "rawAmount": 50 },
-    { "id": 5, "date": "23/05/2025", "category": "Taxanos", "description": "Tax refund received", "amount": "+$20.00", "icon": "car", "type": "income", "rawAmount": 20 },
-    { "id": 6, "date": "20/05/2025", "category": "Invoices", "description": "Utility bill payment", "amount": "-$0.00", "icon": "document", "type": "expense", "rawAmount": 0 },
-    { "id": 7, "date": "20/05/2025", "category": "Calculated", "description": "Dinner with friends", "amount": "-$50.00", "icon": "user", "type": "expense", "rawAmount": 50 }
+    { "id": 1, "date": "15/08/2026", "rawDate": "2026-08-15", "category": "freelance", "description": "Rediseño de landing page", "amount": "+$1,200.00", "icon": "bank", "type": "income", "rawAmount": 1200 },
+    { "id": 2, "date": "12/08/2026", "rawDate": "2026-08-12", "category": "transport", "description": "Combustible", "amount": "-$58.40", "icon": "car", "type": "expense", "rawAmount": 58.4 },
+    { "id": 3, "date": "10/08/2026", "rawDate": "2026-08-10", "category": "food", "description": "Mercado semanal", "amount": "-$145.30", "icon": "folder", "type": "expense", "rawAmount": 145.3 },
+    { "id": 4, "date": "07/08/2026", "rawDate": "2026-08-07", "category": "utilities", "description": "Electricidad e internet", "amount": "-$118.00", "icon": "document", "type": "expense", "rawAmount": 118 },
+    { "id": 5, "date": "05/08/2026", "rawDate": "2026-08-05", "category": "entertainment", "description": "Suscripciones de streaming", "amount": "-$32.99", "icon": "bell", "type": "expense", "rawAmount": 32.99 },
+    { "id": 6, "date": "03/08/2026", "rawDate": "2026-08-03", "category": "rent", "description": "Arriendo de apartamento", "amount": "-$850.00", "icon": "document", "type": "expense", "rawAmount": 850 },
+    { "id": 7, "date": "02/08/2026", "rawDate": "2026-08-02", "category": "healthcare", "description": "Membresía del gimnasio", "amount": "-$45.00", "icon": "user", "type": "expense", "rawAmount": 45 },
+    { "id": 8, "date": "01/08/2026", "rawDate": "2026-08-01", "category": "salary", "description": "Retainer mensual — Studio Nova", "amount": "+$2,500.00", "icon": "bank", "type": "income", "rawAmount": 2500 }
   ]
 }

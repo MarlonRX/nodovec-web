@@ -1,4 +1,6 @@
 import { apiGet, apiPost, apiPut, apiDelete } from './apiClient';
+import { isDemoMode } from '@/lib/demoUtils';
+import { DEMO_SAVINGS_GOAL } from '@/data/demoData';
 import type { ApiResponse } from './types';
 import type {
   SavingsGoal,
@@ -61,8 +63,22 @@ export interface ProgressResponse {
 export const getGoals = (
   params?: { page?: number; page_size?: number; status?: 'active' | 'completed' | 'all' },
   token?: string | null,
-): Promise<PaginatedResponse<SavingsGoal>> =>
-  apiGet<PaginatedResponse<SavingsGoal>['data']>('goals', { params, token }) as Promise<PaginatedResponse<SavingsGoal>>;
+): Promise<PaginatedResponse<SavingsGoal>> => {
+  if (isDemoMode()) {
+    return Promise.resolve({
+      response: true,
+      message: 'Goals fetched (Demo Mode)',
+      data: {
+        data: [DEMO_SAVINGS_GOAL],
+        current_page: 1,
+        last_page: 1,
+        per_page: params?.page_size ?? 5,
+        total: 1,
+      },
+    });
+  }
+  return apiGet<PaginatedResponse<SavingsGoal>['data']>('goals', { params, token }) as Promise<PaginatedResponse<SavingsGoal>>;
+};
 
 export const createGoal = (data: CreateSavingsGoal, token?: string | null): Promise<SingleGoalResponse> =>
   apiPost<SavingsGoal>('goals', data, { token });
