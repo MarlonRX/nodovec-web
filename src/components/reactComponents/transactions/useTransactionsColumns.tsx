@@ -3,7 +3,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Transaction } from "@/schemas/tableSchema";
 import { formatDate } from "@/utils/dateFormat";
-import { formatAmount, getCategoryColor } from "./transactionsConstants";
+import { formatAmount, getCategoryColor, getCategoryLabel } from "./transactionsConstants";
 
 export type TransactionColumn = {
   key: keyof Transaction | 'income' | 'expense' | 'actions';
@@ -31,12 +31,12 @@ export function useTransactionColumns({
     {
       key: 'category', label: t('transactions.colCategory'), sortable: true,
       render: (value: any): ReactNode => {
-        const categoryName = String(value).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-        const colors = getCategoryColor(String(value));
+        const category = String(value);
+        const colors = getCategoryColor(category);
         return (
           <span style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
             className="inline-block px-3.5 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider transition-shadow transition-transform border border-solid backdrop-blur-sm hover:shadow-md hover:scale-105">
-            {categoryName}
+            {getCategoryLabel(category, t)}
           </span>
         );
       }

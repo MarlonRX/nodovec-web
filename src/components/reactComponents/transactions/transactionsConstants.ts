@@ -77,3 +77,11 @@ function snakeToPascal(value: string): string {
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
 }
+
+/** Etiqueta traducida de una categoría (con fallback a nombre humanizado si no hay clave i18n). */
+export function getCategoryLabel(category: string, t: (key: string) => string): string {
+  const key = `transactionForm.category${snakeToPascal(category)}`;
+  const translated = t(key);
+  if (translated !== key) return translated;
+  return category.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
