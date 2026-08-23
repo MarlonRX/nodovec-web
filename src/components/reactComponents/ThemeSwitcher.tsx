@@ -71,14 +71,14 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
         id="theme-selector"
         role="listbox"
         aria-label={t('themes.selector')}
-        className={`${compact ? 'flex gap-2 items-center' : 'flex items-center gap-2 flex-wrap bg-(--bg-surface) border border-(--border-primary) rounded-md px-2 py-2 max-w-full'}`}
+        className={`${compact ? 'flex gap-2 items-center' : 'flex items-center gap-2 flex-wrap bg-(--bg-surface) border border-(--border-primary) rounded-none px-2 py-2 max-w-full'}`}
         style={{ boxSizing: 'border-box' }}
       >
         {THEMES.map((t) => {
           const active = t === theme;
           const btnClass = compact
             ? `w-6 h-6 p-0 rounded-full flex items-center justify-center transition focus:outline-none ${active ? 'ring-2 ring-offset-1 ring-(--accent-primary) bg-[rgba(var(--accent-primary-rgb),0.12)]' : 'hover:bg-[rgba(var(--text-primary-rgb),0.04)]'}`
-            : `flex items-center gap-2 px-2 py-1 rounded-md transition focus:outline-none shrink-0 ${active ? 'ring-2 ring-offset-1 ring-(--accent-primary) bg-[rgba(var(--accent-primary-rgb),0.12)]' : 'hover:bg-[rgba(var(--text-primary-rgb),0.04)]'}`;
+            : `flex items-center gap-2 px-2 py-1 rounded-none transition focus:outline-none shrink-0 ${active ? 'ring-2 ring-offset-1 ring-(--accent-primary) bg-[rgba(var(--accent-primary-rgb),0.12)]' : 'hover:bg-[rgba(var(--text-primary-rgb),0.04)]'}`;
 
           return (
             <button

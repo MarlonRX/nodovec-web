@@ -35,7 +35,7 @@ export function useTransactionColumns({
         const colors = getCategoryColor(category);
         return (
           <span style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.border }}
-            className="inline-block px-3.5 py-2 rounded-lg font-semibold text-xs uppercase tracking-wider transition-shadow transition-transform border border-solid backdrop-blur-sm hover:shadow-md hover:scale-105">
+            className="inline-block px-3.5 py-2 rounded-none font-semibold text-xs tracking-wider transition-shadow transition-transform border border-solid backdrop-blur-sm hover:shadow-md hover:scale-105">
             {getCategoryLabel(category, t)}
           </span>
         );
@@ -44,7 +44,7 @@ export function useTransactionColumns({
     {
       key: 'income', label: t('transactions.colIncome'), sortable: false,
       render: (_: any, row: Transaction): ReactNode => row.type === 'income' ? (
-        <span className="inline-block text-(--semantic-success) font-bold text-sm bg-[rgba(46,139,87,0.08)] px-3.5 py-2 rounded-lg border border-[rgba(46,139,87,0.2)] backdrop-blur-sm">
+        <span className="inline-block text-(--semantic-success) font-bold text-sm bg-[rgba(46,139,87,0.08)] px-3.5 py-2 rounded-none border border-[rgba(46,139,87,0.2)] backdrop-blur-sm">
           + ${formatAmount(row.amount)}
         </span>
       ) : null,
@@ -52,7 +52,7 @@ export function useTransactionColumns({
     {
       key: 'expense', label: t('transactions.colExpense'), sortable: false,
       render: (_: any, row: Transaction): ReactNode => row.type === 'expense' ? (
-        <span className="inline-block text-(--semantic-error) font-bold text-sm bg-[rgba(207,102,121,0.08)] px-3.5 py-2 rounded-lg border border-[rgba(207,102,121,0.2)] backdrop-blur-sm">
+        <span className="inline-block text-(--semantic-error) font-bold text-sm bg-[rgba(207,102,121,0.08)] px-3.5 py-2 rounded-none border border-[rgba(207,102,121,0.2)] backdrop-blur-sm">
           - ${formatAmount(row.amount)}
         </span>
       ) : null,
@@ -62,12 +62,12 @@ export function useTransactionColumns({
       render: (_: any, row: Transaction): ReactNode => (
         <div className="flex gap-2">
           <button onClick={(e) => { e.stopPropagation(); if (!demoMode) handleEdit(row); else toast.info(t('common.demoReadOnly')); }} disabled={demoMode}
-            className={`p-1.5 rounded-lg transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)'}`}
+            className={`p-1.5 rounded-none transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)'}`}
             title={demoMode ? t('common.demoReadOnly') : t('common.edit')}>
             <Pencil className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); if (!demoMode) setTransactionToDelete(row.uuid as string); else toast.info(t('common.demoReadOnly')); }} disabled={demoMode}
-            className={`p-1.5 rounded-lg transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]'}`}
+            className={`p-1.5 rounded-none transition-colors ${demoMode ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]'}`}
             title={demoMode ? t('common.demoReadOnly') : t('common.delete')}>
             <Trash2 className="w-4 h-4" />
           </button>

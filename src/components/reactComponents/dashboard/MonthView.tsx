@@ -105,7 +105,7 @@ const MonthView: React.FC<MonthViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
         {/* Monthly Overview */}
         <div
-          className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+          className="rounded-none p-4 sm:p-5 lg:p-7"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1px solid var(--border-primary)",
@@ -128,7 +128,7 @@ const MonthView: React.FC<MonthViewProps> = ({
 
           <div className="grid grid-cols-1 gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div
-              className="p-3 sm:p-4 rounded-lg"
+              className="p-3 sm:p-4 rounded-none"
               style={{
                 backgroundColor: "rgba(var(--semantic-success-rgb), 0.06)",
                 border: "1px solid rgba(var(--semantic-success-rgb), 0.19)",
@@ -148,7 +148,7 @@ const MonthView: React.FC<MonthViewProps> = ({
               </p>
             </div>
             <div
-              className="p-3 sm:p-4 rounded-lg"
+              className="p-3 sm:p-4 rounded-none"
               style={{
                 backgroundColor: "rgba(var(--semantic-error-rgb), 0.06)",
                 border: "1px solid rgba(var(--semantic-error-rgb), 0.19)",
@@ -168,7 +168,7 @@ const MonthView: React.FC<MonthViewProps> = ({
               </p>
             </div>
             <div
-              className="p-3 sm:p-4 rounded-lg"
+              className="p-3 sm:p-4 rounded-none"
               style={{
                 backgroundColor: "rgba(var(--accent-primary-rgb), 0.06)",
                 border: "1px solid rgba(var(--accent-primary-rgb), 0.19)",
@@ -237,7 +237,7 @@ const MonthView: React.FC<MonthViewProps> = ({
 
         {/* Recent Transactions */}
         <div
-          className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg flex flex-col"
+          className="rounded-none p-4 sm:p-5 lg:p-7 flex flex-col"
           style={{
             backgroundColor: "var(--bg-surface)",
             border: "1px solid var(--border-primary)",

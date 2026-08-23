@@ -18,7 +18,7 @@ const t = (key: string) => translate(key, lang);
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <h1 class="text-3xl font-black text-(--text-primary) mb-2 tracking-tight">
+        <h1 class="text-3xl font-semibold text-(--text-primary) mb-2 tracking-tight">
           {t("unauthorized.title")}
         </h1>
         <p class="text-(--text-secondary) text-sm font-medium px-4">
@@ -27,11 +27,11 @@ const t = (key: string) => translate(key, lang);
       </div>
 
       <!-- Action Buttons Card -->
-      <div class="bg-(--bg-surface) border border-(--border-primary) rounded-2xl p-6 sm:p-8 shadow-xl text-center space-y-4">
+      <div class="bg-(--bg-surface) border border-(--border-primary) rounded-none p-6 sm:p-8 text-center space-y-4">
         <!-- Log In Button -->
         <a
           href="/login"
-          class="w-full block text-center px-6 py-3.5 bg-(--accent-primary) text-(--text-inverted) font-black text-sm uppercase tracking-wider rounded-xl hover:bg-(--accent-hover) transition-all shadow-lg hover:shadow-(--accent-primary)/30 hover:-translate-y-0.5 active:translate-y-0"
+          class="w-full block text-center px-6 py-3.5 bg-(--accent-primary) text-(--text-inverted) font-semibold text-sm rounded-none hover:bg-(--accent-hover) transition-colors"
         >
           {t("unauthorized.goLogin")}
         </a>
@@ -39,7 +39,7 @@ const t = (key: string) => translate(key, lang);
         <!-- Try Demo Button -->
         <a
           href="/demo"
-          class="w-full block text-center px-6 py-3.5 bg-(--bg-secondary) text-(--text-primary) font-black text-sm uppercase tracking-wider rounded-xl border-2 border-(--border-primary) hover:border-(--accent-primary) transition-all"
+          class="w-full block text-center px-6 py-3.5 bg-(--bg-secondary) text-(--text-primary) font-semibold text-sm rounded-none border border-(--border-primary) hover:border-(--accent-primary) transition-colors"
         >
           {t("unauthorized.goDemo")}
         </a>
@@ -47,14 +47,14 @@ const t = (key: string) => translate(key, lang);
         <!-- Divider -->
         <div class="flex items-center gap-4 my-2">
           <div class="flex-1 h-px bg-(--border-primary)"></div>
-          <span class="text-xs text-(--text-tertiary) uppercase font-bold">or</span>
+          <span class="text-xs text-(--text-tertiary)">or</span>
           <div class="flex-1 h-px bg-(--border-primary)"></div>
         </div>
 
         <!-- Back to Home -->
         <a
           href="/"
-          class="inline-block text-sm font-bold text-(--text-secondary) hover:text-(--accent-primary) transition-colors hover:underline"
+          class="inline-block text-sm font-medium text-(--text-secondary) hover:text-(--accent-primary) transition-colors hover:underline"
         >
           {t("unauthorized.goHome")}
         </a>

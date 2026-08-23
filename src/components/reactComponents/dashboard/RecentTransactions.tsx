@@ -15,7 +15,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   t,
   compact = false,
 }) => (
-  <div className="overflow-x-auto rounded-lg -mx-2 px-2">
+  <div className="overflow-x-auto rounded-none -mx-2 px-2">
     <table className="w-full min-w-[320px]">
       <thead
         className="sticky top-0 z-10"
@@ -26,25 +26,25 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
       >
         <tr>
           <th
-            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold tracking-wide ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
             {t('transactions.colDate')}
           </th>
           <th
-            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold tracking-wide ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
             {t('transactions.colCategory')}
           </th>
           <th
-            className={`text-left font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-left font-semibold tracking-wide ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
             {t('transactions.colDescription')}
           </th>
           <th
-            className={`text-right font-semibold uppercase tracking-wider ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
+            className={`text-right font-semibold tracking-wide ${compact ? "py-2 px-2 text-[10px]" : "py-3 sm:py-4 px-3 sm:px-4 text-xs"}`}
             style={{ color: "var(--text-secondary)" }}
           >
             {t('transactions.colAmount')}
@@ -67,7 +67,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
             <td className={compact ? "py-2 px-2" : "py-3 sm:py-4 px-3 sm:px-4"}>
               <div className="flex items-center gap-2 sm:gap-3">
                 <div
-                  className="rounded-lg flex-shrink-0"
+                  className="rounded-none flex-shrink-0"
                   style={{
                     backgroundColor: "rgba(var(--accent-primary-rgb), 0.125)",
                   }}

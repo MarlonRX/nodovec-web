@@ -212,7 +212,7 @@ export const SavingsGoalsPage = ({ initialData = null }: SavingsGoalsPageProps) 
 
       {error && (
         <div
-          className="p-4 rounded-xl mb-6"
+          className="p-4 rounded-none mb-6"
           style={{ backgroundColor: 'var(--semantic-error-rgb, 239 68 68)', color: 'var(--semantic-error)' }}
         >
           {error}

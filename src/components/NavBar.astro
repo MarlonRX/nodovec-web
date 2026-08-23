@@ -10,8 +10,8 @@ const isLoginPage = Astro.url.pathname === "/login" || Astro.url.pathname === "/
 
 {!isLoginPage && (
 <nav
-    class="fixed top-0 left-0 right-0 z-10 border-b backdrop-blur-xl"
-    style="background: var(--bg-surface); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);"
+    class="fixed top-0 left-0 right-0 z-10 border-b"
+    style="background: var(--bg-primary); border-color: var(--border-primary);"
 >
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center h-16">

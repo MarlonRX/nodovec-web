@@ -25,7 +25,7 @@ export const MyTextArea = React.forwardRef<HTMLTextAreaElement, MyTextAreaProps>
           id={textareaId}
           autoComplete="off"
           className={cn(
-            "w-full px-3 py-2 rounded-lg border text-sm resize-none",
+            "w-full px-3 py-2 rounded-none border text-sm resize-none",
             "bg-(--bg-surface) text-(--text-primary) placeholder:text-(--text-secondary)",
             "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
             "outline-none transition-colors duration-200",

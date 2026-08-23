@@ -30,7 +30,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({ error, onReload, t }) =>
       <div className="flex gap-2 justify-center flex-wrap">
         <button
           onClick={onReload}
-          className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          className="px-4 py-2 rounded-none text-sm font-semibold transition-colors"
           style={{
             backgroundColor: "var(--accent-primary)",
             color: "var(--text-inverted)",
@@ -40,7 +40,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({ error, onReload, t }) =>
         </button>
         <a
           href="/"
-          className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          className="px-4 py-2 rounded-none text-sm font-semibold transition-colors"
           style={{
             backgroundColor: "var(--bg-secondary)",
             color: "var(--text-primary)",

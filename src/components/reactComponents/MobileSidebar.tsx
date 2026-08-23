@@ -36,7 +36,7 @@ export const MobileSidebar: React.FC = () => {
               key={item.key}
               href={item.path}
               onClick={handleLinkClick}
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors hover:opacity-80 cursor-pointer"
+              className="flex items-center space-x-3 px-4 py-3 rounded-none transition-colors hover:opacity-80 cursor-pointer"
               style={{ color: 'var(--text-secondary)' }}
             >
               <Icon

@@ -82,7 +82,7 @@ export function QuickAddFAB() {
 
       {/* Keyboard shortcut hint (visible on hover) */}
       <div className="fixed bottom-24 right-6 z-50 opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-        <span className="px-2 py-1 rounded-md bg-(--bg-secondary) text-(--text-secondary) text-xs font-bold border border-(--border-primary) shadow-sm">
+        <span className="px-2 py-1 rounded-none bg-(--bg-secondary) text-(--text-secondary) text-xs font-bold border border-(--border-primary) shadow-sm">
           Ctrl/Cmd + N
         </span>
       </div>

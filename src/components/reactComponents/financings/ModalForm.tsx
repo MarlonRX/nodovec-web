@@ -59,21 +59,21 @@ export const ModalForm = ({
         onClick={onClose}
       />
 
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-7xl mx-4 md:mx-0 h-[85vh] max-h-[90vh] flex flex-col bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) overflow-hidden">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-7xl mx-4 md:mx-0 h-[85vh] max-h-[90vh] flex flex-col bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) overflow-hidden">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-(--border-primary) shrink-0">
                 <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.15)' }}>
+                    <div className="w-12 h-12 rounded-none flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.15)' }}>
                         <Calculator size={24} style={{ color: 'var(--accent-primary)' }} />
                     </div>
                     <div className="min-w-0">
-                        <h2 className="text-xl md:text-2xl font-black text-(--text-primary) tracking-tight uppercase truncate">{editingFinancing ? t("financing.editPlan") : t("financing.newPlan")}</h2>
-                        <p className="text-xs uppercase font-bold tracking-wider text-(--text-tertiary) truncate">{editingFinancing ? editingFinancing.name : t("financing.subtitle")}</p>
+                        <h2 className="text-xl md:text-2xl font-semibold text-(--text-primary) tracking-tight truncate">{editingFinancing ? t("financing.editPlan") : t("financing.newPlan")}</h2>
+                        <p className="text-xs font-bold tracking-wider text-(--text-tertiary) truncate">{editingFinancing ? editingFinancing.name : t("financing.subtitle")}</p>
                     </div>
                 </div>
                 <button type="button" onClick={onClose}
                     aria-label={t('common.close')}
-                    className="p-2 rounded-lg transition-colors hover:bg-(--bg-hover) group shrink-0">
+                    className="p-2 rounded-none transition-colors hover:bg-(--bg-hover) group shrink-0">
                     <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
                 </button>
             </div>
@@ -108,10 +108,10 @@ export const ModalForm = ({
 
                             {/* Visual Type Selector */}
                             <div className="sm:col-span-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-(--text-tertiary) block mb-2">{t("financing.type")}</span>
+                                <span className="text-xs font-semibold text-(--text-tertiary) block mb-2">{t("financing.type")}</span>
                                 <div className="grid grid-cols-2 gap-3">
                                     <button type="button" onClick={() => update("type", "loan")}
-                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-none text-sm font-bold transition-colors"
                                         style={{
                                             border: `2px solid ${form.type === "loan" ? 'var(--accent-primary)' : 'var(--border-primary)'}`,
                                             backgroundColor: form.type === "loan" ? 'rgba(var(--accent-primary-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -121,7 +121,7 @@ export const ModalForm = ({
                                         {t("financing.loan")}
                                     </button>
                                     <button type="button" onClick={() => update("type", "card_purchase")}
-                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-none text-sm font-bold transition-colors"
                                         style={{
                                             border: `2px solid ${form.type === "card_purchase" ? 'var(--accent-primary)' : 'var(--border-primary)'}`,
                                             backgroundColor: form.type === "card_purchase" ? 'rgba(var(--accent-primary-rgb), 0.1)' : 'var(--bg-secondary)',
@@ -134,7 +134,7 @@ export const ModalForm = ({
                             </div>
 
                             {/* Auto Transactions Switch */}
-                            <div className="sm:col-span-2 flex items-center justify-between p-3 rounded-lg" style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
+                            <div className="sm:col-span-2 flex items-center justify-between p-3 rounded-none" style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-secondary)' }}>
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     <Zap className="w-5 h-5 shrink-0" style={{ color: form.generate_transactions ? 'var(--accent-primary)' : 'var(--text-tertiary)' }} />
                                     <div className="min-w-0">
@@ -227,21 +227,21 @@ export const ModalForm = ({
                     </form>
 
                     {/* Table Column */}
-                    <div className="flex flex-col h-full overflow-hidden rounded-xl" style={{ border: '1px solid var(--border-primary)' }}>
+                    <div className="flex flex-col h-full overflow-hidden rounded-none" style={{ border: '1px solid var(--border-primary)' }}>
                         {/* Table Header */}
                         <div className="p-5 shrink-0" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.15)' }}>
+                                <div className="w-10 h-10 rounded-none flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.15)' }}>
                                     <Landmark size={20} style={{ color: 'var(--accent-primary)' }} />
                                 </div>
-                                <h3 className="text-base font-black text-(--text-primary) uppercase tracking-wider">{t("financing.schedule")}</h3>
+                                <h3 className="text-base font-semibold text-(--text-primary) tracking-wider">{t("financing.schedule")}</h3>
                             </div>
                             {summary ? (
                                 <div className="grid grid-cols-3 gap-2">
                                     {[[t("financing.installmentValue"), summary.installment_amount], [t("financing.totalInterest"), summary.total_interest], [t("financing.totalToPay"), summary.total_amount]].map(([label, value]) => (
-                                        <div key={label} className="rounded-lg p-2.5" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-primary)' }}>
-                                            <p className="text-[9px] font-bold uppercase tracking-wider text-(--text-tertiary)">{label}</p>
-                                            <p className="mt-0.5 text-sm font-black text-(--text-primary)">${formatMoney(value)}</p>
+                                        <div key={label} className="rounded-none p-2.5" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-primary)' }}>
+                                            <p className="text-[9px] font-semibold text-(--text-tertiary)">{label}</p>
+                                            <p className="mt-0.5 text-sm font-semibold text-(--text-primary)">${formatMoney(value)}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -261,7 +261,7 @@ export const ModalForm = ({
                                 <>
                                     <table className="w-full text-sm">
                                         <caption className="sr-only">{t("financing.schedule")}</caption>
-                                        <thead className="sticky top-0 text-[10px] uppercase tracking-wider text-(--text-tertiary)" style={{ backgroundColor: 'var(--bg-surface)' }}>
+                                        <thead className="sticky top-0 text-[10px] tracking-wider text-(--text-tertiary)" style={{ backgroundColor: 'var(--bg-surface)' }}>
                                             <tr>
                                                 <th className="px-3 py-2.5 font-bold text-left whitespace-nowrap">#</th>
                                                 <th className="px-3 py-2.5 font-bold text-left whitespace-nowrap">{t("financing.dueDate")}</th>
@@ -277,7 +277,7 @@ export const ModalForm = ({
                                                     <td className="px-3 py-2 text-(--text-secondary) font-mono text-xs">{dayjs(row.due_date).format('YYYY-MM-DD')}</td>
                                                     <td className="px-3 py-2 text-right text-(--text-secondary) text-xs">${formatMoney(row.principal_amount)}</td>
                                                     <td className="px-3 py-2 text-right text-xs" style={{ color: 'var(--accent-primary)' }}>${formatMoney(row.interest_amount)}</td>
-                                                    <td className="px-3 py-2 text-right font-black text-(--text-primary) text-xs">${formatMoney(row.total_amount)}</td>
+                                                    <td className="px-3 py-2 text-right font-semibold text-(--text-primary) text-xs">${formatMoney(row.total_amount)}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -298,7 +298,7 @@ export const ModalForm = ({
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <button onClick={onSubmit} disabled={saving}
-                                                className="flex-1 rounded-lg px-4 py-3 font-black transition-transform disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                                className="flex-1 rounded-none px-4 py-3 font-semibold disabled:opacity-40 flex items-center justify-center gap-2"
                                                 style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}>
                                                 {saving ? t("financing.saving") : (editingFinancing ? t("financing.update") : t("financing.save"))}
                                             </button>

@@ -25,7 +25,7 @@ export const MyInput = React.forwardRef<HTMLInputElement, MyInputProps>(
           id={inputId}
           autoComplete="off"
           className={cn(
-            "w-full px-3 py-2 rounded-lg border text-sm",
+            "w-full px-3 py-2 rounded-none border text-sm",
             "bg-(--bg-surface) text-(--text-primary) placeholder:text-(--text-secondary)",
             "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
             "outline-none transition-colors duration-200",

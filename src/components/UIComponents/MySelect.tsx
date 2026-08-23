@@ -28,7 +28,7 @@ export const MySelect = React.forwardRef<HTMLSelectElement, MySelectProps>(
             ref={ref}
             id={selectId}
             className={cn(
-              "w-full appearance-none px-3 py-2 pr-8 rounded-lg border text-sm",
+              "w-full appearance-none px-3 py-2 pr-8 rounded-none border text-sm",
               "bg-(--bg-surface) text-(--text-primary)",
               "border-(--border-primary) focus:border-(--accent-primary) focus:ring-2 focus:ring-(--accent-primary)/30",
               "outline-none transition-colors duration-200 cursor-pointer",

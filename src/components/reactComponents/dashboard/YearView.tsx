@@ -169,7 +169,7 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
       <div
-        className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
         style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
       >
         <div className="mb-4 sm:mb-6 lg:mb-8">
@@ -183,7 +183,7 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
         <ComposedChartComponent
           data={monthlyData}
           xAxisKey="month"
-          yAxisDomain={chartYDomain} $-1435
+          yAxisDomain={chartYDomain}
           bars={[
             { dataKey: "income", fill: "var(--semantic-success)", name: t("dashboard.income") },
             { dataKey: "expenses", fill: "var(--semantic-error)", name: t("dashboard.expenses") },
@@ -196,7 +196,7 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
       </div>
 
       <div
-        className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+        className="rounded-none p-4 sm:p-5 lg:p-7"
         style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
       >
         <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
@@ -236,7 +236,7 @@ const BottomSection: React.FC<BottomSectionProps> = ({
 }) => (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
     <div
-      className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      className="rounded-none p-4 sm:p-5 lg:p-7"
       style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
@@ -256,7 +256,7 @@ const BottomSection: React.FC<BottomSectionProps> = ({
     </div>
 
     <div
-      className="lg:col-span-2 rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+      className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
       style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
@@ -274,7 +274,7 @@ interface ActiveSavingsGoalPanelProps {
 
 const ActiveSavingsGoalPanel: React.FC<ActiveSavingsGoalPanelProps> = ({ goal, t }) => (
   <div
-    className="rounded-2xl p-4 sm:p-5 lg:p-7 shadow-md transition-shadow hover:shadow-lg"
+    className="rounded-none p-4 sm:p-5 lg:p-7"
     style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
   >
     <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
@@ -298,7 +298,7 @@ const ActiveSavingsGoalPanel: React.FC<ActiveSavingsGoalPanelProps> = ({ goal, t
         <ProgressBar label="" value={goal.current_amount} max={goal.target_amount} color={goal.color} />
       </div>
       <div
-        className="p-3 sm:p-4 rounded-lg"
+        className="p-3 sm:p-4 rounded-none"
         style={{ backgroundColor: "rgba(var(--semantic-success-rgb), 0.06)", border: "1px solid rgba(var(--semantic-success-rgb), 0.19)" }}
       >
         <p className="text-xs sm:text-sm" style={{ color: "var(--semantic-success)" }}>

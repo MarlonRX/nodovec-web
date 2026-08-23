@@ -192,10 +192,10 @@ export const TransactionModal = ({
       />
 
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
-        <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
+        <div className="bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
-              <h2 className="text-xl md:text-2xl font-black text-(--text-primary) tracking-tight uppercase">
+              <h2 className="text-xl md:text-2xl font-semibold text-(--text-primary) tracking-tight">
                 {initialData ? t("transactionForm.edit") : t("transactionForm.new")}
               </h2>
               {!isLoggedIn && (
@@ -207,7 +207,7 @@ export const TransactionModal = ({
             <button
               onClick={handleClose}
               aria-label={t('common.close')}
-              className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group"
+              className="p-2 hover:bg-(--bg-hover) rounded-none transition-colors group"
             >
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
             </button>
@@ -401,14 +401,14 @@ const TransactionFormContent = ({
       <button
         type="button"
         onClick={handleClose}
-        className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors font-bold uppercase tracking-wider text-sm md:text-base"
+        className="flex-1 px-4 py-2 md:py-3 bg-(--bg-surface) border border-(--text-secondary) text-(--text-primary) rounded-none hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors font-semibold text-sm md:text-base"
       >
         {t("transactionForm.cancel")}
       </button>
       <button
         type="submit"
         disabled={isLoading}
-        className="flex-1 px-4 py-2 md:py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0 text-sm md:text-base"
+        className="flex-1 px-4 py-2 md:py-3 bg-(--accent-primary) text-(--text-inverted) rounded-none hover:bg-(--accent-hover) transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
       >
         {isLoading
           ? (initialData ? t("transactionForm.updating") : t("transactionForm.creating"))

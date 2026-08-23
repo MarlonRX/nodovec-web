@@ -64,7 +64,7 @@ export function PasswordInput({
           onChange={handleChange}
           required={required}
           placeholder={placeholder}
-          className={`w-full px-4 py-3 bg-(--bg-secondary) border-2 border-(--border-primary) rounded-lg text-(--text-primary) placeholder-[var(--text-tertiary)] focus:outline-none focus:border-(--accent-primary) transition-colors pr-10 ${className}`}
+          className={`w-full px-4 py-3 bg-(--bg-secondary) border border-(--border-primary) rounded-none text-(--text-primary) placeholder-[var(--text-tertiary)] focus:outline-none focus:border-(--accent-primary) transition-colors pr-10 ${className}`}
         />
         <button
           type="button"
@@ -82,8 +82,8 @@ export function PasswordInput({
       </div>
 
       {showRequirements && password && (
-        <div className="mt-3 p-3 bg-(--bg-secondary) border border-(--border-primary) rounded-lg">
-          <p className="text-xs font-bold text-(--text-secondary) mb-2 uppercase">{t("auth.passwordRequirements")}</p>
+        <div className="mt-3 p-3 bg-(--bg-secondary) border border-(--border-primary) rounded-none">
+          <p className="text-xs font-bold text-(--text-secondary) mb-2">{t("auth.passwordRequirements")}</p>
           <ul className="space-y-1 text-xs">
             <li className={`flex items-center gap-2 ${requirements.length ? 'text-green-500' : 'text-(--text-tertiary)'}`}>
               <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${requirements.length ? 'bg-green-500/20' : 'bg-(--border-primary)'}`}>

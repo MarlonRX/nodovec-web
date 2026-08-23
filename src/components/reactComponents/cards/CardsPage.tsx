@@ -105,9 +105,9 @@ export const CardsPage = ({ initialData = null }: CardsPageProps) => {
     <div className="table-page-container">
       {loading && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-100 flex items-center justify-center">
-          <div className="bg-(--bg-surface) p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+          <div className="bg-(--bg-surface) p-6 rounded-none shadow-2xl flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-t-(--accent-primary) border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">{t('common.loading')}</p>
+            <p className="font-bold text-sm text-(--text-secondary)">{t('common.loading')}</p>
           </div>
         </div>
       )}
@@ -115,11 +115,11 @@ export const CardsPage = ({ initialData = null }: CardsPageProps) => {
       <div className="flex flex-col gap-6 mb-6 border-b border-(--border-primary) pb-6 shrink-0">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl md:text-4xl font-black text-(--text-primary) tracking-tight uppercase">{t('cards.title')}</h2>
-            <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest">{t('cards.subtitle')}</p>
+            <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">{t('cards.title')}</h2>
+            <p className="text-(--text-tertiary) text-xs font-bold tracking-wide">{t('cards.subtitle')}</p>
           </div>
           <button onClick={openCreateModal}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-none transition-colors font-semibold text-xs md:text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             {t('cards.addCard')}
           </button>

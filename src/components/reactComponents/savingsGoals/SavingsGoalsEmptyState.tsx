@@ -13,7 +13,7 @@ export const SavingsGoalsEmptyState = ({ filterStatus, onCreateGoal, t }: Saving
 
   return (
     <div
-      className="rounded-2xl p-12 text-center"
+      className="rounded-none p-12 text-center"
       style={{ backgroundColor: 'var(--bg-surface)', border: '1.5px solid var(--border-primary)' }}
     >
       <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
@@ -24,7 +24,7 @@ export const SavingsGoalsEmptyState = ({ filterStatus, onCreateGoal, t }: Saving
       {filterStatus !== 'completed' && (
         <button
           onClick={onCreateGoal}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-none font-semibold transition-opacity hover:opacity-90"
           style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
         >
           <Plus size={18} />

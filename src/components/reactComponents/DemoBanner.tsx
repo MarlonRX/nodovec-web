@@ -41,7 +41,7 @@ export function DemoBanner() {
             </span>
             <a
                 href="/register"
-                className="shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-opacity hover:opacity-90"
+                className="shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-opacity hover:opacity-90"
                 style={{ backgroundColor: "var(--accent-primary)", color: "var(--text-inverted)" }}
             >
                 {translate("demo.cta", lang)}
@@ -49,7 +49,7 @@ export function DemoBanner() {
             <button
                 onClick={dismiss}
                 aria-label="Dismiss"
-                className="shrink-0 p-1 rounded-md transition-opacity hover:opacity-70"
+                className="shrink-0 p-1 rounded-none transition-opacity hover:opacity-70"
                 style={{ color: "var(--text-secondary)" }}
             >
                 <X className="w-4 h-4" />

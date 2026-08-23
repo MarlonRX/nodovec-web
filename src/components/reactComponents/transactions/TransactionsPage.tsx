@@ -184,9 +184,9 @@ export const TransactionsPage = ({ onRowClick, itemsPerPage = 10, initialData = 
     <div className="table-page-container">
       {loading && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-100 flex items-center justify-center">
-          <div className="bg-(--bg-surface) p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+          <div className="bg-(--bg-surface) p-6 rounded-none shadow-2xl flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-t-(--accent-primary) border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">{t('transactions.syncing')}</p>
+            <p className="font-bold text-sm text-(--text-secondary)">{t('transactions.syncing')}</p>
           </div>
         </div>
       )}

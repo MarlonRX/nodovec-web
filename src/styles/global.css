@@ -66,7 +66,7 @@
     --box-shadow:
         0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
         0 16px 32px rgba(var(--gray), 33%);
-    --radius: 0.625rem;
+    --radius: 0rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.129 0.042 264.695);
     --card: oklch(1 0 0);
@@ -105,7 +105,7 @@
 }
 
 .sidebar-link:hover {
-    color: var(--text-inverted);
+    color: var(--text-primary);
     background-color: rgba(var(--accent-primary-rgb), var(--sidebar-hover-alpha));
 }
 
@@ -153,7 +153,7 @@ h4,
 h5,
 h6 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     margin: 0 0 0.5rem 0;
     color: var(--text-primary);
     line-height: 1.2;
@@ -217,7 +217,7 @@ table {
 img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 0;
 }
 
 code {
@@ -228,7 +228,7 @@ code {
 
 pre {
     padding: 1.5em;
-    border-radius: 8px;
+    border-radius: 0;
 }
 
 pre>code {
@@ -279,10 +279,10 @@ hr {
     --font-sans: "Instrument Sans", sans-serif;
     --font-mono: "JetBrains Mono", monospace;
     --font-display: "Sora", sans-serif;
-    --radius-sm: calc(var(--radius) - 4px);
-    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: var(--radius);
+    --radius-md: var(--radius);
     --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) + 4px);
+    --radius-xl: var(--radius);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
@@ -350,6 +350,46 @@ hr {
     --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/*
+  Puente shadcn -> tokens de la app para los temas oscuros.
+  La clase .dark nunca se aplica (el sistema usa data-theme), así que sin este
+  bloque los componentes portados (popovers, toasts, day-picker) heredan los
+  valores light: bordes casi blancos sobre canvas oscuro.
+*/
+html[data-theme="dark"],
+html[data-theme="obsidian"],
+html[data-theme="ember"],
+html[data-theme="midnight-teal"],
+html[data-theme="violet-dusk"],
+html[data-theme="forest-night"] {
+    --background: var(--bg-primary);
+    --foreground: var(--text-primary);
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-surface);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--text-primary);
+    --primary-foreground: var(--bg-primary);
+    --secondary: var(--bg-secondary);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-secondary);
+    --muted-foreground: var(--text-secondary);
+    --accent: var(--bg-secondary);
+    --accent-foreground: var(--text-primary);
+    --destructive: var(--semantic-error);
+    --border: var(--border-secondary);
+    --input: var(--border-secondary);
+    --ring: var(--accent-primary);
+    --sidebar: var(--bg-primary);
+    --sidebar-foreground: var(--text-primary);
+    --sidebar-primary: var(--accent-primary);
+    --sidebar-primary-foreground: var(--bg-primary);
+    --sidebar-accent: var(--bg-secondary);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: var(--border-primary);
+    --sidebar-ring: var(--accent-primary);
+}
+
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -372,7 +412,7 @@ hr {
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: var(--border-primary);
-    border-radius: 10px;
+    border-radius: 0;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -380,11 +420,11 @@ hr {
 }
 
 /* Toast Styles with Semantic Colors */
+/* Relleno plano + borde del estado: el matiz comunica el estado, sin degradados ni resplandores */
 :is(.toaster-toast-success) {
-    background: linear-gradient(135deg, rgba(52, 160, 106, 0.95) 0%, rgba(38, 122, 82, 0.95) 100%) !important;
-    color: #ffffff !important;
-    border: 2px solid #34a06a !important;
-    box-shadow: 0 8px 32px rgba(52, 160, 106, 0.3) !important;
+    background: #1d2b23 !important;
+    color: #e8f5ee !important;
+    border: 1px solid var(--semantic-success) !important;
 }
 
 :is(.toaster-toast-success) svg {
@@ -393,10 +433,9 @@ hr {
 }
 
 :is(.toaster-toast-error) {
-    background: linear-gradient(135deg, rgba(229, 72, 77, 0.95) 0%, rgba(185, 50, 55, 0.95) 100%) !important;
-    color: #ffffff !important;
-    border: 2px solid #e5484d !important;
-    box-shadow: 0 8px 32px rgba(229, 72, 77, 0.3) !important;
+    background: #2e1a1c !important;
+    color: #fbe9ea !important;
+    border: 1px solid var(--semantic-error) !important;
 }
 
 :is(.toaster-toast-error) svg {
@@ -405,10 +444,9 @@ hr {
 }
 
 :is(.toaster-toast-warning) {
-    background: linear-gradient(135deg, rgba(240, 160, 44, 0.95) 0%, rgba(210, 130, 20, 0.95) 100%) !important;
-    color: #1c1b18 !important;
-    border: 2px solid #f0a02c !important;
-    box-shadow: 0 8px 32px rgba(240, 160, 44, 0.3) !important;
+    background: #2e2415 !important;
+    color: #fdf3e3 !important;
+    border: 1px solid var(--semantic-warning) !important;
 }
 
 :is(.toaster-toast-warning) svg {
@@ -417,10 +455,9 @@ hr {
 }
 
 :is(.toaster-toast-info) {
-    background: linear-gradient(135deg, rgba(255, 107, 69, 0.95) 0%, rgba(224, 78, 40, 0.95) 100%) !important;
-    color: #ffffff !important;
-    border: 2px solid #ff6b45 !important;
-    box-shadow: 0 8px 32px rgba(255, 107, 69, 0.3) !important;
+    background: #2b1d19 !important;
+    color: #fdeae5 !important;
+    border: 1px solid var(--semantic-info) !important;
 }
 
 :is(.toaster-toast-info) svg {
@@ -440,18 +477,17 @@ hr {
 
 ::-webkit-scrollbar-track {
     background: var(--bg-surface);
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb {
     background: #505050;
-    border-radius: 4px;
+    border-radius: 0;
     cursor: pointer;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #707070;
-    box-shadow: 0 0 6px rgba(112, 112, 112, 0.4);
 }
 
 ::-webkit-scrollbar-thumb:active {
@@ -471,12 +507,12 @@ input::-webkit-scrollbar {
 
 input::-webkit-scrollbar-track {
     background: var(--bg-secondary);
-    border-radius: 3px;
+    border-radius: 0;
 }
 
 input::-webkit-scrollbar-thumb {
     background: #505050;
-    border-radius: 3px;
+    border-radius: 0;
 }
 
 input::-webkit-scrollbar-thumb:hover {
@@ -646,18 +682,16 @@ li, ul, ol,
     letter-spacing: -0.02em;
 }
 
-/* Glassmorphism & Bento shadows styling helpers */
+/* Panel translúcido: la elevación se comunica con el borde, sin sombras grandes */
 .glass-panel {
     background: rgba(var(--bg-surface-rgb), 0.65) !important;
     backdrop-filter: blur(14px) saturate(120%);
     -webkit-backdrop-filter: blur(14px) saturate(120%);
     border: 1px solid var(--border-primary) !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
 
 .glass-panel:hover {
     border-color: rgba(var(--accent-primary-rgb), 0.2) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* ============================================

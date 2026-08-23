@@ -94,12 +94,12 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
     <>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
-        <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) p-4 md:p-8">
+        <div className="bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) p-4 md:p-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl md:text-2xl font-black text-(--text-primary) tracking-tight uppercase">
+            <h2 className="text-xl md:text-2xl font-semibold text-(--text-primary) tracking-tight">
               {initialData ? t("purchaseForm.edit") : t("purchaseForm.new")}
             </h2>
-            <button onClick={() => { resetForm(); onClose(); }} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
+            <button onClick={() => { resetForm(); onClose(); }} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-none transition-colors group">
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
             </button>
           </div>
@@ -174,12 +174,12 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
             {/* Live installment preview */}
             {preview !== null && (
-              <div className="md:col-span-2 flex items-center gap-3 p-4 rounded-xl border"
+              <div className="md:col-span-2 flex items-center gap-3 p-4 rounded-none border"
                 style={{ backgroundColor: 'rgba(var(--accent-primary-rgb),0.06)', borderColor: 'rgba(var(--accent-primary-rgb),0.2)' }}>
                 <Calculator size={20} style={{ color: 'var(--accent-primary)' }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>{t("purchaseForm.monthlyPayment")}</p>
-                  <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>
+                  <p className="text-xs font-medium tracking-wide" style={{ color: 'var(--text-secondary)' }}>{t("purchaseForm.monthlyPayment")}</p>
+                  <p className="text-2xl font-semibold" style={{ color: 'var(--accent-primary)' }}>
                     ${fmtCurrency(preview)}
                     <span className="text-sm font-normal ml-2" style={{ color: 'var(--text-secondary)' }}>
                       × {formData.installments} = ${formatMoney(money(preview).times(Number(formData.installments)))}
@@ -191,11 +191,11 @@ export const CardPurchaseModal = ({ isOpen, onClose, onSubmit, isLoading = false
 
             <div className="flex gap-3 pt-2 col-span-1 md:col-span-2">
               <button type="button" onClick={() => { resetForm(); onClose(); }}
-                className="flex-1 px-4 py-3 bg-(--bg-surface) border-2 border-(--text-secondary) text-(--text-primary) rounded-lg hover:border-(--text-primary) transition-colors font-bold uppercase tracking-wider text-sm">
+                className="flex-1 px-4 py-3 bg-(--bg-surface) border border-(--text-secondary) text-(--text-primary) rounded-none hover:border-(--text-primary) transition-colors font-semibold text-sm">
                 {t("purchaseForm.cancel")}
               </button>
               <button type="submit" disabled={isLoading}
-                className="flex-1 px-4 py-3 bg-(--accent-primary) text-(--text-inverted) rounded-lg hover:bg-(--accent-hover) transition-colors transition-transform font-bold uppercase tracking-wider shadow-lg disabled:opacity-50 hover:-translate-y-0.5 text-sm">
+                className="flex-1 px-4 py-3 bg-(--accent-primary) text-(--text-inverted) rounded-none hover:bg-(--accent-hover) transition-colors font-semibold disabled:opacity-50 text-sm">
                 {isLoading ? (initialData ? t("purchaseForm.updating") : t("purchaseForm.creating")) : (initialData ? t("purchaseForm.update") : t("purchaseForm.create"))}
               </button>
             </div>

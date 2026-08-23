@@ -18,7 +18,7 @@ export const SavingsGoalsHeader = ({
 }: SavingsGoalsHeaderProps) => (
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div>
-      <h1 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: 'var(--text-primary)' }}>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
         {t('savingsGoals.title') || 'Savings Goals'}
       </h1>
       <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -41,7 +41,7 @@ export const SavingsGoalsHeader = ({
 
       <button
         onClick={onCreateGoal}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-opacity hover:opacity-90"
+        className="flex items-center gap-2 px-4 py-2 rounded-none font-semibold text-sm transition-opacity hover:opacity-90"
         style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
       >
         <Plus size={18} />

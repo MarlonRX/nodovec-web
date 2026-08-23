@@ -49,7 +49,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 transition-opacity duration-300">
         <div
-          className="rounded-3xl shadow-2xl border p-8 text-center relative overflow-hidden"
+          className="rounded-none shadow-2xl border p-8 text-center relative overflow-hidden"
           style={{
             backgroundColor: 'var(--bg-surface)',
             borderColor: 'var(--border-primary)',
@@ -73,7 +73,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
             </div>
 
             <h2
-              className="text-3xl font-black mb-2 tracking-tight"
+              className="text-3xl font-semibold mb-2 tracking-tight"
               style={{ color: 'var(--text-primary)' }}
             >
               {t('savingsGoals.congratulations') || 'Congratulations!'}
@@ -90,13 +90,13 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
               {goal.name}
             </p>
 
-            <p className="text-4xl font-black mb-6" style={{ color: 'var(--semantic-success)' }}>
+            <p className="text-4xl font-semibold mb-6" style={{ color: 'var(--semantic-success)' }}>
               {formatCurrency(goal.target_amount)}
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-6">
               <span
-                className="px-4 py-2 rounded-full text-sm font-semibold"
+                className="px-4 py-2 rounded-none text-sm font-semibold"
                 style={{ backgroundColor: 'var(--semantic-success-rgb, 16 185 129)', color: 'var(--semantic-success)' }}
               >
                 ✓ {t('savingsGoals.goalCompleted') || 'Goal Completed'}
@@ -105,7 +105,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
 
             <button
               onClick={onClose}
-              className="w-full px-6 py-4 rounded-xl font-bold uppercase tracking-wider text-sm shadow-lg transition-opacity transition-transform hover:opacity-90 active:scale-[0.98]"
+              className="w-full px-6 py-4 rounded-none font-semibold text-sm transition-opacity active:scale-[0.98]"
               style={{
                 backgroundColor: goal.color,
                 color: '#FFFFFF',

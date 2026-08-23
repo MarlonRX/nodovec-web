@@ -50,7 +50,7 @@ export function LanguageSelector({ fullWidth }: { fullWidth?: boolean } = {}) {
         <div className="relative language-selector">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center ${fullWidth ? 'justify-between w-full' : ''} space-x-2 px-3 py-2 text-sm font-medium rounded-md focus:outline-none transition-colors duration-200 hover:bg-amber-600/10`}
+                className={`flex items-center ${fullWidth ? 'justify-between w-full' : ''} space-x-2 px-3 py-2 text-sm font-medium rounded-none focus:outline-none transition-colors duration-200 hover:bg-amber-600/10`}
                 style={{
                     color: 'var(--text-secondary)',
                 }}
@@ -75,7 +75,7 @@ export function LanguageSelector({ fullWidth }: { fullWidth?: boolean } = {}) {
 
             {isOpen && (
                 <div
-                    className={`absolute mt-2 rounded-md shadow-lg focus:outline-none z-50 ${fullWidth ? 'left-0 right-0 w-full' : 'right-0 w-48'}`}
+                    className={`absolute mt-2 rounded-none shadow-lg focus:outline-none z-50 ${fullWidth ? 'left-0 right-0 w-full' : 'right-0 w-48'}`}
                     style={{
                         backgroundColor: 'var(--bg-surface)',
                         border: `1px solid var(--border-primary)`,

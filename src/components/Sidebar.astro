@@ -30,7 +30,7 @@ const t = (key: string) => translate(key, lang);
     >
         <!-- Logo Icon -->
         <div
-            class="logo-icon shrink-0 p-1.5 rounded-md border"
+            class="logo-icon shrink-0 p-1.5 rounded-none border"
             style={`background: var(--accent-primary); border-color: var(--bg-surface);`}
         >
             <svg
@@ -67,7 +67,7 @@ const t = (key: string) => translate(key, lang);
             <a
                 href="/"
                 id="sidebar-dashboard"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-200 group"
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="home" />
@@ -82,7 +82,7 @@ const t = (key: string) => translate(key, lang);
             <a
                 href="/financings"
                 id="sidebar-financings"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-200 group"
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="financing" />
@@ -95,7 +95,7 @@ const t = (key: string) => translate(key, lang);
             <a
                 href="/transactions/table"
                 id="sidebar-transactions"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-200 group"
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="transactions" />
@@ -111,7 +111,7 @@ const t = (key: string) => translate(key, lang);
             <a
                 href="/savings-goals/table"
                 id="sidebar-savings-goals"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-200 group"
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="savings" />
@@ -127,7 +127,7 @@ const t = (key: string) => translate(key, lang);
             <a
                 href="/preferences"
                 id="sidebar-preferences"
-                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group"
+                class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-200 group"
                 style={`color: var(--text-secondary);`}
             >
                 <SidebarIcons client:load icon="preferences" />
@@ -185,9 +185,10 @@ const t = (key: string) => translate(key, lang);
     }
 
     .sidebar-link.active {
-        border-left: 4px solid;
+        border-left: 4px solid var(--accent-primary);
         padding-left: calc(1rem - 4px);
-        background: rgba(212, 175, 55, 0.1);
+        background: rgba(var(--accent-primary-rgb), 0.1);
+        color: var(--text-primary);
     }
 
     .sidebar-header {
@@ -240,7 +241,7 @@ const t = (key: string) => translate(key, lang);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 0.5rem;
+        border-radius: 0;
         padding: 0.5rem;
     }
 

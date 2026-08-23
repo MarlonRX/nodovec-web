@@ -36,7 +36,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ t }) => (
       </p>
       <a
         href="/transactions/table"
-        className="inline-block px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors hover:opacity-90"
+        className="inline-block px-5 py-2.5 rounded-none text-sm font-semibold transition-colors hover:opacity-90"
         style={{
           backgroundColor: "var(--accent-primary)",
           color: "var(--text-inverted)",

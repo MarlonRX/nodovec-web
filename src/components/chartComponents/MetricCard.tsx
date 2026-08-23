@@ -10,18 +10,17 @@ const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
     return (
         <div
-            className="animate-fade-up rounded-2xl p-5 sm:p-6 transition-transform duration-300 hover:-translate-y-0.5"
+            className="animate-fade-up rounded-none p-5 sm:p-6"
             style={{
                 backgroundColor: "var(--bg-surface)",
                 border: "1px solid var(--border-primary)",
-                boxShadow: "var(--shadow-sm)",
             }}
         >
             <div className="flex flex-col h-full justify-between">
                 <div>
                     <div className="flex justify-between items-start mb-3">
                         <h3
-                            className="text-xs font-semibold uppercase tracking-wider"
+                            className="text-xs font-semibold tracking-wide"
                             style={{ color: 'var(--text-secondary)' }}
                         >
                             {title}

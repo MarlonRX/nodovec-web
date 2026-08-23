@@ -136,13 +136,13 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
     <>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col transition-opacity duration-300">
-        <div className="bg-(--bg-surface) rounded-2xl shadow-2xl border border-(--border-primary) flex flex-col overflow-hidden">
+        <div className="bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-(--border-primary) shrink-0">
             <div>
-              <h2 className="text-xl font-black text-(--text-primary) uppercase tracking-tight">{card.name} •••• {card.last_four}</h2>
-              <p className="text-xs text-(--text-tertiary) uppercase font-bold tracking-widest">{card.bank} · {t('cards.typeCredit')}</p>
+              <h2 className="text-xl font-semibold text-(--text-primary) tracking-tight">{card.name} •••• {card.last_four}</h2>
+              <p className="text-xs text-(--text-tertiary) font-bold tracking-wide">{card.bank} · {t('cards.typeCredit')}</p>
             </div>
-            <button onClick={handleClose} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-full transition-colors group">
+            <button onClick={handleClose} aria-label={t('common.close')} className="p-2 hover:bg-(--bg-hover) rounded-none transition-colors group">
               <X className="w-6 h-6 text-(--text-secondary) group-hover:rotate-90 transition-transform" />
             </button>
           </div>
@@ -153,8 +153,8 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
               { label: t('purchases.available'), value: available != null ? `$${formatMoney(available)}` : '—', color: available != null && !available.isNegative() ? 'var(--semantic-success)' : 'var(--semantic-error)' }
             ].map(({ label, value, color }) => (
               <div key={`purchase-metric-${label}`} className="p-3 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-(--text-tertiary)">{label}</p>
-                <p className="font-black text-lg" style={{ color }}>{value}</p>
+                <p className="text-[10px] font-medium tracking-wide text-(--text-tertiary)">{label}</p>
+                <p className="font-semibold text-lg" style={{ color }}>{value}</p>
               </div>
             ))}
           </div>
@@ -162,15 +162,15 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
           <div className="flex-1 overflow-y-auto p-4 md:p-6">
             {!showForm && (
               <button onClick={() => { setEditingPurchase(null); resetForm(); setShowForm(true); }}
-                className="group flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider shadow bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) hover:-translate-y-0.5 transition-colors transition-transform mb-4">
+                className="group flex items-center gap-2 px-4 py-2 rounded-none font-bold text-sm tracking-wider shadow bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) transition-colors mb-4">
                 <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
                 {t('purchases.addPurchase')}
               </button>
             )}
 
             {showForm && (
-              <div className="mb-6 p-4 rounded-xl border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
-                <h3 className="text-sm font-black uppercase tracking-wider text-(--text-primary) mb-4">
+              <div className="mb-6 p-4 rounded-none border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                <h3 className="text-sm font-semibold tracking-wider text-(--text-primary) mb-4">
                   {editingPurchase ? t('purchases.editPurchase') : t('purchases.newPurchase')}
                 </h3>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -191,21 +191,21 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                   <MyInput label={t('purchases.labelCategory')} name="category" value={formData.category} onChange={handleChange} placeholder="e.g., Electronics" className={editingPurchase ? "" : "sm:col-span-1"} />
 
                   {preview !== null && (
-                    <div className="sm:col-span-2 flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb),0.06)', border: '1px solid rgba(var(--accent-primary-rgb),0.2)' }}>
+                    <div className="sm:col-span-2 flex items-center gap-2 p-3 rounded-none" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb),0.06)', border: '1px solid rgba(var(--accent-primary-rgb),0.2)' }}>
                       <Calculator size={16} style={{ color: 'var(--accent-primary)' }} />
                       <span className="text-xs text-(--text-secondary)">{t('purchases.monthlyPayment')}:</span>
-                      <span className="font-black" style={{ color: 'var(--accent-primary)' }}>${fmt(preview)}</span>
+                      <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>${fmt(preview)}</span>
                        <span className="text-xs text-(--text-secondary)">× {formData.installments} = ${formatMoney(money(preview).times(Number(formData.installments || '1')))}</span>
                     </div>
                   )}
 
                   <div className="sm:col-span-2 flex gap-2 pt-1">
                     <button type="button" onClick={() => { setShowForm(false); setEditingPurchase(null); resetForm(); }}
-                      className="flex-1 px-3 py-2 border-2 border-(--text-secondary) text-(--text-primary) rounded-lg font-bold uppercase text-xs tracking-wider hover:border-(--text-primary) transition-colors">
+                      className="flex-1 px-3 py-2 border border-(--text-secondary) text-(--text-primary) rounded-none font-bold text-xs tracking-wider hover:border-(--text-primary) transition-colors">
                       {t('purchases.cancel')}
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                      className="flex-1 px-3 py-2 bg-(--accent-primary) text-(--text-inverted) rounded-lg font-bold uppercase text-xs tracking-wider disabled:opacity-50 hover:-translate-y-0.5 transition-transform">
+                      className="flex-1 px-3 py-2 bg-(--accent-primary) text-(--text-inverted) rounded-none font-bold text-xs tracking-wider disabled:opacity-50 transition-transform">
                       {isSubmitting ? t('purchases.saving') : (editingPurchase ? t('purchases.update') : t('purchases.create'))}
                     </button>
                   </div>
@@ -225,11 +225,11 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                   const done = p.current_installment > p.installments;
                   const pct = Math.min(Math.round((p.current_installment - 1) / p.installments * 100), 100);
                   return (
-                    <div key={p.uuid} className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+                    <div key={p.uuid} className="flex items-center gap-3 p-3 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <p className="font-bold text-sm text-(--text-primary) truncate">{p.description}</p>
-                          <span className="font-black text-sm shrink-0" style={{ color: done ? 'var(--semantic-success)' : 'var(--accent-primary)' }}>
+                          <span className="font-semibold text-sm shrink-0" style={{ color: done ? 'var(--semantic-success)' : 'var(--accent-primary)' }}>
                             {done ? t('purchases.paidOff') : `$${fmt(p.installment_amount)}/mo`}
                           </span>
                         </div>
@@ -243,16 +243,16 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                       <div className="flex gap-1 shrink-0">
                         {!done && (
                           <button onClick={() => handleAdvance(p)} title={t('purchases.advanceTitle')}
-                            className="p-1.5 rounded-lg text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)] transition-colors">
+                            className="p-1.5 rounded-none text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)] transition-colors">
                             <RotateCw className="w-3.5 h-3.5" />
                           </button>
                         )}
                         <button onClick={() => handleEdit(p)} title={t('common.edit')}
-                          className="p-1.5 rounded-lg text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover) transition-colors">
+                          className="p-1.5 rounded-none text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover) transition-colors">
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => setPurchaseToDelete(p.uuid)} title={t('common.delete')}
-                          className="p-1.5 rounded-lg text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)] transition-colors">
+                          className="p-1.5 rounded-none text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)] transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -264,11 +264,11 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
                   <div className="flex justify-center gap-2 pt-2">
                     <button disabled={currentPage === 1} onClick={() => { setCurrentPage(p => p - 1); loadPurchases(currentPage - 1); }}
                       aria-label="Previous page"
-                      className="px-3 py-1 text-xs rounded-lg border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">‹</button>
+                      className="px-3 py-1 text-xs rounded-none border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">‹</button>
                     <span className="text-xs text-(--text-secondary) px-2 py-1">{currentPage}/{totalPages}</span>
                     <button disabled={currentPage === totalPages} onClick={() => { setCurrentPage(p => p + 1); loadPurchases(currentPage + 1); }}
                       aria-label="Next page"
-                      className="px-3 py-1 text-xs rounded-lg border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">›</button>
+                      className="px-3 py-1 text-xs rounded-none border border-(--border-primary) disabled:opacity-40 hover:bg-(--bg-hover) transition-colors">›</button>
                   </div>
                 )}
               </div>

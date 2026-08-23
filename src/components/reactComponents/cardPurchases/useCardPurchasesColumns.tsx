@@ -67,16 +67,16 @@ export function useCardPurchasesColumns({ t, onAdvance, onEdit, onDelete }: UseC
           {row.current_installment <= row.installments && (
             <button onClick={(e) => { e.stopPropagation(); onAdvance(row); }}
               title={t('purchaseForm.advanceInstallment')}
-              className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)]">
+              className="p-1.5 rounded-none transition-colors text-(--text-secondary) hover:text-(--semantic-success) hover:bg-[rgba(52,168,83,0.1)]">
               <RotateCw className="w-4 h-4" />
             </button>
           )}
           <button onClick={(e) => { e.stopPropagation(); onEdit(row); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)" title={t('purchaseForm.editTitle')}>
+            className="p-1.5 rounded-none transition-colors text-(--text-secondary) hover:text-(--accent-primary) hover:bg-(--bg-hover)" title={t('purchaseForm.editTitle')}>
             <Pencil className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); onDelete(row); }}
-            className="p-1.5 rounded-lg transition-colors text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]" title={t('purchaseForm.deleteTitle')}>
+            className="p-1.5 rounded-none transition-colors text-(--text-secondary) hover:text-(--semantic-error) hover:bg-[rgba(207,102,121,0.1)]" title={t('purchaseForm.deleteTitle')}>
             <Trash2 className="w-4 h-4" />
           </button>
         </div>

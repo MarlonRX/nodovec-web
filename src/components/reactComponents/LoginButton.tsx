@@ -103,7 +103,7 @@ export function LoginButton() {
             <div className="flex items-center space-x-3">
                 <a
                     href="/login"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-full transition-shadow duration-200 shadow-md hover:shadow-lg font-medium text-sm focus:outline-none"
+                    className="flex items-center space-x-2 px-4 py-2 rounded-none transition-shadow duration-200 shadow-md hover:shadow-lg font-medium text-sm focus:outline-none"
                     style={{
                         background: 'var(--accent-primary)',
                         color: 'var(--text-inverted)',
@@ -151,7 +151,7 @@ export function LoginButton() {
                     />
                 ) : (
                     <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-(--border-primary)"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border border-(--border-primary)"
                         style={{
                             backgroundColor: "rgba(255, 255, 255, 0.06)",
                         }}
@@ -181,7 +181,7 @@ export function LoginButton() {
                             background: 'var(--bg-surface)',
                             borderColor: 'var(--border-primary)'
                         }}
-                        className="rounded-xl shadow-2xl border p-6 space-y-4"
+                        className="rounded-none shadow-2xl border p-6 space-y-4"
                     >
                         {/* Avatar grande */}
                         <div className="flex justify-center mb-4">

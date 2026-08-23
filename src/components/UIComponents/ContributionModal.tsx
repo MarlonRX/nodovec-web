@@ -80,7 +80,7 @@ export const ContributionModal = ({
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div
-          className="rounded-2xl shadow-2xl border p-6 md:p-8"
+          className="rounded-none shadow-2xl border p-6 md:p-8"
           style={{
             backgroundColor: 'var(--bg-surface)',
             borderColor: 'var(--border-primary)',
@@ -90,7 +90,7 @@ export const ContributionModal = ({
             <div className="flex items-center gap-3">
               <TrendingUp size={24} style={{ color: goal.color }} />
               <h2
-                className="text-xl font-black tracking-tight"
+                className="text-xl font-semibold tracking-tight"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {t('savingsGoals.contributeTitle') || 'Add Contribution'}
@@ -99,7 +99,7 @@ export const ContributionModal = ({
             <button
               onClick={handleClose}
               aria-label={t('common.close')}
-              className="p-2 rounded-full transition-colors hover:bg-[var(--bg-hover)]"
+              className="p-2 rounded-none transition-colors hover:bg-[var(--bg-hover)]"
               style={{ color: 'var(--text-secondary)' }}
             >
               <X className="w-6 h-6" />
@@ -157,7 +157,7 @@ export const ContributionModal = ({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 rounded-lg border-2 transition-colors font-bold uppercase tracking-wider text-sm"
+                className="flex-1 px-4 py-3 rounded-none border-2 transition-colors font-semibold text-sm"
                 style={{
                   borderColor: 'var(--text-secondary)',
                   color: 'var(--text-primary)',
@@ -168,7 +168,7 @@ export const ContributionModal = ({
               <button
                 type="submit"
                 disabled={isLoading || amountValue <= 0}
-                className="flex-1 px-4 py-3 rounded-lg font-bold uppercase tracking-wider text-sm shadow-lg disabled:opacity-50 transition-opacity"
+                className="flex-1 px-4 py-3 rounded-none font-semibold text-sm disabled:opacity-50 transition-opacity"
                 style={{
                   backgroundColor: goal.color,
                   color: '#FFFFFF',
@@ -185,10 +185,10 @@ export const ContributionModal = ({
             <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--border-primary)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <History size={18} style={{ color: 'var(--text-secondary)' }} />
-                <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                   {t('savingsGoals.contributionHistory') || 'Contribution History'}
                 </h3>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
                   {goal.contributions.length}
                 </span>
               </div>
@@ -196,7 +196,7 @@ export const ContributionModal = ({
                 {goal.contributions.map((contribution) => (
                   <div
                     key={contribution.uuid}
-                    className="flex items-center justify-between p-3 rounded-lg"
+                    className="flex items-center justify-between p-3 rounded-none"
                     style={{ backgroundColor: 'var(--bg-secondary)' }}
                   >
                     <div className="flex-1 min-w-0">

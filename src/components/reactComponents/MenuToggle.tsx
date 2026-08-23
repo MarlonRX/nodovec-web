@@ -31,12 +31,12 @@ export function MenuToggle({ isSidebar = false }: MenuToggleProps) {
         <button
             id={buttonId}
             onClick={handleClick}
-            className="p-2 rounded-md transition-colors duration-200 focus:outline-none touch-target"
+            className="p-2 rounded-none transition-colors duration-200 focus:outline-none touch-target"
             style={{
                 color: "var(--accent-primary)",
             }}
             onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.1)";
+                e.currentTarget.style.backgroundColor = "rgba(var(--accent-primary-rgb), 0.1)";
                 e.currentTarget.style.color = "var(--accent-hover)";
             }}
             onMouseLeave={(e) => {

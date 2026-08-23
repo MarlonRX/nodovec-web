@@ -265,7 +265,7 @@ export function UserComponent() {
   return (
     <>
       <div className="mb-6">
-        <h1 className="text-3xl font-black mb-2" style={{color: 'var(--text-primary)'}}>
+        <h1 className="text-3xl font-semibold mb-2" style={{color: 'var(--text-primary)'}}>
           {t("preferences.title")}
         </h1>
         <p className="text-sm" style={{color: 'var(--text-secondary)'}}>
@@ -273,7 +273,7 @@ export function UserComponent() {
         </p>
       </div>
       <div className="flex justify-center w-full">
-        <section className="max-w-6xl w-full mx-auto rounded-xl p-8 md:p-10 bg-(--bg-surface) border border-(--border-primary) shadow-md">
+        <section className="max-w-6xl w-full mx-auto rounded-none p-8 md:p-10 bg-(--bg-surface) border border-(--border-primary) shadow-md">
           <div className="mt-4">
             <div className="w-full min-w-0">
               <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-8 items-start w-full">
@@ -433,8 +433,8 @@ function SavePreferencesBar({ hasUnsavedChanges, isSaving, onSave, t }: SavePref
         <button
           onClick={onSave}
           disabled={!hasUnsavedChanges || isSaving}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors mr-10 ${hasUnsavedChanges && !isSaving
-            ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer hover:-translate-y-0.5'
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-none font-semibold text-sm tracking-wider transition-colors mr-10 ${hasUnsavedChanges && !isSaving
+            ? 'bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover) cursor-pointer'
             : 'bg-(--bg-secondary) text-(--text-tertiary) cursor-not-allowed opacity-50'
             }`}
         >

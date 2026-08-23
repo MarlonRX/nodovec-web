@@ -146,9 +146,9 @@ export const CardPurchasesPage = ({ cardUuid, initialData = null }: CardPurchase
     <div className="table-page-container">
       {loading && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-100 flex items-center justify-center">
-          <div className="bg-(--bg-surface) p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+          <div className="bg-(--bg-surface) p-6 rounded-none shadow-2xl flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-t-(--accent-primary) border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-            <p className="font-bold text-sm uppercase tracking-widest text-(--text-secondary)">{t('purchaseForm.loading')}</p>
+            <p className="font-bold text-sm text-(--text-secondary)">{t('purchaseForm.loading')}</p>
           </div>
         </div>
       )}
@@ -158,18 +158,18 @@ export const CardPurchasesPage = ({ cardUuid, initialData = null }: CardPurchase
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <a href="/cards/table" className="text-(--text-tertiary) text-xs font-bold uppercase tracking-widest hover:text-(--accent-primary) transition-colors">{t('purchaseForm.breadCrumbCards')}</a>
+              <a href="/cards/table" className="text-(--text-tertiary) text-xs font-medium tracking-wide hover:text-(--accent-primary) transition-colors">{t('purchaseForm.breadCrumbCards')}</a>
               <ChevronRight size={12} className="text-(--text-tertiary)" />
-              <span className="text-(--text-secondary) text-xs font-bold uppercase tracking-widest">{t('purchaseForm.breadCrumbPurchases')}</span>
+              <span className="text-(--text-secondary) text-xs font-medium tracking-wide">{t('purchaseForm.breadCrumbPurchases')}</span>
             </div>
-            <h2 className="text-2xl md:text-4xl font-black text-(--text-primary) tracking-tight uppercase flex items-center gap-3">
+            <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight flex items-center gap-3">
               <CreditCard size={28} style={{ color: 'var(--accent-primary)' }} />
               {card ? `${card.name} •••• ${card.last_four}` : t('purchaseForm.title')}
             </h2>
-            {card && <p className="text-(--text-tertiary) text-xs uppercase font-bold tracking-widest mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
+            {card && <p className="text-(--text-tertiary) text-xs font-bold mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
           </div>
           <button onClick={openCreateModal}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-xl transition-colors transition-transform font-bold text-xs md:text-sm uppercase tracking-wider shadow-lg hover:-translate-y-0.5 w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
+            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-none transition-colors font-semibold text-xs md:text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
             {t('purchaseForm.addPurchase')}
           </button>
@@ -178,17 +178,17 @@ export const CardPurchasesPage = ({ cardUuid, initialData = null }: CardPurchase
         {/* Summary cards */}
         {data.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.monthlyDue')}</p>
-              <p className="text-2xl font-black" style={{ color: 'var(--accent-primary)' }}>${formatNumber(totalMonthlyDue)}</p>
+            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.monthlyDue')}</p>
+              <p className="text-2xl font-semibold" style={{ color: 'var(--accent-primary)' }}>${formatNumber(totalMonthlyDue)}</p>
             </div>
-            <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.active')}</p>
-              <p className="text-2xl font-black text-(--text-primary)">{activePurchases}</p>
+            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.active')}</p>
+              <p className="text-2xl font-semibold text-(--text-primary)">{activePurchases}</p>
             </div>
-            <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-              <p className="text-xs font-bold uppercase tracking-widest text-(--text-tertiary) mb-1">{t('purchaseForm.completed')}</p>
-              <p className="text-2xl font-black" style={{ color: 'var(--semantic-success)' }}>{completedPurchases}</p>
+            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.completed')}</p>
+              <p className="text-2xl font-semibold" style={{ color: 'var(--semantic-success)' }}>{completedPurchases}</p>
             </div>
           </div>
         )}

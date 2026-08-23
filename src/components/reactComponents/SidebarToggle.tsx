@@ -34,12 +34,12 @@ export function SidebarToggle() {
     return (
         <button
             onClick={toggleSidebar}
-            className="w-full h-full flex items-center justify-center transition-colors duration-200 focus:outline-none rounded-2xl"
+            className="w-full h-full flex items-center justify-center transition-colors duration-200 focus:outline-none rounded-none"
             style={{
                 color: "var(--accent-primary)",
             }}
             onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = `rgba(212, 175, 55, 0.15)`;
+                e.currentTarget.style.backgroundColor = `rgba(var(--accent-primary-rgb), 0.15)`;
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "transparent";

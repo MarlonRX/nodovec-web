@@ -83,7 +83,7 @@ export const MyDatePicker = React.forwardRef<HTMLButtonElement, MyDatePickerProp
               type="button"
               data-empty={!value}
               className={cn(
-                "w-full flex items-center justify-between rounded-lg px-3 py-2.5 text-sm outline-none transition-colors",
+                "w-full flex items-center justify-between rounded-none px-3 py-2.5 text-sm outline-none transition-colors",
                 "border border-(--border-primary) bg-(--bg-secondary) text-(--text-primary)",
                 "hover:border-(--accent-primary)/50 focus:ring-2 focus:ring-(--accent-primary)/30 focus:border-(--accent-primary)",
                 "data-[empty=true]:text-(--text-tertiary)",

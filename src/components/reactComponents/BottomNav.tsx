@@ -96,7 +96,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentPath = '/' }) => {
             <a
               key={item.key}
               href={item.path}
-              className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors min-w-[60px] min-h-[44px]"
+              className="flex flex-col items-center justify-center gap-1 p-2 rounded-none transition-colors min-w-[60px] min-h-[44px]"
               style={{
                 backgroundColor: active ? 'rgba(var(--accent-primary-rgb), 0.125)' : 'transparent',
                 color: active ? 'var(--accent-primary)' : 'var(--text-secondary)',
@@ -110,7 +110,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentPath = '/' }) => {
         })}
         <a
           href="/preferences"
-          className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors min-w-[60px] min-h-[44px]"
+          className="flex flex-col items-center justify-center gap-1 p-2 rounded-none transition-colors min-w-[60px] min-h-[44px]"
           style={{
             color: currentPath.startsWith('/preferences') ? 'var(--accent-primary)' : 'var(--text-secondary)',
           }}

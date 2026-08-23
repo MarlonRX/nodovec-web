@@ -46,11 +46,11 @@ interface StatusBadgeProps {
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, t }) => {
   switch (status) {
     case 'completed':
-      return <span className="px-2 py-1 text-xs font-semibold rounded-full" style={{ backgroundColor: 'var(--semantic-success-rgb, 16 185 129)', color: 'var(--semantic-success, #10B981)' }}>{t('savingsGoals.completed') || 'Completed'}</span>;
+      return <span className="px-2 py-1 text-xs font-semibold rounded-none" style={{ backgroundColor: 'var(--semantic-success-rgb, 16 185 129)', color: 'var(--semantic-success, #10B981)' }}>{t('savingsGoals.completed') || 'Completed'}</span>;
     case 'paused':
-      return <span className="px-2 py-1 text-xs font-semibold rounded-full" style={{ color: 'var(--semantic-warning, #F59E0B)' }}>{t('savingsGoals.paused') || 'Paused'}</span>;
+      return <span className="px-2 py-1 text-xs font-semibold rounded-none" style={{ color: 'var(--semantic-warning, #F59E0B)' }}>{t('savingsGoals.paused') || 'Paused'}</span>;
     case 'cancelled':
-      return <span className="px-2 py-1 text-xs font-semibold rounded-full" style={{ color: 'var(--semantic-error, #EF4444)' }}>{t('savingsGoals.cancelled') || 'Cancelled'}</span>;
+      return <span className="px-2 py-1 text-xs font-semibold rounded-none" style={{ color: 'var(--semantic-error, #EF4444)' }}>{t('savingsGoals.cancelled') || 'Cancelled'}</span>;
     default:
       return null;
   }
@@ -58,7 +58,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, t }) => {
 
 const GoalHeader: React.FC<GoalHeaderProps> = ({ goal, IconComponent, t }) => (
   <div className="flex items-center gap-4 mb-5">
-    <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${goal.color}20` }}>
+    <div className="w-16 h-16 rounded-none flex items-center justify-center shrink-0" style={{ backgroundColor: `${goal.color}20` }}>
       {IconComponent && <IconComponent size={32} style={{ color: goal.color }} />}
     </div>
     <div className="flex-1 min-w-0">
@@ -271,7 +271,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
 
   return (
     <div
-      className="rounded-xl p-6 transition-shadow hover:shadow-lg relative group"
+      className="rounded-none p-6 transition-shadow hover:shadow-lg relative group"
       style={{
         backgroundColor: 'var(--bg-surface)',
         border: `1.5px solid var(--border-primary)`,
@@ -295,7 +295,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
       {goal.status === 'active' && (
         <button
           onClick={handleCardClick}
-          className="w-full py-2.5 rounded-xl font-semibold transition-opacity flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] text-sm"
+          className="w-full py-2.5 rounded-none font-semibold transition-opacity flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] text-sm"
           style={{ backgroundColor: goal.color, color: '#FFFFFF' }}
         >
           <Plus size={16} />
@@ -345,7 +345,7 @@ const CompactSavingsGoalCard: React.FC<CompactSavingsGoalCardProps> = ({
 }) => (
   <button
     type="button"
-    className="rounded-xl p-4 transition-shadow hover:shadow-md cursor-pointer text-left w-full"
+    className="rounded-none p-4 transition-shadow hover:shadow-md cursor-pointer text-left w-full"
     style={{
       backgroundColor: 'var(--bg-surface)',
       border: `1.5px solid var(--border-primary)`,
@@ -420,7 +420,7 @@ const GoalMenu: React.FC<GoalMenuProps> = ({
           onClick={onClose}
         />
         <div
-          className="absolute right-0 top-10 z-50 py-2 rounded-xl shadow-xl min-w-[160px]"
+          className="absolute right-0 top-10 z-50 py-2 rounded-none shadow-xl min-w-[160px]"
           style={{
             backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-primary)',
@@ -499,12 +499,12 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
   <div className="mt-4">
     <button
       onClick={onToggleHistory}
-      className="w-full flex items-center justify-between p-2.5 rounded-lg transition-colors hover:bg-[var(--bg-hover)]"
+      className="w-full flex items-center justify-between p-2.5 rounded-none transition-colors hover:bg-[var(--bg-hover)]"
       style={{ color: 'var(--text-secondary)' }}
     >
       <div className="flex items-center gap-2">
         <History size={14} />
-        <span className="text-xs font-bold uppercase tracking-wider">
+        <span className="text-xs font-semibold">
           {t('savingsGoals.contributionHistory') || 'History'}
         </span>
         <span className="text-xs font-medium px-1.5 py-0.5 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
@@ -519,7 +519,7 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
         {contributions.map((contribution) => (
           <div
             key={contribution.uuid}
-            className="group/item flex items-center justify-between p-2.5 rounded-lg"
+            className="group/item flex items-center justify-between p-2.5 rounded-none"
             style={{ backgroundColor: 'var(--bg-secondary)' }}
           >
             {editingContribution === contribution.uuid ? (
@@ -547,14 +547,14 @@ const ContributionHistory: React.FC<ContributionHistoryProps> = ({
                     type="button"
                     onClick={() => onSaveEdit(contribution.uuid)}
                     disabled={isSubmitting}
-                    className="px-3 py-1.5 rounded-lg bg-(--accent-primary) text-(--text-inverted) text-xs font-bold uppercase tracking-wider hover:bg-(--accent-hover) transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 rounded-none bg-(--accent-primary) text-(--text-inverted) text-xs font-semibold hover:bg-(--accent-hover) transition-colors disabled:opacity-50"
                   >
                     {t('common.save') || 'Save'}
                   </button>
                   <button
                     type="button"
                     onClick={onCancelEdit}
-                    className="px-3 py-1.5 rounded-lg border-2 border-(--text-secondary) text-(--text-primary) text-xs font-bold uppercase tracking-wider hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
+                    className="px-3 py-1.5 rounded-none border border-(--text-secondary) text-(--text-primary) text-xs font-semibold hover:border-(--text-primary) hover:bg-(--bg-secondary) transition-colors"
                   >
                     {t('common.cancel') || 'Cancel'}
                   </button>

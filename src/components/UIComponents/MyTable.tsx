@@ -29,8 +29,8 @@ const SortableHeader = ({
       tabIndex={isSortable ? 0 : undefined}
       onClick={() => isSortable && onSort(sortKey)}
       onKeyDown={(e) => { if (isSortable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onSort(sortKey); } }}
-      className={`flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-transform duration-200 ${isSortable
-          ? 'cursor-pointer hover:text-(--accent-secondary) hover:-translate-y-0.5'
+      className={`flex items-center gap-2 font-medium tracking-wide text-xs transition-transform duration-200 ${isSortable
+          ? 'cursor-pointer hover:text-(--accent-secondary)'
           : 'cursor-default'
         }`}
     >
@@ -165,22 +165,22 @@ export const MyTable = <T extends { id: string | number }>({
     <div className="w-full h-full flex flex-col gap-3 md:gap-6 flex-1 overflow-hidden">
       {/* Table Wrapper */}
       <div className={`w-full overflow-hidden flex-1 flex flex-col ${variant === 'excel'
-          ? 'rounded-none border-2 border-(--border-primary) shadow-none'
-          : 'rounded-lg md:rounded-xl bg-(--bg-surface) shadow-md border border-(--border-primary) hover:shadow-lg transition-shadow duration-300'
+          ? 'rounded-none border border-(--border-primary) shadow-none'
+          : 'rounded-none md:rounded-none bg-(--bg-surface) border border-(--border-primary)'
         }`}>
         <div className={variant === 'excel' ? "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar" : "flex-1 overflow-x-auto overflow-y-auto custom-scrollbar"}>
           <table className={`w-full border-collapse min-w-full ${variant === 'excel' ? 'bg-(--bg-surface)' : 'bg-(--bg-surface)'}`}>
             <thead className={variant === 'excel' ? "sticky top-0 z-10" : ""}>
               <tr className={`${variant === 'excel'
                   ? 'bg-(--bg-secondary) border-b-2 border-(--border-primary) h-10'
-                  : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) border-b-2 border-(--accent-primary) h-14'
+                  : 'bg-(--bg-secondary) border-b border-(--border-primary) h-14'
                 }`}>
                 {columns.map(column => (
                   <th
                     key={String(column.key)}
                     className={`${variant === 'excel'
                         ? 'px-2 md:px-4 py-2 text-(--text-secondary) font-bold border-r border-(--border-primary) last:border-r-0 sticky top-0 bg-(--bg-secondary) z-20 shadow-[0_1px_0_var(--border-primary)]'
-                        : 'px-3 md:px-6 py-2 md:py-4 text-(--text-inverted) bg-transparent border-none whitespace-nowrap'
+                        : 'px-3 md:px-6 py-2 md:py-4 text-(--text-secondary) bg-transparent border-none whitespace-nowrap'
                       }`}
                   >
                     <SortableHeader
@@ -202,10 +202,10 @@ export const MyTable = <T extends { id: string | number }>({
                     key={row.id}
                     className={`${variant === 'excel'
                         ? 'border-b border-(--border-primary) hover:bg-(--border-light)'
-                        : `border-b border-(--border-primary) transition-transform duration-200 cursor-pointer group ${index % 2 === 0
+                        : `border-b border-(--border-primary) transition-colors duration-200 cursor-pointer group ${index % 2 === 0
                           ? 'bg-(--bg-surface)'
-                          : 'bg-[rgba(212,175,55,0.03)]'
-                        } hover:bg-[rgba(var(--accent-primary-rgb),0.08)] hover:translate-x-1 hover:shadow-[inset_3px_0_0_0_var(--accent-primary)]`
+                          : 'bg-[rgba(var(--accent-primary-rgb),0.03)]'
+                        } hover:bg-[rgba(var(--accent-primary-rgb),0.08)] hover:shadow-[inset_3px_0_0_0_var(--accent-primary)]`
                       }`}
                     onClick={() => onRowClick?.(row.id)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick?.(row.id); } }}
@@ -248,9 +248,9 @@ export const MyTable = <T extends { id: string | number }>({
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
             aria-label="Previous page"
-            className={`p-1.5 md:p-2 rounded-lg transition-transform duration-300 ${currentPage === 1
-                ? 'bg-(--border-primary) text-(--text-tertiary) cursor-not-allowed opacity-50'
-                : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md'
+            className={`p-1.5 md:p-2 rounded-none transition-colors duration-200 ${currentPage === 1
+                ? 'text-(--text-tertiary) cursor-not-allowed opacity-50'
+                : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--border-light) hover:text-(--text-primary)'
               }`}
           >
             <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
@@ -265,9 +265,9 @@ export const MyTable = <T extends { id: string | number }>({
                 <button
                   key={page}
                   onClick={() => onPageChange(page as number)}
-                  className={`w-7 h-7 md:w-10 md:h-10 rounded-lg font-semibold text-xs md:text-sm transition-transform duration-300 ${currentPage === page
-                      ? 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) shadow-lg scale-105'
-                      : 'bg-(--border-primary) text-(--text-secondary) hover:bg-(--border-secondary) hover:-translate-y-0.5'
+                  className={`w-7 h-7 md:w-10 md:h-10 rounded-none font-semibold text-xs md:text-sm transition-colors duration-200 ${currentPage === page
+                      ? 'bg-(--accent-primary) text-(--text-inverted)'
+                      : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--border-light) hover:text-(--text-primary)'
                     }`}
                 >
                   {page}
@@ -281,9 +281,9 @@ export const MyTable = <T extends { id: string | number }>({
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
             aria-label="Next page"
-            className={`p-1.5 md:p-2 rounded-lg transition-transform duration-300 ${currentPage === totalPages
-                ? 'bg-(--border-primary) text-(--text-tertiary) cursor-not-allowed opacity-50'
-                : 'bg-linear-to-r from-(--accent-primary) to-(--accent-hover) text-(--text-inverted) hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md'
+            className={`p-1.5 md:p-2 rounded-none transition-colors duration-200 ${currentPage === totalPages
+                ? 'text-(--text-tertiary) cursor-not-allowed opacity-50'
+                : 'bg-(--bg-secondary) text-(--text-secondary) hover:bg-(--border-light) hover:text-(--text-primary)'
               }`}
           >
             <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
