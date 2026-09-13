@@ -1,5 +1,11 @@
 # NodoVec Web
 
+<img src='docs/assets/nodovec-hero.webp' width='800'>
+
+NodoVec es una herramienta web de gestión de finanzas personales. Permite registrar y filtrar transacciones, administrar tarjetas de crédito y sus compras, solicitar financiamientos y seguir metas de ahorro, todo con un dashboard de indicadores y gráficos (vista mensual y anual). Incluye autenticación contra una API backend, modo demo, multi-idioma (español/inglés), selección de moneda y temas personalizables, construido con Astro 5 + React 18.
+
+<video src='docs/assets/nodovec-promo.webm' controls width='800' loop></video>
+
 NodoVec frontend built with Astro 5 + React 18.
 
 ## Stack
