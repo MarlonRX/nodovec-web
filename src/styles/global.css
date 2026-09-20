@@ -185,12 +185,17 @@ b {
     font-weight: 700;
 }
 
-a {
-    color: var(--accent);
-}
+/* Dentro de @layer base para que las utilidades text-* de Tailwind puedan
+   sobrescribirlo. Sin layer, esta regla ganaría siempre a la cascada de
+   Tailwind v4 y los enlaces con color propio se verían con --accent. */
+@layer base {
+    a {
+        color: var(--accent);
+    }
 
-a:hover {
-    color: var(--accent);
+    a:hover {
+        color: var(--accent);
+    }
 }
 
 p {

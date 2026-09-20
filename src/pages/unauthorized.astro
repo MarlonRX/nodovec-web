@@ -31,17 +31,17 @@ const t = (key: string) => translate(key, lang);
         <!-- Log In Button -->
         <a
           href="/login"
-          class="w-full block text-center px-6 py-3.5 bg-(--accent-primary) text-(--text-inverted) font-semibold text-sm rounded-none hover:bg-(--accent-hover) transition-colors"
+          class="w-full block text-center px-6 py-3.5 bg-(--accent-primary) font-semibold text-sm rounded-none hover:bg-(--accent-hover) transition-colors"
         >
-          {t("unauthorized.goLogin")}
+          <span class="text-(--text-inverted)">{t("unauthorized.goLogin")}</span>
         </a>
 
         <!-- Try Demo Button -->
         <a
           href="/demo"
-          class="w-full block text-center px-6 py-3.5 bg-(--bg-secondary) text-(--text-primary) font-semibold text-sm rounded-none border border-(--border-primary) hover:border-(--accent-primary) transition-colors"
+          class="w-full block text-center px-6 py-3.5 bg-(--bg-surface) border border-(--border-primary) font-semibold text-sm rounded-none hover:bg-(--bg-secondary) transition-colors"
         >
-          {t("unauthorized.goDemo")}
+          <span class="text-(--text-primary)">{t("unauthorized.goDemo")}</span>
         </a>
 
         <!-- Divider -->
