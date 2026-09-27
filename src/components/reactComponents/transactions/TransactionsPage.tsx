@@ -14,6 +14,7 @@ import { TransactionsFilters } from "./TransactionsFilters";
 import { TransactionsTotals } from "./TransactionsTotals";
 import { CardPaymentsPanel } from "./CardPaymentsPanel";
 import { TransactionsEmptyState } from "./TransactionsEmptyState";
+import BentoGrid from "@/components/reactbits/MagicBento";
 import { useTransactionsData, type TransactionsInitialData } from "./useTransactionsData";
 import { useTransactionColumns } from "./useTransactionsColumns";
 import { buildCategoryOptions } from "./transactionsConstants";
@@ -191,7 +192,7 @@ export const TransactionsPage = ({ onRowClick, itemsPerPage = 10, initialData = 
         </div>
       )}
 
-      <div className="flex flex-col gap-6 mb-6 border-b border-(--border-primary) pb-6 shrink-0">
+      <BentoGrid className="flex flex-col gap-6 mb-6 border-b border-(--border-primary) pb-6 shrink-0">
         <TransactionsHeader
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
@@ -220,7 +221,7 @@ export const TransactionsPage = ({ onRowClick, itemsPerPage = 10, initialData = 
         />
         <TransactionsTotals totals={totals} fixedTotals={fixedTotals} t={t} />
         {activePurchases.length > 0 && <CardPaymentsPanel purchases={activePurchases} t={t} />}
-      </div>
+      </BentoGrid>
 
       <div className="flex-1 overflow-hidden flex flex-col items-center justify-center">
         {!error && data.length > 0 && (

@@ -16,6 +16,7 @@ import type { SavingsGoal } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SavingsGoalsHeader } from "./SavingsGoalsHeader";
 import { SavingsGoalsEmptyState } from "./SavingsGoalsEmptyState";
+import BentoGrid from "@/components/reactbits/MagicBento";
 
 interface SavingsGoalsPageProps {
   initialData?: SavingsGoal[] | null;
@@ -222,11 +223,12 @@ export const SavingsGoalsPage = ({ initialData = null }: SavingsGoalsPageProps) 
       {goals.length === 0 ? (
         <SavingsGoalsEmptyState filterStatus={filterStatus} onCreateGoal={openCreateModal} t={t} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {goals.map((goal) => (
+        <BentoGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {goals.map((goal, idx) => (
             <SavingsGoalCard
               key={goal.uuid}
               goal={goal}
+              index={idx}
               onContribute={openContributeModal}
               onEdit={openEditModal}
               onDelete={handleDeleteGoal}
@@ -234,7 +236,7 @@ export const SavingsGoalsPage = ({ initialData = null }: SavingsGoalsPageProps) 
               onRefresh={loadGoals}
             />
           ))}
-        </div>
+        </BentoGrid>
       )}
 
       <ContributionModal

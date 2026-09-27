@@ -4,11 +4,13 @@ import {
   ComposedChartComponent,
   DonutChart,
   StackedBarChart,
-  ProgressBar,
   MetricCard,
 } from "../../chartComponents";
 import { RecentTransactions } from "./RecentTransactions";
+import { Panel, PanelTitle } from "./Panel";
+import AnimatedProgressCircle from "../AnimatedProgressCircle";
 import { translateCategory } from "../../../lib/categoryTranslator";
+import { formatCurrency, formatCurrencyWithSign } from "../../../lib/currencyFormatter";
 import type {
   MonthlyData,
   AccountBalance,
@@ -35,6 +37,12 @@ interface YearViewProps {
     income: string;
     expenses: string;
     cashFlow: string;
+    raw: {
+      balance: number;
+      income: number;
+      expenses: number;
+      cashFlow: number;
+    };
     subtitle: string;
   };
   incomeTrend: { value: number; isPositive: boolean };
@@ -121,6 +129,10 @@ const MetricCardsRow: React.FC<MetricCardsRowProps> = ({
     <MetricCard
       title={t("dashboard.totalBalance")}
       value={metrics.balance}
+      valueNumeric={metrics.raw.balance}
+      formatValue={(n) => formatCurrency(n)}
+      accent="var(--accent-primary)"
+      delay={0}
       trend={cashFlowTrend}
       subtitle={t("dashboard.accumulatedBalance")}
       chart={<SimpleLineChart data={monthlyData} dataKey="cashFlow" height={100} showLegend={false} showGrid={false} showTooltip={false} yAxisDomain={cashFlowDomain} />}
@@ -128,6 +140,10 @@ const MetricCardsRow: React.FC<MetricCardsRowProps> = ({
     <MetricCard
       title={t("dashboard.avgMonthlyIncome")}
       value={metrics.income}
+      valueNumeric={metrics.raw.income}
+      formatValue={(n) => formatCurrency(n)}
+      accent="var(--semantic-success)"
+      delay={80}
       trend={incomeTrend}
       subtitle={t("dashboard.averagePerMonth")}
       chart={<SimpleLineChart data={monthlyData} dataKey="income" height={100} showLegend={false} showGrid={false} showTooltip={false} yAxisDomain={incomeDomain} />}
@@ -135,6 +151,10 @@ const MetricCardsRow: React.FC<MetricCardsRowProps> = ({
     <MetricCard
       title={t("dashboard.avgMonthlyExpenses")}
       value={metrics.expenses}
+      valueNumeric={metrics.raw.expenses}
+      formatValue={(n) => formatCurrency(n)}
+      accent="var(--semantic-error)"
+      delay={160}
       trend={expensesTrend}
       subtitle={t("dashboard.averagePerMonth")}
       chart={<SimpleLineChart data={monthlyData} dataKey="expenses" height={100} showLegend={false} showGrid={false} showTooltip={false} yAxisDomain={expensesDomain} />}
@@ -142,6 +162,10 @@ const MetricCardsRow: React.FC<MetricCardsRowProps> = ({
     <MetricCard
       title={t("dashboard.netCashFlow")}
       value={metrics.cashFlow}
+      valueNumeric={metrics.raw.cashFlow}
+      formatValue={(n) => formatCurrencyWithSign(n, true)}
+      accent="var(--semantic-info)"
+      delay={240}
       trend={cashFlowTrend}
       subtitle={t("dashboard.averagePerMonth")}
       chart={<SimpleLineChart data={monthlyData} dataKey="cashFlow" height={100} showLegend={false} showGrid={false} showTooltip={false} yAxisDomain={cashFlowDomain} />}
@@ -168,18 +192,11 @@ const MainChartsSection: React.FC<MainChartsSectionProps> = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
-      <div
-className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
-        style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-      >
-        <div className="mb-4 sm:mb-6 lg:mb-8">
-          <h2 className="text-lg sm:text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-            {t("dashboard.financialOverview")}
-          </h2>
-          <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-            {t("dashboard.yearToDateAnalysis")}
-          </p>
-        </div>
+      <Panel className="lg:col-span-2" delay={120}>
+        <PanelTitle
+          title={t("dashboard.financialOverview")}
+          subtitle={t("dashboard.yearToDateAnalysis")}
+        />
         <ComposedChartComponent
           data={monthlyData}
           xAxisKey="month"
@@ -193,15 +210,10 @@ className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
           ]}
           height={280}
         />
-      </div>
+      </Panel>
 
-      <div
-        className="rounded-none p-4 sm:p-5 lg:p-7"
-        style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-      >
-        <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
-          {t("dashboard.expenseCategories")}
-        </h2>
+      <Panel delay={200}>
+        <PanelTitle title={t("dashboard.expenseCategories")} />
         <DonutChart data={expenseCategories} colors={COLORS} innerRadius={40} outerRadius={70} paddingAngle={2} height={180} showLegend={false} />
         <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
           {expenseCategories.map((cat, idx) => (
@@ -212,13 +224,13 @@ className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
                   {translateCategory(cat.name, t)}
                 </span>
               </div>
-              <span className="font-semibold flex-shrink-0 ml-2" style={{ color: "var(--text-primary)" }}>
+              <span className="font-semibold flex-shrink-0 ml-2 font-financial" style={{ color: "var(--text-primary)" }}>
                 {cat.value}%
               </span>
             </div>
           ))}
         </div>
-      </div>
+      </Panel>
     </div>
   );
 };
@@ -235,13 +247,8 @@ const BottomSection: React.FC<BottomSectionProps> = ({
   t,
 }) => (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
-    <div
-      className="rounded-none p-4 sm:p-5 lg:p-7"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-    >
-      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 lg:mb-8" style={{ color: "var(--text-primary)" }}>
-        {t("dashboard.accountBalances")}
-      </h2>
+    <Panel delay={160}>
+      <PanelTitle title={t("dashboard.accountBalances")} />
       <StackedBarChart
         data={accountBalancesData}
         xAxisKey="month"
@@ -253,17 +260,12 @@ const BottomSection: React.FC<BottomSectionProps> = ({
         ]}
         height={240}
       />
-    </div>
+    </Panel>
 
-    <div
-      className="lg:col-span-2 rounded-none p-4 sm:p-5 lg:p-7"
-      style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-    >
-      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
-        {t("dashboard.recentTransactions")}
-      </h2>
+    <Panel className="lg:col-span-2" delay={240}>
+      <PanelTitle title={t("dashboard.recentTransactions")} />
       <RecentTransactions transactions={recentTransactions} t={t} />
-    </div>
+    </Panel>
   </div>
 );
 
@@ -273,38 +275,35 @@ interface ActiveSavingsGoalPanelProps {
 }
 
 const ActiveSavingsGoalPanel: React.FC<ActiveSavingsGoalPanelProps> = ({ goal, t }) => (
-  <div
-    className="rounded-none p-4 sm:p-5 lg:p-7"
-    style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-primary)" }}
-  >
-    <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: "var(--text-primary)" }}>
-      {t("dashboard.savingsTarget")}
-    </h2>
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: goal.color }}>
-            <span className="text-white text-xs font-bold">{goal.progress_percentage}%</span>
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm sm:text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>
-              {goal.name}
-            </p>
-            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-              {goal.formatted_progress.current} / {goal.formatted_progress.target}
-            </p>
-          </div>
-        </div>
-        <ProgressBar label="" value={goal.current_amount} max={goal.target_amount} color={goal.color} />
-      </div>
-      <div
-        className="p-3 sm:p-4 rounded-none"
-        style={{ backgroundColor: "rgba(var(--semantic-success-rgb), 0.06)", border: "1px solid rgba(var(--semantic-success-rgb), 0.19)" }}
-      >
-        <p className="text-xs sm:text-sm" style={{ color: "var(--semantic-success)" }}>
-          {t("dashboard.onTrack")}
+  <Panel delay={200}>
+    <PanelTitle title={t("dashboard.savingsTarget")} />
+    <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
+      <AnimatedProgressCircle
+        percentage={goal.progress_percentage}
+        size={110}
+        strokeWidth={9}
+        color={goal.color}
+      />
+      <div className="flex-1 w-full min-w-0">
+        <p className="text-sm sm:text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>
+          {goal.name}
         </p>
+        <p className="text-xs sm:text-sm font-financial mb-4" style={{ color: "var(--text-secondary)" }}>
+          {goal.formatted_progress.current} / {goal.formatted_progress.target}
+        </p>
+        <div
+          className="inline-flex items-center gap-2 p-2.5 sm:p-3 rounded-none"
+          style={{ backgroundColor: "rgba(var(--semantic-success-rgb), 0.06)", border: "1px solid rgba(var(--semantic-success-rgb), 0.19)" }}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full animate-pulse"
+            style={{ backgroundColor: "var(--semantic-success)" }}
+          />
+          <p className="text-xs sm:text-sm m-0" style={{ color: "var(--semantic-success)" }}>
+            {t("dashboard.onTrack")}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
+  </Panel>
 );

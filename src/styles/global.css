@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./reactbits.css";
 @import "../config/theme.light.css";
 @import "../config/theme.dark.css";
 @import "../config/theme.custom.css";

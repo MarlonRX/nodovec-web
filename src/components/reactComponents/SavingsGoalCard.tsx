@@ -30,6 +30,7 @@ interface SavingsGoalCardProps {
   onToggleStatus: (goal: SavingsGoal) => void;
   onRefresh?: () => void;
   compact?: boolean;
+  index?: number;
 }
 
 interface GoalHeaderProps {
@@ -121,6 +122,7 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
   onToggleStatus,
   onRefresh,
   compact = false,
+  index = 0,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -271,11 +273,8 @@ const SavingsGoalCard: React.FC<SavingsGoalCardProps> = ({
 
   return (
     <div
-      className="rounded-none p-6 transition-shadow hover:shadow-lg relative group"
-      style={{
-        backgroundColor: 'var(--bg-surface)',
-        border: `1.5px solid var(--border-primary)`,
-      }}
+      className="card card--border-glow glass-panel animate-fade-up rounded-none p-6 transition-shadow hover:shadow-lg relative group"
+      style={{ animationDelay: `${index * 60}ms` }}
     >
       <GoalMenu
         goal={goal}
@@ -345,11 +344,7 @@ const CompactSavingsGoalCard: React.FC<CompactSavingsGoalCardProps> = ({
 }) => (
   <button
     type="button"
-    className="rounded-none p-4 transition-shadow hover:shadow-md cursor-pointer text-left w-full"
-    style={{
-      backgroundColor: 'var(--bg-surface)',
-      border: `1.5px solid var(--border-primary)`,
-    }}
+    className="card card--border-glow glass-panel rounded-none p-4 transition-shadow hover:shadow-md cursor-pointer text-left w-full relative"
     onClick={handleCardClick}
   >
     <div className="flex items-center gap-3">

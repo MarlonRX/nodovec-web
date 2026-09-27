@@ -1,5 +1,7 @@
 import { Plus } from "lucide-react";
 import { MySelect } from "@/components/UIComponents/MySelect";
+import SplitText from "@/components/reactbits/SplitText";
+import SparkButton from "@/components/reactbits/SparkButton";
 
 interface TransactionsHeaderProps {
   selectedYear: string;
@@ -24,7 +26,9 @@ export const TransactionsHeader = ({
 }: TransactionsHeaderProps) => (
   <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
     <div className="flex flex-col gap-1">
-      <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">{t('transactions.title')}</h2>
+      <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">
+        <SplitText text={t('transactions.title')} />
+      </h2>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
         <span className="text-(--text-tertiary) text-xs font-bold tracking-wide">{t('transactions.selectPeriod')}</span>
         <div className="flex gap-2 md:gap-3">
@@ -33,9 +37,8 @@ export const TransactionsHeader = ({
         </div>
       </div>
     </div>
-    <button onClick={onAdd} className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-none transition-colors font-semibold text-xs md:text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)" title={t('transactions.addTransaction')}>
-      <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
-      <span>{t('transactions.addTransaction')}</span>
-    </button>
+    <SparkButton onClick={onAdd} icon={<Plus className="w-5 h-5 md:w-6 md:h-6" />} title={t('transactions.addTransaction')}>
+      {t('transactions.addTransaction')}
+    </SparkButton>
   </div>
 );

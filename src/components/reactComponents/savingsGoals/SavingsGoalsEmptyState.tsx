@@ -1,4 +1,5 @@
 import { Plus, Target } from "lucide-react";
+import SparkButton from "@/components/reactbits/SparkButton";
 
 interface SavingsGoalsEmptyStateProps {
   filterStatus: 'all' | 'active' | 'completed';
@@ -13,23 +14,17 @@ export const SavingsGoalsEmptyState = ({ filterStatus, onCreateGoal, t }: Saving
 
   return (
     <div
-      className="rounded-none p-12 text-center"
-      style={{ backgroundColor: 'var(--bg-surface)', border: '1.5px solid var(--border-primary)' }}
+      className="glass-panel animate-fade-up rounded-none p-12 text-center"
     >
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-        <Target size={32} style={{ color: 'var(--text-secondary)' }} />
+      <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse" style={{ backgroundColor: 'rgba(var(--accent-primary-rgb), 0.1)' }}>
+        <Target size={32} style={{ color: 'var(--accent-primary)' }} />
       </div>
       <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{emptyState.title}</h3>
       <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>{emptyState.description}</p>
       {filterStatus !== 'completed' && (
-        <button
-          onClick={onCreateGoal}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-none font-semibold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
-        >
-          <Plus size={18} />
+        <SparkButton onClick={onCreateGoal} icon={<Plus size={18} />} wrapperClassName="w-auto mx-auto" className="px-6 py-3 text-sm">
           {t('savingsGoals.addFirstGoal') || 'Add Your First Goal'}
-        </button>
+        </SparkButton>
       )}
     </div>
   );

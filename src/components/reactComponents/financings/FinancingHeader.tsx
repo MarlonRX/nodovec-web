@@ -1,5 +1,10 @@
 import { Plus } from "lucide-react";
-import { formatMoney } from "@/utils/cardFinance";
+import SplitText from "@/components/reactbits/SplitText";
+import ShinyText from "@/components/reactbits/ShinyText";
+import SparkButton from "@/components/reactbits/SparkButton";
+import CountUp from "@/components/reactbits/CountUp";
+import BentoGrid, { BentoCard } from "@/components/reactbits/MagicBento";
+import { formatNumber } from "@/lib/currencyFormatter";
 import { FinancingTip } from "./FinancingTip";
 
 interface FinancingHeaderProps {
@@ -15,30 +20,36 @@ export function FinancingHeader({ totalSum, activeCount, totalMonthly, onNewPlan
     <div className="flex flex-col gap-4 mb-2 border-b border-(--border-primary) pb-6 shrink-0">
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h2 id="financing-title" className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">{t("financing.title")}</h2>
-          <p className="text-(--text-tertiary) text-sm font-bold tracking-wider">{t("financing.subtitle")}</p>
+          <h2 id="financing-title" className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">
+            <SplitText text={t("financing.title")} />
+          </h2>
+          <ShinyText text={t("financing.subtitle")} speed={4} className="text-sm font-bold tracking-wider inline-block" />
         </div>
-        <button onClick={onNewPlan}
-          className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2.5 md:py-3 rounded-none transition-colors font-semibold text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
-          <Plus className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-90" />
-          <span>{t("financing.newPlan")}</span>
-        </button>
+        <SparkButton onClick={onNewPlan} icon={<Plus className="w-5 h-5 md:w-6 md:h-6" />}>
+          {t("financing.newPlan")}
+        </SparkButton>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 md:gap-4">
-        <div className="flex flex-col items-center md:items-start p-3 md:p-4 rounded-none bg-(--bg-secondary)">
+      <BentoGrid className="grid grid-cols-3 gap-2 md:gap-4">
+        <BentoCard className="glass-panel animate-fade-up rounded-none flex flex-col items-center md:items-start p-3 md:p-4" enableStars={false}>
           <span className="text-(--text-tertiary) text-xs font-bold tracking-wider mb-1 flex items-center">{t("financing.totalFinanced")}<FinancingTip text={t("financing.tipFinanced")} /></span>
-          <span className="font-semibold text-base md:text-lg text-(--text-primary)">${formatMoney(totalSum)}</span>
-        </div>
-        <div className="flex flex-col items-center md:items-start p-3 md:p-4 rounded-none bg-(--bg-secondary)">
+          <span className="font-semibold font-financial text-base md:text-lg text-(--text-primary)">
+            $<CountUp to={totalSum} format={(n) => formatNumber(n)} duration={1.5} />
+          </span>
+        </BentoCard>
+        <BentoCard className="glass-panel animate-fade-up rounded-none flex flex-col items-center md:items-start p-3 md:p-4" style={{ animationDelay: "80ms" }} enableStars={false}>
           <span className="text-(--text-tertiary) text-xs font-bold tracking-wider mb-1 flex items-center">{t("financing.activePlans")}<FinancingTip text={t("financing.tipActive")} /></span>
-          <span className="font-semibold text-base md:text-lg" style={{ color: 'var(--accent-primary)' }}>{activeCount}</span>
-        </div>
-        <div className="flex flex-col items-center md:items-start p-3 md:p-4 rounded-none bg-(--bg-secondary)">
+          <span className="font-semibold font-financial text-base md:text-lg" style={{ color: 'var(--accent-primary)' }}>
+            <CountUp to={activeCount} format={(n) => String(Math.round(n))} duration={1.2} />
+          </span>
+        </BentoCard>
+        <BentoCard className="glass-panel animate-fade-up rounded-none flex flex-col items-center md:items-start p-3 md:p-4" style={{ animationDelay: "160ms" }} enableStars={false}>
           <span className="text-(--text-tertiary) text-xs font-bold tracking-wider mb-1 flex items-center">{t("financing.monthlyPayment")}<FinancingTip text={t("financing.tipMonthlyDue")} /></span>
-          <span className="font-semibold text-base md:text-lg" style={{ color: totalMonthly > 0 ? 'var(--accent-primary)' : 'var(--text-primary)' }}>${formatMoney(totalMonthly)}</span>
-        </div>
-      </div>
+          <span className="font-semibold font-financial text-base md:text-lg" style={{ color: totalMonthly > 0 ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
+            $<CountUp to={totalMonthly} format={(n) => formatNumber(n)} duration={1.5} />
+          </span>
+        </BentoCard>
+      </BentoGrid>
     </div>
   );
 }

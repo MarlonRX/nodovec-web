@@ -9,7 +9,7 @@ const myButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: "hover:opacity-90",
+        default: "hover:opacity-90 btn-shine",
         outline: "border hover:opacity-80",
         ghost: "hover:opacity-80",
         link: "underline-offset-4 hover:underline",

@@ -17,6 +17,7 @@ import { FinancingHeader } from "./FinancingHeader";
 import { FinancingLoadingOverlay, FinancingEmptyState } from "./FinancingStates";
 import { FinancingListItem } from "./FinancingListItem";
 import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
+import BentoGrid from "@/components/reactbits/MagicBento";
 
 type ScheduleRow = { installment_number: number; due_date: string; principal_amount: string; interest_amount: string; total_amount: string; remaining_principal: string };
 type Summary = { installment_amount: string; total_interest: string; total_amount: string };
@@ -303,17 +304,18 @@ export const FinancingsPage = ({ initialData = null }: FinancingsPageProps) => {
         )}
 
         {!loading && financings.length > 0 && (
-          <div className="w-full flex flex-col gap-3">
-            {financings.map((f: Financing) => (
+          <BentoGrid className="w-full flex flex-col gap-3">
+            {financings.map((f: Financing, idx: number) => (
               <FinancingListItem
                 key={f.uuid}
                 financing={f}
+                index={idx}
                 onEdit={openEditModal}
                 onDelete={() => setDeleteConfirm(f)}
                 t={t}
               />
             ))}
-          </div>
+          </BentoGrid>
         )}
       </div>
 

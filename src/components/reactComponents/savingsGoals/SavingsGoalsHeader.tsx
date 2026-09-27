@@ -1,5 +1,8 @@
 import { Plus } from "lucide-react";
 import { MySelect } from "@/components/UIComponents/MySelect";
+import SplitText from "@/components/reactbits/SplitText";
+import ShinyText from "@/components/reactbits/ShinyText";
+import SparkButton from "@/components/reactbits/SparkButton";
 
 interface SavingsGoalsHeaderProps {
   goalCount: number;
@@ -19,11 +22,13 @@ export const SavingsGoalsHeader = ({
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div>
       <h1 className="text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-        {t('savingsGoals.title') || 'Savings Goals'}
+        <SplitText text={t('savingsGoals.title') || 'Savings Goals'} />
       </h1>
-      <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-        {goalCount} {goalCount !== 1 ? t('savingsGoals.goals') || 'goals' : t('savingsGoals.goal') || 'goal'}
-      </p>
+      <ShinyText
+        text={`${goalCount} ${goalCount !== 1 ? t('savingsGoals.goals') || 'goals' : t('savingsGoals.goal') || 'goal'}`}
+        speed={4}
+        className="text-sm mt-1 inline-block"
+      />
     </div>
 
     <div className="flex items-center gap-3">
@@ -39,14 +44,9 @@ export const SavingsGoalsHeader = ({
         ]}
       />
 
-      <button
-        onClick={onCreateGoal}
-        className="flex items-center gap-2 px-4 py-2 rounded-none font-semibold text-sm transition-opacity hover:opacity-90"
-        style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverted)' }}
-      >
-        <Plus size={18} />
+      <SparkButton onClick={onCreateGoal} icon={<Plus size={18} />}>
         {t('savingsGoals.addGoal') || 'Add Goal'}
-      </button>
+      </SparkButton>
     </div>
   </div>
 );

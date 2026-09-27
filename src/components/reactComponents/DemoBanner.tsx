@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import StarBorder from "../reactbits/StarBorder";
 import { translate, getCurrentLanguage, type Language } from "../../i18n";
 
 const DISMISS_KEY = "nodovec_demo_banner_dismissed";
@@ -33,19 +34,22 @@ export function DemoBanner() {
             style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border-primary)" }}
         >
             <div
-                className="w-1.5 h-1.5 rounded-full shrink-0"
+                className="w-1.5 h-1.5 rounded-full shrink-0 animate-pulse"
                 style={{ backgroundColor: "var(--accent-primary)" }}
             />
             <span className="text-xs sm:text-sm" style={{ color: "var(--text-secondary)" }}>
                 {translate("demo.bannerText", lang)}
             </span>
-            <a
+            <StarBorder
+                as="a"
                 href="/register"
-                className="shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "var(--accent-primary)", color: "var(--text-inverted)" }}
+                className="shrink-0"
+                color="var(--accent-primary)"
+                borderColor="rgba(var(--accent-primary-rgb), 0.4)"
+                speed="5s"
             >
-                {translate("demo.cta", lang)}
-            </a>
+                <span className="text-xs whitespace-nowrap">{translate("demo.cta", lang)}</span>
+            </StarBorder>
             <button
                 onClick={dismiss}
                 aria-label="Dismiss"

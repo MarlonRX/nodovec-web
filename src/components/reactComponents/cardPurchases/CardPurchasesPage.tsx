@@ -8,6 +8,10 @@ import { getCards } from "@/services/cardServices";
 import { CardPurchasePaginatedResponseSchema, type CardPurchase, type Card } from "@/schemas/tableSchema";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatNumber } from "@/lib/currencyFormatter";
+import SplitText from "@/components/reactbits/SplitText";
+import SparkButton from "@/components/reactbits/SparkButton";
+import CountUp from "@/components/reactbits/CountUp";
+import BentoGrid, { BentoCard } from "@/components/reactbits/MagicBento";
 import { toast } from "sonner";
 import { useCardPurchasesColumns } from "./useCardPurchasesColumns";
 import { CardPurchasesEmptyState } from "./CardPurchasesEmptyState";
@@ -164,33 +168,37 @@ export const CardPurchasesPage = ({ cardUuid, initialData = null }: CardPurchase
             </div>
             <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight flex items-center gap-3">
               <CreditCard size={28} style={{ color: 'var(--accent-primary)' }} />
-              {card ? `${card.name} •••• ${card.last_four}` : t('purchaseForm.title')}
+              <SplitText text={card ? `${card.name} •••• ${card.last_four}` : t('purchaseForm.title')} />
             </h2>
             {card && <p className="text-(--text-tertiary) text-xs font-bold mt-1">{card.bank} · {t('purchaseForm.creditCard')}</p>}
           </div>
-          <button onClick={openCreateModal}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-none transition-colors font-semibold text-xs md:text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
-            <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
+          <SparkButton onClick={openCreateModal} icon={<Plus className="w-5 h-5" />}>
             {t('purchaseForm.addPurchase')}
-          </button>
+          </SparkButton>
         </div>
 
         {/* Summary cards */}
         {data.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+          <BentoGrid className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <BentoCard className="glass-panel animate-fade-up rounded-none p-4" enableStars={false}>
               <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.monthlyDue')}</p>
-              <p className="text-2xl font-semibold" style={{ color: 'var(--accent-primary)' }}>${formatNumber(totalMonthlyDue)}</p>
-            </div>
-            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              <p className="text-2xl font-semibold font-financial" style={{ color: 'var(--accent-primary)' }}>
+                $<CountUp to={totalMonthlyDue} format={(n) => formatNumber(n)} duration={1.5} />
+              </p>
+            </BentoCard>
+            <BentoCard className="glass-panel animate-fade-up rounded-none p-4" style={{ animationDelay: '80ms' }} enableStars={false}>
               <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.active')}</p>
-              <p className="text-2xl font-semibold text-(--text-primary)">{activePurchases}</p>
-            </div>
-            <div className="p-4 rounded-none" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
+              <p className="text-2xl font-semibold font-financial text-(--text-primary)">
+                <CountUp to={activePurchases} format={(n) => String(Math.round(n))} duration={1.2} />
+              </p>
+            </BentoCard>
+            <BentoCard className="glass-panel animate-fade-up rounded-none p-4" style={{ animationDelay: '160ms' }} enableStars={false}>
               <p className="text-xs font-medium tracking-wide text-(--text-tertiary) mb-1">{t('purchaseForm.completed')}</p>
-              <p className="text-2xl font-semibold" style={{ color: 'var(--semantic-success)' }}>{completedPurchases}</p>
-            </div>
-          </div>
+              <p className="text-2xl font-semibold font-financial" style={{ color: 'var(--semantic-success)' }}>
+                <CountUp to={completedPurchases} format={(n) => String(Math.round(n))} duration={1.2} />
+              </p>
+            </BentoCard>
+          </BentoGrid>
         )}
       </div>
 

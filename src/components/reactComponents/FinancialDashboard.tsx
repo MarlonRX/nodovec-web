@@ -8,6 +8,7 @@ import { DashboardHeader } from "./dashboard/DashboardHeader";
 import { LoadingState } from "./dashboard/LoadingState";
 import { ErrorState } from "./dashboard/ErrorState";
 import { EmptyState } from "./dashboard/EmptyState";
+import BentoGrid from "../reactbits/MagicBento";
 
 // Lazy load view components — only one is rendered at a time
 const YearView = React.lazy(() => import("./dashboard/YearView"));
@@ -141,6 +142,12 @@ const FinancialDashboard = () => {
         income: formatCurrency(annuals.avgMonthlyIncome),
         expenses: formatCurrency(annuals.avgMonthlyExpenses),
         cashFlow: formatCurrencyWithSign(annuals.avgMonthlyCashFlow, true),
+        raw: {
+          balance: totalBalance,
+          income: annuals.avgMonthlyIncome,
+          expenses: annuals.avgMonthlyExpenses,
+          cashFlow: annuals.avgMonthlyCashFlow,
+        },
         subtitle: t("dashboard.annualOverview"),
       };
     } else {
@@ -155,6 +162,12 @@ const FinancialDashboard = () => {
         income: formatCurrency(month.income || 0),
         expenses: formatCurrency(month.expenses || 0),
         cashFlow: formatCurrencyWithSign(month.cashFlow || 0, true),
+        raw: {
+          balance: isFinite(monthBalance) ? monthBalance : 0,
+          income: month.income || 0,
+          expenses: month.expenses || 0,
+          cashFlow: month.cashFlow || 0,
+        },
         subtitle: `${monthlyData[selectedMonth]?.month || "N/A"} ${currentYear}`,
       };
     }
@@ -232,7 +245,7 @@ const FinancialDashboard = () => {
       />
 
       <div className="flex-1 overflow-y-auto w-full">
-        <div className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-32">
+        <BentoGrid className="max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-32">
           <Suspense
             fallback={
               <LoadingState message={t("dashboard.loadingView") || "Loading view..."} />
@@ -272,7 +285,7 @@ const FinancialDashboard = () => {
               />
             )}
           </Suspense>
-        </div>
+        </BentoGrid>
       </div>
     </div>
   );

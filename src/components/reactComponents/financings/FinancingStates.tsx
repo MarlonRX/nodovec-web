@@ -1,4 +1,5 @@
 import { Landmark, Plus } from "lucide-react";
+import SparkButton from "@/components/reactbits/SparkButton";
 
 export function FinancingLoadingOverlay({ t }: { t: (key: string) => string }) {
   return (
@@ -24,11 +25,9 @@ export function FinancingEmptyState({ onNewPlan, t }: { onNewPlan: () => void; t
         <p className="text-(--text-secondary) text-sm md:text-base mb-6">
           {t("financing.noPlansHint")}
         </p>
-        <button onClick={onNewPlan}
-          className="group flex items-center gap-2 px-6 py-3 rounded-none transition-colors font-semibold text-sm mx-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
-          <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
+        <SparkButton onClick={onNewPlan} icon={<Plus className="w-5 h-5" />} wrapperClassName="w-auto mx-auto" className="px-6 py-3 text-sm">
           {t("financing.createFirst")}
-        </button>
+        </SparkButton>
       </div>
     </div>
   );

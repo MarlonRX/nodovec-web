@@ -91,6 +91,10 @@ export interface ProgressBarProps {
 export interface MetricCardProps {
     title: string;
     value: string | number;
+    valueNumeric?: number;
+    formatValue?: (value: number) => string;
+    accent?: string;
+    delay?: number;
     trend?: {
         value: number;
         isPositive: boolean;

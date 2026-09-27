@@ -4,6 +4,9 @@ import { MyTable } from "@/components/UIComponents/MyTable";
 import { CardModal } from "@/components/UIComponents/CardModal";
 import { CardPurchasesModal } from "@/components/UIComponents/CardPurchasesModal";
 import { DeleteConfirmModal } from "@/components/UIComponents/DeleteConfirmModal";
+import SplitText from "@/components/reactbits/SplitText";
+import ShinyText from "@/components/reactbits/ShinyText";
+import SparkButton from "@/components/reactbits/SparkButton";
 import { getCards, createCard, updateCard, deleteCard } from "@/services/cardServices";
 import { CardPaginatedResponseSchema, type Card } from "@/schemas/tableSchema";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -115,14 +118,14 @@ export const CardsPage = ({ initialData = null }: CardsPageProps) => {
       <div className="flex flex-col gap-6 mb-6 border-b border-(--border-primary) pb-6 shrink-0">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">{t('cards.title')}</h2>
-            <p className="text-(--text-tertiary) text-xs font-bold tracking-wide">{t('cards.subtitle')}</p>
+            <h2 className="text-2xl md:text-4xl font-semibold text-(--text-primary) tracking-tight">
+              <SplitText text={t('cards.title')} />
+            </h2>
+            <ShinyText text={t('cards.subtitle')} speed={4} className="text-xs font-bold tracking-wide inline-block" color="var(--text-tertiary)" shineColor="var(--text-primary)" />
           </div>
-          <button onClick={openCreateModal}
-            className="group flex items-center justify-center gap-2 px-4 md:px-8 py-2 md:py-3 rounded-none transition-colors font-semibold text-xs md:text-sm w-full sm:w-auto bg-(--accent-primary) text-(--text-inverted) hover:bg-(--accent-hover)">
-            <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
+          <SparkButton onClick={openCreateModal} icon={<Plus className="w-5 h-5" />}>
             {t('cards.addCard')}
-          </button>
+          </SparkButton>
         </div>
       </div>
 

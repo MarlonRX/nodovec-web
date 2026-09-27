@@ -8,15 +8,16 @@ interface FinancingListItemProps {
   onEdit: (f: Financing) => void;
   onDelete: (f: Financing) => void;
   t: (key: string) => string;
+  index?: number;
 }
 
-export function FinancingListItem({ financing: f, onEdit, onDelete, t }: FinancingListItemProps) {
+export function FinancingListItem({ financing: f, onEdit, onDelete, t, index = 0 }: FinancingListItemProps) {
   const nextPayment = getNextPaymentDate(f.first_payment_date, f.payment_frequency, f.current_installment);
   const isCard = f.type === "card_purchase";
   return (
     <div
-      className="rounded-none p-4 md:p-5 cursor-default"
-      style={{ border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-surface)' }}
+      className="card card--border-glow glass-panel animate-fade-up rounded-none p-4 md:p-5 cursor-default relative"
+      style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
     >
       <div className="flex items-center gap-4">
         <div className="shrink-0">

@@ -1,5 +1,6 @@
 import { CreditCard } from "lucide-react";
 import type { CardPurchase } from "@/schemas/tableSchema";
+import { BentoCard } from "@/components/reactbits/MagicBento";
 import { formatAmount } from "./transactionsConstants";
 
 interface CardPaymentsPanelProps {
@@ -8,7 +9,11 @@ interface CardPaymentsPanelProps {
 }
 
 export const CardPaymentsPanel = ({ purchases, t }: CardPaymentsPanelProps) => (
-  <div className="rounded-none overflow-hidden" style={{ border: '1px solid rgba(var(--accent-primary-rgb),0.2)', backgroundColor: 'rgba(var(--accent-primary-rgb),0.04)' }}>
+  <BentoCard
+    className="animate-fade-up rounded-none overflow-hidden"
+    enableStars={false}
+    style={{ border: '1px solid rgba(var(--accent-primary-rgb),0.2)', backgroundColor: 'rgba(var(--accent-primary-rgb),0.04)' }}
+  >
     <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'rgba(var(--accent-primary-rgb),0.15)' }}>
       <CreditCard size={16} style={{ color: 'var(--accent-primary)' }} />
       <span className="text-xs font-semibold tracking-wide" style={{ color: 'var(--accent-primary)' }}>{t('transactions.cardPaymentsTitle')}</span>
@@ -29,5 +34,5 @@ export const CardPaymentsPanel = ({ purchases, t }: CardPaymentsPanelProps) => (
       <span className="text-xs text-(--text-secondary)">Total monthly: </span>
       <span className="font-semibold text-sm" style={{ color: 'var(--accent-primary)' }}>${formatAmount(purchases.reduce((s, p) => s + p.installment_amount, 0))}</span>
     </div>
-  </div>
+  </BentoCard>
 );

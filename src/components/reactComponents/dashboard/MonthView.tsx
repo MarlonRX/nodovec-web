@@ -3,6 +3,8 @@ import SimpleLineChart from "../../chartComponents/SimpleLineChart";
 import DonutChart from "../../chartComponents/DonutChart";
 import MetricCard from "../../chartComponents/MetricCard";
 import { RecentTransactions } from "./RecentTransactions";
+import { Panel, PanelTitle } from "./Panel";
+import CountUp from "../../reactbits/CountUp";
 import { formatCurrency, formatCurrencyWithSign } from "../../../lib/currencyFormatter";
 import { translateCategory } from "../../../lib/categoryTranslator";
 import type {
@@ -29,6 +31,12 @@ interface MonthViewProps {
     income: string;
     expenses: string;
     cashFlow: string;
+    raw: {
+      balance: number;
+      income: number;
+      expenses: number;
+      cashFlow: number;
+    };
     subtitle: string;
   };
   incomeTrend: { value: number; isPositive: boolean };
@@ -48,7 +56,6 @@ const MonthView: React.FC<MonthViewProps> = ({
   metrics,
   incomeTrend,
   expensesTrend,
-  cashFlowTrend,
   incomeDomain,
   expensesDomain,
   t,
@@ -63,11 +70,14 @@ const MonthView: React.FC<MonthViewProps> = ({
 
   return (
     <>
-      {/* Monthly Metrics - 2 wide columns */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-6 lg:mb-8">
         <MetricCard
           title={t("dashboard.monthlyIncome")}
           value={metrics.income}
+          valueNumeric={month.income || 0}
+          formatValue={(n) => formatCurrency(n)}
+          accent="var(--semantic-success)"
+          delay={0}
           trend={incomeTrend}
           subtitle={t("dashboard.thisMonth")}
           chart={
@@ -85,6 +95,10 @@ const MonthView: React.FC<MonthViewProps> = ({
         <MetricCard
           title={t("dashboard.monthlyExpenses")}
           value={metrics.expenses}
+          valueNumeric={month.expenses || 0}
+          formatValue={(n) => formatCurrency(n)}
+          accent="var(--semantic-error)"
+          delay={80}
           trend={expensesTrend}
           subtitle={t("dashboard.thisMonth")}
           chart={
@@ -101,30 +115,12 @@ const MonthView: React.FC<MonthViewProps> = ({
         />
       </div>
 
-      {/* Monthly Summary and Recent Transactions - Side by Side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-10">
-        {/* Monthly Overview */}
-        <div
-          className="rounded-none p-4 sm:p-5 lg:p-7"
-          style={{
-            backgroundColor: "var(--bg-surface)",
-            border: "1px solid var(--border-primary)",
-          }}
-        >
-          <div className="mb-4 sm:mb-6">
-            <h2
-              className="text-base sm:text-lg lg:text-xl font-bold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              {month.month} {currentYear} {t("dashboard.summary") || "Summary"}
-            </h2>
-            <p
-              className="text-xs sm:text-sm mt-1"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              {t("dashboard.financialBreakdown") || "Financial breakdown"}
-            </p>
-          </div>
+        <Panel delay={120}>
+          <PanelTitle
+            title={`${month.month} ${currentYear} ${t("dashboard.summary") || "Summary"}`}
+            subtitle={t("dashboard.financialBreakdown") || "Financial breakdown"}
+          />
 
           <div className="grid grid-cols-1 gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div
@@ -141,10 +137,10 @@ const MonthView: React.FC<MonthViewProps> = ({
                 {t("dashboard.income")}
               </p>
               <p
-                className="text-lg sm:text-2xl font-bold mt-1"
+                className="text-lg sm:text-2xl font-bold mt-1 font-financial"
                 style={{ color: "var(--semantic-success)" }}
               >
-                {formatCurrency(month.income)}
+                <CountUp to={month.income || 0} format={(n) => formatCurrency(n)} duration={1.5} />
               </p>
             </div>
             <div
@@ -161,10 +157,10 @@ const MonthView: React.FC<MonthViewProps> = ({
                 {t("dashboard.expenses")}
               </p>
               <p
-                className="text-lg sm:text-2xl font-bold mt-1"
+                className="text-lg sm:text-2xl font-bold mt-1 font-financial"
                 style={{ color: "var(--semantic-error)" }}
               >
-                {formatCurrency(month.expenses)}
+                <CountUp to={month.expenses || 0} format={(n) => formatCurrency(n)} duration={1.5} />
               </p>
             </div>
             <div
@@ -181,10 +177,14 @@ const MonthView: React.FC<MonthViewProps> = ({
                 {t("dashboard.netCashFlow")}
               </p>
               <p
-                className="text-lg sm:text-2xl font-bold mt-1"
+                className="text-lg sm:text-2xl font-bold mt-1 font-financial"
                 style={{ color: "var(--accent-primary)" }}
               >
-                {formatCurrencyWithSign(month.cashFlow, true)}
+                <CountUp
+                  to={month.cashFlow || 0}
+                  format={(n) => formatCurrencyWithSign(n, true)}
+                  duration={1.5}
+                />
               </p>
             </div>
           </div>
@@ -224,7 +224,7 @@ const MonthView: React.FC<MonthViewProps> = ({
                     </span>
                   </div>
                   <span
-                    className="font-semibold flex-shrink-0 ml-2"
+                    className="font-semibold flex-shrink-0 ml-2 font-financial"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {cat.value}%
@@ -233,22 +233,10 @@ const MonthView: React.FC<MonthViewProps> = ({
               ))}
             </div>
           </div>
-        </div>
+        </Panel>
 
-        {/* Recent Transactions */}
-        <div
-          className="rounded-none p-4 sm:p-5 lg:p-7 flex flex-col"
-          style={{
-            backgroundColor: "var(--bg-surface)",
-            border: "1px solid var(--border-primary)",
-          }}
-        >
-          <h2
-            className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4"
-            style={{ color: "var(--text-primary)" }}
-          >
-            {t("dashboard.recentTransactions")}
-          </h2>
+        <Panel className="flex flex-col" delay={200}>
+          <PanelTitle title={t("dashboard.recentTransactions")} className="mb-3 sm:mb-4" />
           <div className="flex-1 min-h-0">
             <RecentTransactions
               transactions={monthTransactions}
@@ -256,7 +244,7 @@ const MonthView: React.FC<MonthViewProps> = ({
               compact
             />
           </div>
-        </div>
+        </Panel>
       </div>
     </>
   );
