@@ -140,7 +140,7 @@ const MonthView: React.FC<MonthViewProps> = ({
                 className="text-lg sm:text-2xl font-bold mt-1 font-financial"
                 style={{ color: "var(--semantic-success)" }}
               >
-                <CountUp to={month.income || 0} format={(n) => formatCurrency(n)} duration={1.5} />
+                <CountUp to={month.income || 0} format={(n) => formatCurrency(n)} duration={0.6} />
               </p>
             </div>
             <div
@@ -160,7 +160,7 @@ const MonthView: React.FC<MonthViewProps> = ({
                 className="text-lg sm:text-2xl font-bold mt-1 font-financial"
                 style={{ color: "var(--semantic-error)" }}
               >
-                <CountUp to={month.expenses || 0} format={(n) => formatCurrency(n)} duration={1.5} />
+                <CountUp to={month.expenses || 0} format={(n) => formatCurrency(n)} duration={0.6} />
               </p>
             </div>
             <div
@@ -183,7 +183,7 @@ const MonthView: React.FC<MonthViewProps> = ({
                 <CountUp
                   to={month.cashFlow || 0}
                   format={(n) => formatCurrencyWithSign(n, true)}
-                  duration={1.5}
+                  duration={0.6}
                 />
               </p>
             </div>

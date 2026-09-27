@@ -283,6 +283,7 @@ const ActiveSavingsGoalPanel: React.FC<ActiveSavingsGoalPanelProps> = ({ goal, t
         size={110}
         strokeWidth={9}
         color={goal.color}
+        duration={700}
       />
       <div className="flex-1 w-full min-w-0">
         <p className="text-sm sm:text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>

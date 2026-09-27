@@ -8,6 +8,7 @@ interface AnimatedProgressCircleProps {
   backgroundColor?: string;
   showPercentage?: boolean;
   animate?: boolean;
+  duration?: number;
 }
 
 const AnimatedProgressCircle: React.FC<AnimatedProgressCircleProps> = ({
@@ -18,6 +19,7 @@ const AnimatedProgressCircle: React.FC<AnimatedProgressCircleProps> = ({
   backgroundColor = 'var(--border-secondary)',
   showPercentage = true,
   animate = true,
+  duration = 2500,
 }) => {
   const [displayPercentage, setDisplayPercentage] = useState(animate ? 0 : percentage);
   const animationRef = useRef<number | null>(null);
@@ -34,7 +36,6 @@ const AnimatedProgressCircle: React.FC<AnimatedProgressCircleProps> = ({
       return;
     }
 
-    const duration = 2500;
     const startTime = Date.now();
     const startValue = startValueRef.current;
     const endValue = Math.min(percentage, 100);
@@ -61,7 +62,7 @@ const AnimatedProgressCircle: React.FC<AnimatedProgressCircleProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [percentage, animate]);
+  }, [percentage, animate, duration]);
 
   const strokeDashoffset = circumference - (displayPercentage / 100) * circumference;
 

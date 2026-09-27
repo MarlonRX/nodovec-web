@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
-import { useInView, useMotionValue, useSpring } from "motion/react";
+import { useInView, animate, type AnimationPlaybackControls } from "motion/react";
 
 interface CountUpProps {
   to: number;
@@ -15,19 +15,12 @@ export default function CountUp({
   to,
   from = 0,
   delay = 0,
-  duration = 2,
+  duration = 0.8,
   className = "",
   separator = "",
   format,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const motionValue = useMotionValue(from);
-
-  const damping = 20 + 40 * (1 / duration);
-  const stiffness = 100 * (1 / duration);
-
-  const springValue = useSpring(motionValue, { damping, stiffness });
-
   const isInView = useInView(ref, { once: true, margin: "0px" });
 
   const formatValue = useCallback(
@@ -51,20 +44,24 @@ export default function CountUp({
   }, [from, to, formatValue]);
 
   useEffect(() => {
-    if (isInView) {
-      const timeoutId = setTimeout(() => motionValue.set(to), delay * 1000);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isInView, motionValue, from, to, delay]);
-
-  useEffect(() => {
-    const unsubscribe = springValue.on("change", (latest: number) => {
-      if (ref.current) {
-        ref.current.textContent = formatValue(latest);
-      }
-    });
-    return () => unsubscribe();
-  }, [springValue, formatValue]);
+    if (!isInView) return;
+    let controls: AnimationPlaybackControls | undefined;
+    const timeout = setTimeout(() => {
+      controls = animate(from, to, {
+        duration,
+        ease: [0.22, 1, 0.36, 1],
+        onUpdate: (latest: number) => {
+          if (ref.current) {
+            ref.current.textContent = formatValue(latest);
+          }
+        },
+      });
+    }, delay * 1000);
+    return () => {
+      clearTimeout(timeout);
+      controls?.stop();
+    };
+  }, [isInView, from, to, duration, delay, formatValue]);
 
   return <span className={className} ref={ref} />;
 }

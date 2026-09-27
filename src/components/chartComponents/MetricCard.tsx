@@ -54,7 +54,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                         style={{ color: "var(--text-primary)" }}
                     >
                         {typeof valueNumeric === "number" ? (
-                            <CountUp to={valueNumeric} format={formatValue} duration={1.5} />
+                            <CountUp to={valueNumeric} format={formatValue} duration={0.6} />
                         ) : (
                             value
                         )}
