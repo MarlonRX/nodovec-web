@@ -8,6 +8,7 @@ import { MyCurrencyInput } from "./MyCurrencyInput";
 import { MyInput } from "./MyInput";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { money } from "@/utils/cardFinance";
+import { ModalPortal } from "./ModalPortal";
 
 interface CardModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initia
   const existingDebt = initialData?.current_balance ?? 0;
 
   return (
-    <>
+    <ModalPortal>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) p-4 md:p-8">
@@ -125,6 +126,6 @@ export const CardModal = ({ isOpen, onClose, onSubmit, isLoading = false, initia
           </form>
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };

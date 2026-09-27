@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { ModalPortal } from "./ModalPortal";
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -183,7 +184,7 @@ export const TransactionModal = ({
   }
 
   return (
-    <>
+    <ModalPortal>
       <button
         type="button"
         aria-label={t('common.close')}
@@ -231,7 +232,7 @@ export const TransactionModal = ({
           />
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };
 

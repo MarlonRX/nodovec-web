@@ -12,6 +12,7 @@ import type { FinancingInput } from "@/services/financingServices";
 import type { Financing } from "@/types/financingInterfaces";
 import dayjs from "dayjs";
 import { FinancingTip } from "./FinancingTip";
+import { ModalPortal } from "@/components/UIComponents/ModalPortal";
 
 type ScheduleRow = { installment_number: number; due_date: string; principal_amount: string; interest_amount: string; total_amount: string; remaining_principal: string };
 type Summary = { installment_amount: string; total_interest: string; total_amount: string };
@@ -51,7 +52,7 @@ export const ModalForm = ({
   if (!isOpen) return null;
 
   return (
-    <>
+    <ModalPortal>
       <button
         type="button"
         aria-label={t('common.close')}
@@ -310,8 +311,8 @@ export const ModalForm = ({
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
-      </>
+    </div>
+    </ModalPortal>
   );
 };

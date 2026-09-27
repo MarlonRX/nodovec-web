@@ -13,6 +13,7 @@ import {
 } from '@/types/savingsGoalInterfaces';
 import { GOAL_ICONS, GOAL_ICON_LIST } from '@/components/reactComponents/goalIcons';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
+import { ModalPortal } from './ModalPortal';
 
 interface SavingsGoalModalProps {
   isOpen: boolean;
@@ -121,7 +122,7 @@ export const SavingsGoalModal = ({
   if (!isOpen) return null;
 
   return (
-    <>
+    <ModalPortal>
       <button
         type="button"
         aria-label={t('common.close')}
@@ -282,6 +283,6 @@ export const SavingsGoalModal = ({
           </form>
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };

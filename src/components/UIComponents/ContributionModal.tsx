@@ -6,6 +6,7 @@ import type { SavingsGoal } from '@/types/savingsGoalInterfaces';
 import AnimatedProgressCircle from '../reactComponents/AnimatedProgressCircle';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
 import { formatDateShort } from '@/utils/dateFormat';
+import { ModalPortal } from './ModalPortal';
 
 interface ContributionModalProps {
   isOpen: boolean;
@@ -76,7 +77,7 @@ export const ContributionModal = ({
     (goal.current_amount + amountValue) >= goal.target_amount;
 
   return (
-    <>
+    <ModalPortal>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 max-h-[90vh] overflow-y-auto transition-opacity duration-300">
         <div
@@ -219,7 +220,7 @@ export const ContributionModal = ({
           )}
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };
 

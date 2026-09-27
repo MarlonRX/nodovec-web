@@ -22,6 +22,7 @@ export default function CountUp({
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "0px" });
+  const hasAnimated = useRef(false);
 
   const formatValue = useCallback(
     (latest: number) => {
@@ -38,16 +39,12 @@ export default function CountUp({
   );
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.textContent = formatValue(from);
-    }
-  }, [from, to, formatValue]);
-
-  useEffect(() => {
     if (!isInView) return;
+
     let controls: AnimationPlaybackControls | undefined;
     const timeout = setTimeout(() => {
-      controls = animate(from, to, {
+      const startValue = hasAnimated.current ? from : from;
+      controls = animate(startValue, to, {
         duration,
         ease: [0.22, 1, 0.36, 1],
         onUpdate: (latest: number) => {
@@ -56,12 +53,20 @@ export default function CountUp({
           }
         },
       });
+      hasAnimated.current = true;
     }, delay * 1000);
+
     return () => {
       clearTimeout(timeout);
       controls?.stop();
     };
   }, [isInView, from, to, duration, delay, formatValue]);
+
+  useEffect(() => {
+    if (!isInView && ref.current) {
+      ref.current.textContent = formatValue(to);
+    }
+  }, [to, isInView, formatValue]);
 
   return <span className={className} ref={ref} />;
 }

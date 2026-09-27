@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
+import { ModalPortal } from "./ModalPortal";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export const DeleteConfirmModal = ({
   const finalDescription = description ?? t("delete.deleteTransactionDescription");
 
   return (
-    <>
+    <ModalPortal>
       <button
         type="button"
         aria-label={t('common.close')}
@@ -81,6 +82,6 @@ export const DeleteConfirmModal = ({
           </div>
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };

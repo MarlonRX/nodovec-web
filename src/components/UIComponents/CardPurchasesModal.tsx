@@ -11,6 +11,7 @@ import { MyCurrencyInput } from "./MyCurrencyInput";
 import { translate, getCurrentLanguage, type Language } from "@/i18n";
 import { toast } from "sonner";
 import { calculateInstallment, formatMoney, money } from "@/utils/cardFinance";
+import { ModalPortal } from "./ModalPortal";
 
 interface Props {
   isOpen: boolean;
@@ -133,7 +134,7 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
   if (!isOpen) return null;
 
   return (
-    <>
+    <ModalPortal>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={handleClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden flex flex-col transition-opacity duration-300">
         <div className="bg-(--bg-surface) rounded-none shadow-2xl border border-(--border-primary) flex flex-col overflow-hidden">
@@ -279,6 +280,6 @@ export const CardPurchasesModal = ({ isOpen, onClose, card, onBalanceChange }: P
 
       <DeleteConfirmModal isOpen={purchaseToDelete !== null} onClose={() => setPurchaseToDelete(null)}
         onConfirm={() => purchaseToDelete && handleDelete(purchaseToDelete)} isLoading={isDeleting} />
-    </>
+    </ModalPortal>
   );
 };

@@ -65,6 +65,23 @@ html[data-theme="custom"] {
     pointer-events: none;
 }
 
+/* Con un modal o overlay de carga abierto, el bento se aparta:
+   el halo global se apaga y el glow de borde/partículas quedan casi invisibles */
+body:has(.fixed.inset-0.z-40) .global-spotlight,
+body:has(.fixed.inset-0.z-100) .global-spotlight {
+    opacity: 0 !important;
+}
+
+body:has(.fixed.inset-0.z-40) .card--border-glow::after,
+body:has(.fixed.inset-0.z-100) .card--border-glow::after {
+    opacity: 0.12;
+}
+
+body:has(.fixed.inset-0.z-40) .particle,
+body:has(.fixed.inset-0.z-100) .particle {
+    opacity: 0.1 !important;
+}
+
 /* ── ShinyText ───────────────────────────────── */
 .shiny-text {
     background-size: 200% auto;

@@ -3,6 +3,7 @@ import { PartyPopper } from 'lucide-react';
 import type { SavingsGoal } from '@/types/savingsGoalInterfaces';
 import { translate, getCurrentLanguage, type Language } from '@/i18n';
 import useConfetti from '@/hooks/useConfetti';
+import { ModalPortal } from './ModalPortal';
 
 interface CelebrationModalProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
   if (!isOpen || !goal) return null;
 
   return (
-    <>
+    <ModalPortal>
       <button type="button" aria-label={t('common.close')} className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4 md:mx-0 transition-opacity duration-300">
         <div
@@ -116,7 +117,7 @@ const CelebrationModal: React.FC<CelebrationModalProps> = ({ isOpen, onClose, go
           </div>
         </div>
       </div>
-    </>
+    </ModalPortal>
   );
 };
 
